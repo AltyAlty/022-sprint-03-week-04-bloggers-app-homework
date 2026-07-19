@@ -1,0 +1,69 @@
+import { GetBlogListQueryInputDTO } from '../routes/input-dto/query/get-blog-list-query.input-dto';
+import { Filter } from 'mongodb';
+import { BlogType } from '../application/types/blog.type';
+import { BlogSortFieldQueryInputDTO } from '../routes/input-dto/query/blog-sort-field-query.input-dto';
+import { SortDirection } from '../../core/types/pagination/sort-direction';
+import { BlogDBType } from './types/blog-db.type';
+import { injectable } from 'inversify';
+import { BlogListDBType } from './types/blog-list-db.type';
+import { BlogModel } from './models/blog.model';
+
+/*Query-репозиторий для работы с блогами в БД.*/
+@injectable()
+export class BlogsQueryRepository {
+  /*Метод для поиска блога по ID в БД.*/
+  public async findById(id: string): Promise<BlogDBType | null> {
+    /*Просим модель "BlogModel" найти блог по ID в БД.*/
+    const blog: BlogDBType | null = await BlogModel.findById(id).lean();
+    /*Если блог был найден, то возвращаем его, иначе возвращаем null.*/
+    return blog ?? null;
+  }
+
+  /*Метод для поиска блогов в БД.*/
+  public async findAll(queryDTO: GetBlogListQueryInputDTO): Promise<{ items: BlogListDBType; totalCount: number }> {
+    /*Создаем переменные на основе параметра "queryDTO" при помощи деструктуризации.*/
+    const {
+      pageNumber,
+      pageSize,
+      sortBy,
+      sortDirection,
+      searchNameTerm,
+    }: {
+      pageNumber: number;
+      pageSize: number;
+      sortBy: BlogSortFieldQueryInputDTO;
+      sortDirection: SortDirection;
+      searchNameTerm?: string | undefined;
+    } = queryDTO;
+
+    /*Переменная "skip" обозначает сколько записей надо пропустить перед тем, как начать отдавать запрошенную страницу
+    "pageNumber".*/
+    const skip: number = (pageNumber - 1) * pageSize;
+    /*Динамически собираем фильтр для поиска в MongoDB. Начинаем с пустого фильтра.*/
+    const filter: Filter<BlogType> = {};
+    /*Если в query-параметрах было указано имя блога, то добавляем условие по полю "name".
+    "$regex: searchNameTerm" означает поиск по шаблону - по вхождению строки. "$options: 'i'" означает, что поиск будет
+    без учета регистра.*/
+    if (searchNameTerm) filter.name = { $regex: searchNameTerm, $options: 'i' };
+
+    /*Просим модель "BlogModel" найти блоги в БД:
+    1. ".find(filter)": выбираем документы по собранному фильтру.
+    2. ".sort({ [sortBy]: sortDirection })": сортируем по полю сортировки, которое берется динамически из переменной
+    "sortBy", а направление сортировки из переменной "sortDirection".
+    3. ".skip(skip)": пропускаем нужное количество записей, чтобы взять записи для запрошенной страницы.
+    4. ".limit(pageSize)": берем записей не больше размера запрошенной страницы.
+    5. ".lean()": превращаем курсор в обычный массив и возвращаем его.*/
+    const [items, totalCount]: [BlogListDBType, number] = await Promise.all([
+      BlogModel.find(filter)
+        .sort({ [sortBy]: sortDirection })
+        .skip(skip)
+        .limit(pageSize)
+        .lean(),
+      /*Просим модель "BlogModel" подсчитать общее количество документов, подходящих под фильтр, без учета пагинации.*/
+      BlogModel.countDocuments(filter),
+    ]);
+
+    /*Возвращаем данные по блогам.*/
+    return { items, totalCount };
+  }
+}
