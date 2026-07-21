@@ -48,6 +48,22 @@ const PostSchema = new mongoose.Schema<PostDBType>({
     immutable: true,
     default: Date.now,
   },
+
+  extendedLikesInfo: {
+    likesCount: {
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+    },
+
+    dislikesCount: {
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+    },
+  },
 });
 
 /*Модель для поста в БД.*/

@@ -7,6 +7,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../../../ioc/types';
 import { JwtAdapter } from '../../adapters/jwt.adapter';
 import { UsersRepository } from '../../../users/repositories/users.repository';
+import { UserDBType } from '../../../users/repositories/types/user-db.type';
 
 /*Guard-middleware для проверки опционального AT.*/
 @injectable()
@@ -54,11 +55,12 @@ export class OptionalAccessTokenGuardMiddleware {
     if (!ObjectId.isValid(userIdFromAT)) return res.sendStatus(HttpStatuses.Unauthorized_401);
     /*Если ID пользователя из AT соответствуют формату ObjectId, то просим репозиторий "usersRepository" найти
     пользователя по ID в БД.*/
-    const userDB = await this.usersRepository.findById(userIdFromAT);
+    const userDB: UserDBType | null = await this.usersRepository.findById(userIdFromAT);
     /*Если пользователь не был найден, то сообщаем об отказе в аутентификации клиенту.*/
     if (!userDB) return res.sendStatus(HttpStatuses.Unauthorized_401);
-    /*Если пользователь был найден, то прикрепляем ID пользователя к запросу.*/
+    /*Если пользователь был найден, то прикрепляем ID и логин пользователя к запросу.*/
     req.userId = { id: userIdFromAT } as IdType;
+    req.login = userDB.login as string;
     /*Разрешаем дальнейшее выполнение запроса при помощи функции "next()".*/
     next();
   }

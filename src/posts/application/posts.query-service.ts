@@ -4,7 +4,7 @@ import { GetPostListQueryInputDTO } from '../routes/input-dto/query/get-post-lis
 import { mapToPaginatedPostListOutputDTO } from '../repositories/mappers/map-to-paginated-post-list-output-dto.util';
 import { PaginatedPostListOutputDTO } from '../routes/output-dto/paginated-post-list.output-dto';
 import { mapToPostOutputDTO } from '../repositories/mappers/map-to-post-output-dto.util';
-import { PostOutputDTO } from '../routes/output-dto/post.output-dto';
+import { PostLikeStatusOutputDTO, PostOutputDTO } from '../routes/output-dto/post.output-dto';
 import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { Result } from '../../core/types/result/result.type';
 import { BlogOutputDTO } from '../../blogs/routes/output-dto/blog.output-dto';
@@ -12,6 +12,9 @@ import { PostDBType } from '../repositories/types/post-db.type';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
 import { PostListDBType } from '../repositories/types/post-list-db.type';
+import { PostLikeDataDBType } from '../repositories/types/post-like-data-db.type';
+import { PostListOutputDTO } from '../routes/output-dto/post-list.output-dto';
+import { mapToPostListOutputDTO } from '../repositories/mappers/map-to-post-list-output-dto.utils';
 
 /*Query-сервис для работы с постами.*/
 @injectable()
@@ -22,7 +25,7 @@ export class PostsQueryService {
   ) {}
 
   /*Метод для поиска поста по ID.*/
-  public async findById(id: string): Promise<Result<{ postOutput: PostOutputDTO } | null>> {
+  public async findById(id: string, userId?: string): Promise<Result<{ postOutput: PostOutputDTO } | null>> {
     /*Просим query-репозиторий "postsQueryRepository" найти пост по ID в БД.*/
     const postDB: PostDBType | null = await this.postsQueryRepository.findById(id);
 
@@ -36,8 +39,23 @@ export class PostsQueryService {
       };
     }
 
+    /*Формируем статус лайка поста.*/
+    let likeStatus: PostLikeStatusOutputDTO = PostLikeStatusOutputDTO.None;
+
+    /*Если в запрос был указан AT.*/
+    if (userId) {
+      /*Просим query-репозиторий "postsQueryRepository" найти данные о лайке поста в БД.*/
+      const postLikeDataDB: PostLikeDataDBType | null =
+        await this.postsQueryRepository.findPostLikeDataByPostIdAndUserId(id, userId);
+
+      /*Если данные о лайке поста были найдены, то получаем статус лайка.*/
+      if (postLikeDataDB) likeStatus = postLikeDataDB.likeStatus as unknown as PostLikeStatusOutputDTO;
+    }
+
+    /*Просим query-репозиторий "postsQueryRepository" найти данные о трех последних лайках поста по ID поста в БД.*/
+    const newestLikes: PostLikeDataDBType[] = await this.postsQueryRepository.findLastThreePostLikes(id);
     /*Если пост был найден, то преобразовываем пост из БД в подготовленный для отправки клиенту пост.*/
-    const postOutput: PostOutputDTO = mapToPostOutputDTO(postDB);
+    const postOutput: PostOutputDTO = mapToPostOutputDTO(postDB, likeStatus, newestLikes);
     /*Возвращаем ResultObject с преобразованным постом.*/
     return { status: ResultStatuses.Ok, data: { postOutput }, extensions: [] };
   }
@@ -45,7 +63,8 @@ export class PostsQueryService {
   /*Метод для поиска постов.*/
   public async findAll(
     queryDTO: GetPostListQueryInputDTO,
-    blogId?: string
+    blogId?: string,
+    userId?: string
   ): Promise<Result<{ paginatedPostListOutput: PaginatedPostListOutputDTO } | null>> {
     /*Если был указан ID блога, то проверяем существует ли он.*/
     if (blogId) {
@@ -59,12 +78,22 @@ export class PostsQueryService {
     const { items, totalCount }: { items: PostListDBType; totalCount: number } =
       await this.postsQueryRepository.findAll(queryDTO, blogId);
 
+    /*Преобразовываем посты из БД в подготовленные для отправки клиенту без пагинации посты.*/
+    const itemsWithMyStatusAndNewestLikes: PostListOutputDTO = await mapToPostListOutputDTO(
+      items,
+      this.postsQueryRepository,
+      userId
+    );
+
     /*Преобразовываем посты из БД в подготовленные для пагинации посты.*/
-    const paginatedPostListOutput: PaginatedPostListOutputDTO = mapToPaginatedPostListOutputDTO(items, {
-      pageNumber: queryDTO.pageNumber,
-      pageSize: queryDTO.pageSize,
-      totalCount,
-    });
+    const paginatedPostListOutput: PaginatedPostListOutputDTO = mapToPaginatedPostListOutputDTO(
+      itemsWithMyStatusAndNewestLikes,
+      {
+        pageNumber: queryDTO.pageNumber,
+        pageSize: queryDTO.pageSize,
+        totalCount,
+      }
+    );
 
     /*Возвращаем ResultObject с преобразованными для пагинации постами.*/
     return { status: ResultStatuses.Ok, data: { paginatedPostListOutput }, extensions: [] };

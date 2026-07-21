@@ -1,7 +1,7 @@
 import { CommentType } from '../../application/types/comment.type';
 
-/*Тип для поля "likeStatus" в типе "CommentOutputDTO".*/
-export enum commentLikeStatusOutputDTO {
+/*Тип для поля "myStatus" в типе "CommentOutputDTO".*/
+export enum CommentLikeStatusOutputDTO {
   None = 'None',
   Like = 'Like',
   Dislike = 'Dislike',
@@ -13,6 +13,6 @@ export type CommentOutputDTO = Omit<CommentType, 'postId'> & {
   likesInfo: {
     likesCount: number;
     dislikesCount: number;
-    myStatus: commentLikeStatusOutputDTO;
+    myStatus: CommentLikeStatusOutputDTO;
   };
 };

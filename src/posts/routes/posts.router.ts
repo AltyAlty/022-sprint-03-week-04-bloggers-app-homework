@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
 import { idValidation, postIdValidation } from '../../core/middlewares/validation/params-id-validation.middlewares';
-import { createPostInputValidation, updatePostInputValidation } from '../validation/posts-input-validation.middlewares';
+import {
+  createPostInputValidation,
+  likePostInputValidation,
+  updatePostInputValidation,
+} from '../validation/posts-input-validation.middlewares';
 import { paginationValidationMiddleware } from '../../core/middlewares/validation/pagination-validation.middleware';
 import { PostSortFieldQueryInputDTO } from './input-dto/query/post-sort-field-query.input-dto';
 import { CommentSortFieldQueryInputDTO } from '../../comments/routes/input-dto/query/comment-sort-field-query.input-dto';
@@ -40,6 +44,7 @@ postsRouter
   /*003. GET-запрос по получению постов с пагинацией, используя query-параметры.*/
   .get(
     SETTINGS.GET_POST_LIST_PATH,
+    optionalAccessTokenGuardMiddleware,
     paginationValidationMiddleware(PostSortFieldQueryInputDTO),
     inputValidationResultMiddleware,
     postsController.getPostListHandler.bind(postsController)
@@ -55,6 +60,7 @@ postsRouter
   /*005. GET-запрос по получению поста по ID, используя URI-параметры.*/
   .get(
     SETTINGS.GET_POST_BY_ID_PATH,
+    optionalAccessTokenGuardMiddleware,
     idValidation,
     inputValidationResultMiddleware,
     postsController.getPostByIdHandler.bind(postsController)
@@ -75,4 +81,12 @@ postsRouter
     idValidation,
     inputValidationResultMiddleware,
     postsController.deletePostByIdHandler.bind(postsController)
+  ) /*008. PUT-запрос по лайку поста по ID, используя URI-параметры.*/
+  .put(
+    SETTINGS.LIKE_POST_BY_ID_PATH,
+    accessTokenGuardMiddleware,
+    idValidation,
+    likePostInputValidation,
+    inputValidationResultMiddleware,
+    postsController.likePostByIdHandler.bind(postsController)
   );

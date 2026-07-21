@@ -60,7 +60,7 @@ const CommentSchema = new mongoose.Schema<CommentDBType>({
   },
 });
 
-/*Создаем индекс для быстро поиска по массиву с postId.*/
+/*Создаем индекс для быстрого поиска по массиву с postId.*/
 CommentSchema.index({ postId: 1 });
 
 /*Модель для комментария в БД.*/

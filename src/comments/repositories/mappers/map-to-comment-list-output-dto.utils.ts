@@ -1,7 +1,7 @@
 import { CommentListDBType } from '../types/comment-list-db.type';
 import { CommentsQueryRepository } from '../comments.query-repository';
 import { CommentListOutputDTO } from '../../routes/output-dto/comment-list.output-dto';
-import { commentLikeStatusOutputDTO, CommentOutputDTO } from '../../routes/output-dto/comment.output-dto';
+import { CommentLikeStatusOutputDTO, CommentOutputDTO } from '../../routes/output-dto/comment.output-dto';
 import { CommentLikeDataDBType } from '../types/comment-like-data-db.type';
 import { mapToCommentOutputDTO } from './map-to-comment-output-dto.util';
 import { CommentDBType } from '../types/comment-db.type';
@@ -15,23 +15,23 @@ export const mapToCommentListOutputDTO = async (
   if (comments.length === 0) return [];
   const commentIds: string[] = comments.map((comment: CommentDBType): string => comment._id.toString());
   /*Создаем Map: commentId: likeStatus.*/
-  let commentLikesDataMap: Map<string, commentLikeStatusOutputDTO> = new Map<string, commentLikeStatusOutputDTO>();
+  let commentLikesDataMap: Map<string, CommentLikeStatusOutputDTO> = new Map<string, CommentLikeStatusOutputDTO>();
 
   if (userId) {
     const commentLikesDataDB: CommentLikeDataDBType[] =
       await commentsQueryRepository.findAllCommentLikesDataByCommentIdsAndUserId(commentIds, userId);
 
     commentLikesDataMap = new Map(
-      commentLikesDataDB.map((commentLikeDataDB: CommentLikeDataDBType): [string, commentLikeStatusOutputDTO] => [
+      commentLikesDataDB.map((commentLikeDataDB: CommentLikeDataDBType): [string, CommentLikeStatusOutputDTO] => [
         commentLikeDataDB.commentId,
-        commentLikeDataDB.likeStatus as unknown as commentLikeStatusOutputDTO,
+        commentLikeDataDB.likeStatus as unknown as CommentLikeStatusOutputDTO,
       ])
     );
   }
 
   return comments.map((comment: CommentDBType): CommentOutputDTO => {
-    const likeStatus: commentLikeStatusOutputDTO =
-      commentLikesDataMap.get(comment._id.toString()) ?? commentLikeStatusOutputDTO.None;
+    const likeStatus: CommentLikeStatusOutputDTO =
+      commentLikesDataMap.get(comment._id.toString()) ?? CommentLikeStatusOutputDTO.None;
 
     return mapToCommentOutputDTO(comment, likeStatus);
   });

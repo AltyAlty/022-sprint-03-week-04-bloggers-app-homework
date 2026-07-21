@@ -7,13 +7,16 @@ import { UpdatePostByIdInputDTO } from '../routes/input-dto/update-post-by-id.in
 import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { Result } from '../../core/types/result/result.type';
 import { BlogOutputDTO } from '../../blogs/routes/output-dto/blog.output-dto';
-import { PostOutputDTO } from '../routes/output-dto/post.output-dto';
+import { PostLikeStatusOutputDTO, PostOutputDTO } from '../routes/output-dto/post.output-dto';
 import { mapToPostOutputDTO } from '../repositories/mappers/map-to-post-output-dto.util';
 import { PostDBType } from '../repositories/types/post-db.type';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
 import { lazyInject } from '../../ioc/decorators';
 import { PostListDBType } from '../repositories/types/post-list-db.type';
+import { PostLikeStatusInputDTO } from '../routes/input-dto/like-post-by-id.input-dto';
+import { PostLikeDataDBType } from '../repositories/types/post-like-data-db.type';
+import { PostLikeStatus } from './types/post-like-data.type';
 
 /*Сервис для работы с постами.*/
 @injectable()
@@ -37,6 +40,10 @@ export class PostsService {
       blogId: dto.blogId,
       blogName: blogResult.data!.blogOutput.name,
       createdAt: new Date(),
+      extendedLikesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+      },
     };
 
     /*Просим репозиторий "postsRepository" создать пост в БД.*/
@@ -46,7 +53,7 @@ export class PostsService {
   }
 
   /*Метод для поиска поста по ID.*/
-  public async findById(id: string): Promise<Result<{ postOutput: PostOutputDTO } | null>> {
+  public async findById(id: string, userId?: string): Promise<Result<{ postOutput: PostOutputDTO } | null>> {
     /*Просим репозиторий "postsRepository" найти пост по ID в БД.*/
     const postDB: PostDBType | null = await this.postsRepository.findById(id);
 
@@ -60,8 +67,26 @@ export class PostsService {
       };
     }
 
+    /*Формируем статус лайка поста.*/
+    let likeStatus: PostLikeStatusOutputDTO = PostLikeStatusOutputDTO.None;
+
+    /*Если в запрос был указан AT.*/
+    if (userId) {
+      /*Просим репозиторий "postsRepository" найти данные о лайке поста в БД.*/
+      const postLikeDataDB: PostLikeDataDBType | null = await this.postsRepository.findPostLikeDataByPostIdAndUserId(
+        id,
+        userId
+      );
+
+      /*Если данные о лайке поста были найдены, то получаем статус лайка.*/
+      if (postLikeDataDB) likeStatus = postLikeDataDB.likeStatus as unknown as PostLikeStatusOutputDTO;
+    }
+
+    /*Просим репозиторий "postsQueryRepository" найти данные о трех последних лайках поста по ID поста в БД.*/
+    const newestLikes: PostLikeDataDBType[] = await this.postsRepository.findLastThreePostLikes(id);
+
     /*Если пост был найден, то преобразовываем пост из БД в подготовленный для отправки клиенту пост.*/
-    const postOutput: PostOutputDTO = mapToPostOutputDTO(postDB);
+    const postOutput: PostOutputDTO = mapToPostOutputDTO(postDB, likeStatus, newestLikes);
     /*Возвращаем ResultObject с преобразованным постом.*/
     return { status: ResultStatuses.Ok, data: { postOutput }, extensions: [] };
   }
@@ -82,6 +107,126 @@ export class PostsService {
     }
 
     /*Если пост был изменен, то возвращаем ResultObject с информацией об этом.*/
+    return { status: ResultStatuses.NoContent, data: {}, extensions: [] };
+  }
+
+  /*Метод для лайка поста по ID.*/
+  public async likePostById(
+    id: string,
+    userId: string,
+    login: string,
+    likeStatus: PostLikeStatusInputDTO
+  ): Promise<Result<{} | null>> {
+    /*Просим репозиторий "postsRepository" найти пост по ID в БД.*/
+    const postDB: PostDBType | null = await this.postsRepository.findById(id);
+
+    /*Если пост не был найден, то возвращаем ResultObject с информацией об этом.*/
+    if (!postDB) {
+      return {
+        status: ResultStatuses.NotFound,
+        data: null,
+        errorMessage: 'Not Found',
+        extensions: [{ field: 'id', message: 'Post not found' }],
+      };
+    }
+
+    /*Если пост был найден, то просим репозиторий "postsRepository" найти данные о лайке для поста по ID поста и ID
+    пользователя в БД.*/
+    const postLikeDB: PostLikeDataDBType | null = await this.postsRepository.findPostLikeDataByPostIdAndUserId(
+      id,
+      userId
+    );
+
+    /*Если пользователь пытается установить повторный статус лайка, то возвращаем ResultObject с информацией об этом.*/
+    if (
+      (postLikeDB && (postLikeDB.likeStatus as string) === (likeStatus as string)) ||
+      (!postLikeDB && likeStatus === PostLikeStatusInputDTO.None)
+    ) {
+      return { status: ResultStatuses.NoContent, data: {}, extensions: [] };
+    }
+
+    /*Если пользователь хочет убрать лайк/дизлайк.*/
+    if (likeStatus === PostLikeStatusInputDTO.None) {
+      /*Просим репозиторий "postsRepository" удалить данные о лайке по ID поста и ID пользователя в БД.*/
+      await this.postsRepository.deletePostLikeDataByPostIdAndUserId(id, userId);
+
+      /*Просим репозиторий "postsRepository" изменить количество лайков/дизлайков у поста по ID в БД:
+      1. Если уже стоял лайк, то уменьшить количество лайков на 1.
+      2. Если уже стоял дизлайк, то уменьшить количество дизлайков на 1.*/
+      if (postLikeDB?.likeStatus === PostLikeStatus.Like) {
+        await this.postsRepository.updatePostLikesById(id, -1, 0);
+      } else {
+        await this.postsRepository.updatePostLikesById(id, 0, -1);
+      }
+    }
+
+    /*Если пользователь хочет поставить лайк.*/
+    if (likeStatus === PostLikeStatusInputDTO.Like) {
+      /*Если еще не был поставлен лайк/дизлайк.*/
+      if (!postLikeDB) {
+        /*Просим репозиторий "postsRepository" создать данные о лайке поста в БД.*/
+        await this.postsRepository.createPostLikeData({
+          postId: id,
+          userId,
+          login,
+          likeStatus: likeStatus as unknown as PostLikeStatus,
+          addedAt: new Date(),
+        });
+
+        /*Просим репозиторий "postsRepository" изменить количество лайков/дизлайков у поста по ID в БД:
+        1. Увеличить количество лайков на 1.
+        2. Не менять количество дизлайков.*/
+        await this.postsRepository.updatePostLikesById(id, 1, 0);
+        /*Если уже стоял дизлайк.*/
+      } else if (postLikeDB.likeStatus === PostLikeStatus.Dislike) {
+        /*Просим репозиторий "postsRepository" изменить данные о лайке поста по ID поста и ID пользователя в БД.*/
+        await this.postsRepository.updatePostLikeDataByPostIdAndUserId(
+          id,
+          userId,
+          likeStatus as unknown as PostLikeStatus
+        );
+
+        /*Просим репозиторий "postsRepository" изменить количество лайков/дизлайков у поста по ID в БД:
+        1. Увеличить количество лайков на 1.
+        2. Уменьшить количество дизлайков на 1.*/
+        await this.postsRepository.updatePostLikesById(id, 1, -1);
+      }
+    }
+
+    /*Если пользователь хочет поставить дизлайк.*/
+    if (likeStatus === PostLikeStatusInputDTO.Dislike) {
+      /*Если еще не был поставлен лайк/дизлайк.*/
+      if (!postLikeDB) {
+        /*Просим репозиторий "postsRepository" создать данные о лайке поста в БД.*/
+        await this.postsRepository.createPostLikeData({
+          postId: id,
+          userId,
+          login,
+          likeStatus: likeStatus as unknown as PostLikeStatus,
+          addedAt: new Date(),
+        });
+
+        /*Просим репозиторий "postsRepository" изменить количество лайков/дизлайков у поста по ID в БД:
+        1. Не менять количество лайков.
+        2. Увеличить количество дизлайков на 1.*/
+        await this.postsRepository.updatePostLikesById(id, 0, 1);
+        /*Если уже стоял лайк.*/
+      } else if (postLikeDB?.likeStatus === PostLikeStatus.Like) {
+        /*Просим репозиторий "postsRepository" изменить данные о лайке поста по ID поста и ID пользователя в БД.*/
+        await this.postsRepository.updatePostLikeDataByPostIdAndUserId(
+          id,
+          userId,
+          likeStatus as unknown as PostLikeStatus
+        );
+
+        /*Просим репозиторий "postsRepository" изменить количество лайков/дизлайков у поста по ID в БД:
+        1. Уменьшить количество лайков на 1.
+        2. Увеличить количество дизлайков на 1.*/
+        await this.postsRepository.updatePostLikesById(id, -1, 1);
+      }
+    }
+
+    /*Возвращаем ResultObject с информацией о лайке поста.*/
     return { status: ResultStatuses.NoContent, data: {}, extensions: [] };
   }
 

@@ -149,11 +149,7 @@ export class CommentsRepository {
   public async deleteCommentLikeDataByCommentIdAndUserId(commentId: string, userId: string): Promise<number> {
     /*Просим модель "CommentLikeDataModel" удалить данные о лайке комментария по ID комментария и ID пользователя в
     БД.*/
-    const result: DeleteResult = await CommentLikeDataModel.deleteOne({
-      commentId,
-      userId,
-    });
-
+    const result: DeleteResult = await CommentLikeDataModel.deleteOne({ commentId, userId });
     /*Возвращаем количество удаленных данных о лайке комментария.*/
     return result.deletedCount;
   }

@@ -12,6 +12,8 @@ declare global {
       userId: IdType | undefined;
       /*Добавляем в интерфейс "Request" новое свойство "deviceId".*/
       deviceId: IdType | undefined;
+      /*Добавляем в интерфейс "Request" новое свойство "login".*/
+      login: string | undefined;
     }
   }
 }

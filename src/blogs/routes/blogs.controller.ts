@@ -104,6 +104,8 @@ export class BlogsController {
     try {
       /*Получаем ID блога.*/
       const blogId: string = req.params.blogId;
+      /*Получаем ID пользователя.*/
+      const userId: string | undefined = req.userId?.id;
 
       /*Санитизируем query-параметры и добавляем к ним дефолтные настройки пагинации.*/
       const sanitizedQueryInputWithDefaultPaginationSettings = getSanitizedQueryInputWithDefaultPaginationSettings<
@@ -113,7 +115,7 @@ export class BlogsController {
 
       /*Просим query-сервис "postsQueryService" найти посты в блоге по ID.*/
       const paginatedPostListResult: Result<{ paginatedPostListOutput: PaginatedPostListOutputDTO } | null> =
-        await this.postsQueryService.findAll(sanitizedQueryInputWithDefaultPaginationSettings, blogId);
+        await this.postsQueryService.findAll(sanitizedQueryInputWithDefaultPaginationSettings, blogId, userId);
 
       /*Получаем HTTP-статус операции по поиску постов в блоге по ID.*/
       const paginatedPostListResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(paginatedPostListResult.status);

@@ -7,7 +7,11 @@ import { BlogSortFieldQueryInputDTO } from './input-dto/query/blog-sort-field-qu
 import { createPostForBlogInputValidation } from '../../posts/validation/posts-input-validation.middlewares';
 import { PostSortFieldQueryInputDTO } from '../../posts/routes/input-dto/query/post-sort-field-query.input-dto';
 import { SETTINGS } from '../../core/settings/settings';
-import { basicAuthGuardMiddleware, blogsController } from '../../ioc/composition-root';
+import {
+  basicAuthGuardMiddleware,
+  blogsController,
+  optionalAccessTokenGuardMiddleware,
+} from '../../ioc/composition-root';
 
 /*Роутер из Express.js для работы с блогами.*/
 export const blogsRouter: Router = Router({});
@@ -32,6 +36,7 @@ blogsRouter
   /*003. GET-запрос по получению постов с пагинацией в блоге по ID, используя URI-параметры и query-параметры.*/
   .get(
     SETTINGS.GET_POST_LIST_BY_BLOG_ID_PATH,
+    optionalAccessTokenGuardMiddleware,
     blogIdValidation,
     paginationValidationMiddleware(PostSortFieldQueryInputDTO),
     inputValidationResultMiddleware,

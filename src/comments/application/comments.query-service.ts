@@ -1,7 +1,7 @@
 import { PostsQueryService } from '../../posts/application/posts.query-service';
 import { CommentsQueryRepository } from '../repositories/comments.query-repository';
 import { Result } from '../../core/types/result/result.type';
-import { commentLikeStatusOutputDTO, CommentOutputDTO } from '../routes/output-dto/comment.output-dto';
+import { CommentLikeStatusOutputDTO, CommentOutputDTO } from '../routes/output-dto/comment.output-dto';
 import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { mapToCommentOutputDTO } from '../repositories/mappers/map-to-comment-output-dto.util';
 import { GetCommentListByPostIdQueryInputDTO } from '../routes/input-dto/query/get-comment-list-by-post-id-query.input-dto';
@@ -40,7 +40,7 @@ export class CommentsQueryService {
     }
 
     /*Формируем статус лайка комментария.*/
-    let likeStatus: commentLikeStatusOutputDTO = commentLikeStatusOutputDTO.None;
+    let likeStatus: CommentLikeStatusOutputDTO = CommentLikeStatusOutputDTO.None;
 
     /*Если в запрос был указан AT.*/
     if (userId) {
@@ -49,7 +49,7 @@ export class CommentsQueryService {
         await this.commentsQueryRepository.findCommentLikeDataByCommentIdAndUserId(id, userId);
 
       /*Если данные о лайке комментария были найдены, то получаем статус лайка.*/
-      if (commentLikeDataDB) likeStatus = commentLikeDataDB.likeStatus as unknown as commentLikeStatusOutputDTO;
+      if (commentLikeDataDB) likeStatus = commentLikeDataDB.likeStatus as unknown as CommentLikeStatusOutputDTO;
     }
 
     /*Если комментарий был найден, то преобразовываем комментарий из БД в подготовленный для отправки клиенту

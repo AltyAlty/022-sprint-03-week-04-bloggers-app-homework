@@ -84,9 +84,6 @@ export class CommentsQueryRepository {
   ): Promise<CommentLikeDataDBType[]> {
     /*Просим модель "CommentLikeDataModel" найти данные о лайках комментариев по ID комментариев и ID пользователя в
     БД.*/
-    return await CommentLikeDataModel.find({
-      commentId: { $in: commentIds },
-      userId,
-    }).lean();
+    return await CommentLikeDataModel.find({ commentId: { $in: commentIds }, userId }).lean();
   }
 }

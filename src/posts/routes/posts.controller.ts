@@ -26,6 +26,8 @@ import { UpdatePostByIdInputDTO } from './input-dto/update-post-by-id.input-dto'
 import { DeletePostByIdUriInputDTO } from './input-dto/uri/delete-post-by-id-uri.input-dto';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
+import { LikePostByIdUriInputDTO } from './input-dto/uri/like-post-by-id-uri.input-dto';
+import { LikePostByIdInputDTO, PostLikeStatusInputDTO } from './input-dto/like-post-by-id.input-dto';
 
 /*Контроллер для работы с постами.*/
 @injectable()
@@ -133,6 +135,9 @@ export class PostsController {
     res: Response<PaginatedPostListOutputDTO | ExtensionType[]>
   ): Promise<void | Response<PaginatedPostListOutputDTO | ExtensionType[]>> {
     try {
+      /*Получаем ID пользователя.*/
+      const userId: string | undefined = req.userId?.id;
+
       /*Санитизируем query-параметры и добавляем к ним дефолтные настройки пагинации.*/
       const sanitizedQueryInputWithDefaultPaginationSettings = getSanitizedQueryInputWithDefaultPaginationSettings<
         GetPostListQueryInputDTO,
@@ -141,7 +146,7 @@ export class PostsController {
 
       /*Просим query-сервис "postsQueryService" найти посты.*/
       const paginatedPostListResult: Result<{ paginatedPostListOutput: PaginatedPostListOutputDTO } | null> =
-        await this.postsQueryService.findAll(sanitizedQueryInputWithDefaultPaginationSettings);
+        await this.postsQueryService.findAll(sanitizedQueryInputWithDefaultPaginationSettings, undefined, userId);
 
       /*Получаем HTTP-статус операции по поиску постов.*/
       const paginatedPostListResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(paginatedPostListResult.status);
@@ -199,8 +204,15 @@ export class PostsController {
     try {
       /*Получаем ID поста.*/
       const postId: string = req.params.id;
+      /*Получаем ID пользователя.*/
+      const userId: string | undefined = req.userId?.id;
+
       /*Просим query-сервис "postsQueryService" найти пост по ID.*/
-      const postResult: Result<{ postOutput: PostOutputDTO } | null> = await this.postsQueryService.findById(postId);
+      const postResult: Result<{ postOutput: PostOutputDTO } | null> = await this.postsQueryService.findById(
+        postId,
+        userId
+      );
+
       /*Получаем HTTP-статус операции по поиску поста по ID.*/
       const postResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(postResult.status);
 
@@ -263,6 +275,45 @@ export class PostsController {
 
       /*Если пост был удален, то сообщаем об этом клиенту.*/
       return res.sendStatus(deletedPostResultHttpStatus);
+    } catch (error: unknown) {
+      /*Если была перехвачена ошибка, то обрабатываем ее.*/
+      return errorsHandler(error, res);
+    }
+  }
+
+  /*Метод-обработчик для PUT-запросов по лайку поста по ID, используя URI-параметры.*/
+  public async likePostByIdHandler(
+    req: Request<LikePostByIdUriInputDTO, {}, LikePostByIdInputDTO>,
+    res: Response<void | ExtensionType[]>
+  ): Promise<void | Response<void | ExtensionType[]>> {
+    try {
+      /*Получаем ID поста.*/
+      const postId: string = req.params.id;
+      /*Получаем ID пользователя.*/
+      const userId: string = req.userId!.id;
+      /*Получаем логин пользователя.*/
+      const login: string = req.login!;
+      /*Получаем статус лайка поста.*/
+      const likeStatus: PostLikeStatusInputDTO = req.body.likeStatus!;
+
+      /*Просим сервис "postService" добавить лайк поста по ID.*/
+      const likedPostResult: Result<{} | null> = await this.postsService.likePostById(
+        postId,
+        userId,
+        login,
+        likeStatus
+      );
+
+      /*Получаем HTTP-статус операции по добавлению лайка поста по ID.*/
+      const likedPostResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(likedPostResult.status);
+
+      /*Если лайк посту не был добавлен, то сообщаем об этом клиенту.*/
+      if (likedPostResultHttpStatus !== HttpStatuses.NoContent_204) {
+        return res.status(likedPostResultHttpStatus).send(likedPostResult.extensions);
+      }
+
+      /*Если лайк посту был добавлен, то сообщаем об этом клиенту.*/
+      return res.sendStatus(likedPostResultHttpStatus);
     } catch (error: unknown) {
       /*Если была перехвачена ошибка, то обрабатываем ее.*/
       return errorsHandler(error, res);

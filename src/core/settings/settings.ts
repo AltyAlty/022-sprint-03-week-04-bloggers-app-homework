@@ -21,6 +21,7 @@ export const SETTINGS = {
   GET_POST_BY_ID_PATH: '/:id',
   UPDATE_POST_BY_ID_PATH: '/:id',
   DELETE_POST_BY_ID_PATH: '/:id',
+  LIKE_POST_BY_ID_PATH: '/:id/like-status',
 
   COMMENTS_PATH: '/api/comments',
   UPDATE_COMMENT_BY_ID_PATH: '/:id',

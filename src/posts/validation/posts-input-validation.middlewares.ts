@@ -1,4 +1,5 @@
 import { body, ValidationChain } from 'express-validator';
+import { PostLikeStatusInputDTO } from '../routes/input-dto/like-post-by-id.input-dto';
 
 export const titleValidation: ValidationChain = body('title')
   .exists()
@@ -49,6 +50,17 @@ export const blogIdValidation: ValidationChain = body('blogId')
   .isMongoId()
   .withMessage('Field "blogId" must be an ObjectId');
 
+const likeStatusValidation: ValidationChain = body('likeStatus')
+  .exists()
+  .withMessage('Field "likeStatus" is required')
+  .isString()
+  .withMessage('Field "likeStatus" must be a string')
+  .trim()
+  .notEmpty()
+  .withMessage('Field "likeStatus" must not be empty')
+  .isIn(Object.values(PostLikeStatusInputDTO))
+  .withMessage(`Field "likeStatus" must be one of: ${Object.values(PostLikeStatusInputDTO).join(', ')}`);
+
 /*Комбинируем вышеуказанные middlewares в один middleware для использования его при проверке запросов по созданию
 поста.*/
 export const createPostInputValidation = [
@@ -70,3 +82,5 @@ export const updatePostInputValidation = [
 /*Комбинируем вышеуказанные middlewares в один middleware для использования его при проверке запросов по созданию поста
 в блоге.*/
 export const createPostForBlogInputValidation = [titleValidation, shortDescriptionValidation, contentValidation];
+/*Комбинируем вышеуказанные middlewares в один middleware для использования его при проверке запросов по лайку поста.*/
+export const likePostInputValidation = [likeStatusValidation];
