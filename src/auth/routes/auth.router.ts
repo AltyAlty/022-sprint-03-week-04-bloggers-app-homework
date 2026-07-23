@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import {
-  setNewPasswordByRecoveryCodeInputValidation,
   authUserInputValidation,
   confirmationCodeValidation,
   recoveryPasswordEmailValidation,
   registrationEmailResendingValidation,
+  setNewPasswordByRecoveryCodeInputValidation,
 } from '../validation/auth-input-validation.middlewares';
 import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
 import { createUserInputValidation } from '../../users/validation/users-input-validation.middlewares';

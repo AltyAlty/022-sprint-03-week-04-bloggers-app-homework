@@ -7,7 +7,11 @@ import { UpdatePostByIdInputDTO } from '../routes/input-dto/update-post-by-id.in
 import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { Result } from '../../core/types/result/result.type';
 import { BlogOutputDTO } from '../../blogs/routes/output-dto/blog.output-dto';
-import { PostLikeStatusOutputDTO, PostOutputDTO } from '../routes/output-dto/post.output-dto';
+import {
+  NewestPostLikeListOutputDTO,
+  PostLikeStatusOutputDTO,
+  PostOutputDTO,
+} from '../routes/output-dto/post.output-dto';
 import { mapFromPostDBTypeToPostOutputDTO } from '../repositories/mappers/map-from-post-db-type-to-post-output-dto.util';
 import { PostDBType } from '../repositories/types/post-db.type';
 import { inject, injectable } from 'inversify';
@@ -80,7 +84,7 @@ export class PostsService {
     }
 
     /*Просим репозиторий "postsQueryRepository" найти данные о трех последних лайках поста по ID поста в БД.*/
-    const newestLikes: PostLikeDataDBType[] = await this.postsRepository.findLastThreePostLikes(id);
+    const newestLikes: NewestPostLikeListOutputDTO = await this.postsRepository.findLastThreePostLikes(id);
 
     /*Если пост был найден, то преобразовываем пост из БД в подготовленный для отправки клиенту пост.*/
     const postOutput: PostOutputDTO = mapFromPostDBTypeToPostOutputDTO(postDB, likeStatus, newestLikes);

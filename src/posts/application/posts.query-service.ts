@@ -4,7 +4,11 @@ import { GetPostListQueryInputDTO } from '../routes/input-dto/query/get-post-lis
 import { mapFromPostListOutputDTOToPaginatedPostListOutputDTO } from '../repositories/mappers/map-from-post-list-output-dto-to-paginated-post-list-output-dto.util';
 import { PaginatedPostListOutputDTO } from '../routes/output-dto/paginated-post-list.output-dto';
 import { mapFromPostDBTypeToPostOutputDTO } from '../repositories/mappers/map-from-post-db-type-to-post-output-dto.util';
-import { PostLikeStatusOutputDTO, PostOutputDTO } from '../routes/output-dto/post.output-dto';
+import {
+  NewestPostLikeListOutputDTO,
+  PostLikeStatusOutputDTO,
+  PostOutputDTO,
+} from '../routes/output-dto/post.output-dto';
 import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { Result } from '../../core/types/result/result.type';
 import { BlogOutputDTO } from '../../blogs/routes/output-dto/blog.output-dto';
@@ -53,7 +57,7 @@ export class PostsQueryService {
     }
 
     /*Просим query-репозиторий "postsQueryRepository" найти данные о трех последних лайках поста по ID поста в БД.*/
-    const newestLikes: PostLikeDataDBType[] = await this.postsQueryRepository.findLastThreePostLikes(id);
+    const newestLikes: NewestPostLikeListOutputDTO = await this.postsQueryRepository.findLastThreePostLikes(id);
     /*Если пост был найден, то преобразовываем пост из БД в подготовленный для отправки клиенту пост.*/
     const postOutput: PostOutputDTO = mapFromPostDBTypeToPostOutputDTO(postDB, likeStatus, newestLikes);
     /*Возвращаем ResultObject с преобразованным постом.*/

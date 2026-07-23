@@ -9,6 +9,7 @@ import { HydratedDocument } from 'mongoose';
 import { PostLikeDataDBType } from './types/post-like-data-db.type';
 import { PostLikeDataModel } from './models/post-like-data.model';
 import { PostLikeDataType, PostLikeStatus } from '../application/types/post-like-data.type';
+import { NewestPostLikeListOutputDTO } from '../routes/output-dto/post.output-dto';
 
 /*Репозиторий для работы с постами в БД.*/
 @injectable()
@@ -52,7 +53,7 @@ export class PostsRepository {
   }
 
   /*Метод для поиска данных о трех последних лайках поста по ID поста в БД.*/
-  public async findLastThreePostLikes(postId: string): Promise<PostLikeDataDBType[]> {
+  public async findLastThreePostLikes(postId: string): Promise<NewestPostLikeListOutputDTO> {
     /*Просим модель "PostLikeDataModel" найти данные о трех последних лайках поста по ID поста в БД.*/
     return (
       PostLikeDataModel.find(

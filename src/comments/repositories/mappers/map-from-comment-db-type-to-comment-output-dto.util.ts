@@ -1,4 +1,4 @@
-import { CommentOutputDTO, CommentLikeStatusOutputDTO } from '../../routes/output-dto/comment.output-dto';
+import { CommentLikeStatusOutputDTO, CommentOutputDTO } from '../../routes/output-dto/comment.output-dto';
 import { CommentDBType } from '../types/comment-db.type';
 
 /*Функция для преобразования комментария из БД в подготовленный для отправки клиенту комментарий.*/

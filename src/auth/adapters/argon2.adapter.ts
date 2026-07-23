@@ -1,4 +1,4 @@
-import { hash, verify, Algorithm, Version } from '@node-rs/argon2';
+import { Algorithm, hash, verify, Version } from '@node-rs/argon2';
 import { injectable } from 'inversify';
 
 /*Адаптер для работы с библиотекой @node-rs/argon2.*/

@@ -13,7 +13,7 @@ import { CommentOutputDTO } from './output-dto/comment.output-dto';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
 import { LikeCommentByIdUriInputDTO } from './input-dto/uri/like-comment-by-id-uri.input-dto';
-import { LikeCommentByIdInputDTO, CommentLikeStatusInputDTO } from './input-dto/like-comment-by-id.input-dto';
+import { CommentLikeStatusInputDTO, LikeCommentByIdInputDTO } from './input-dto/like-comment-by-id.input-dto';
 
 /*Контроллер для работы с комментариями.*/
 @injectable()

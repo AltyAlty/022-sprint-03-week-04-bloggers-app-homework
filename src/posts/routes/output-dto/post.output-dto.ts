@@ -7,12 +7,14 @@ export enum PostLikeStatusOutputDTO {
   Dislike = 'Dislike',
 }
 
-/*Тип для поля "newestLikes" в типе "PostOutputDTO".*/
-export type NewestPostLike = {
+export type NewestPostLikeOutputDTO = {
   addedAt: Date;
   userId: string;
   login: string;
 };
+
+/*Тип для поля "newestLikes" в типе "PostOutputDTO".*/
+export type NewestPostLikeListOutputDTO = NewestPostLikeOutputDTO[];
 
 /*Output DTO для поста.*/
 export type PostOutputDTO = PostType & {
@@ -21,6 +23,6 @@ export type PostOutputDTO = PostType & {
     likesCount: number;
     dislikesCount: number;
     myStatus: PostLikeStatusOutputDTO;
-    newestLikes: NewestPostLike[];
+    newestLikes: NewestPostLikeListOutputDTO;
   };
 };

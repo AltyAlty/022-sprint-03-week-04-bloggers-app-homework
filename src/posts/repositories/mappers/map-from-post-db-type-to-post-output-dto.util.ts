@@ -1,12 +1,16 @@
-import { PostLikeStatusOutputDTO, PostOutputDTO } from '../../routes/output-dto/post.output-dto';
+import {
+  NewestPostLikeListOutputDTO,
+  NewestPostLikeOutputDTO,
+  PostLikeStatusOutputDTO,
+  PostOutputDTO,
+} from '../../routes/output-dto/post.output-dto';
 import { PostDBType } from '../types/post-db.type';
-import { PostLikeDataDBType } from '../types/post-like-data-db.type';
 
 /*Функция для преобразования поста из БД в подготовленный для отправки клиенту пост.*/
 export const mapFromPostDBTypeToPostOutputDTO = (
   post: PostDBType,
   likeStatus: PostLikeStatusOutputDTO,
-  newestLikes: PostLikeDataDBType[]
+  newestLikes: NewestPostLikeListOutputDTO
 ): PostOutputDTO => {
   return {
     id: post._id.toString(),
@@ -20,7 +24,7 @@ export const mapFromPostDBTypeToPostOutputDTO = (
       likesCount: post.extendedLikesInfo.likesCount,
       dislikesCount: post.extendedLikesInfo.dislikesCount,
       myStatus: likeStatus,
-      newestLikes: newestLikes.map((postLikeData: PostLikeDataDBType) => ({
+      newestLikes: newestLikes.map((postLikeData: NewestPostLikeOutputDTO) => ({
         addedAt: postLikeData.addedAt,
         userId: postLikeData.userId,
         login: postLikeData.login,
