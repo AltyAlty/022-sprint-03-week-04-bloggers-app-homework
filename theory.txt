@@ -33,8 +33,6 @@ pnpm add -D typescript@6.0.3 @types/express jest ts-jest @types/jest @types/node
 28. Установка babel-jest, ядро компилятора Babel и пресет плагинов для Babel: pnpm add -D babel-jest @babel/core @babel/preset-env
 29. Установка inversify-inject-decorators: pnpm add inversify-inject-decorators
 
-pnpm add -D @trivago/prettier-plugin-sort-imports
-
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 Скрипты:
@@ -248,8 +246,6 @@ babel-jest - это пакет, являющийся плагином-посре
 inversify-inject-decorators - это официальное дополнение для InversifyJS, которое делает "ленивую" подгрузку. Оно выдает
 классу нужный сервис не сразу при старте, а только в момент первого обращения к нему. Это позволяет обойти замкнутый
 круг зависимостей.
-
-@trivago/prettier-plugin-sort-imports - это плагин для Prettier, позволяющий настраивать сортировку импортов.
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 
