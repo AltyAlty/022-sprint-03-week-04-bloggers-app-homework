@@ -2,8 +2,8 @@ import { UserOutputDTO } from '../../routes/output-dto/user.output-dto';
 import { PaginatedUserListOutputDTO } from '../../routes/output-dto/paginated-user-list.output-dto';
 import { UserListDBType } from '../types/user-list-db.type';
 
-/*Функция для преобразования пользователей из БД в подготовленные для пагинации пользователей.*/
-export const mapToPaginatedUserListOutputDTO = (
+/*Функция для преобразования пользователей из БД в подготовленных для отправки клиенту с пагинацией пользователей.*/
+export const mapFromUserListDBTypeToPaginatedUserListOutputDTO = (
   users: UserListDBType,
   meta: { pageNumber: number; pageSize: number; totalCount: number }
 ): PaginatedUserListOutputDTO => {

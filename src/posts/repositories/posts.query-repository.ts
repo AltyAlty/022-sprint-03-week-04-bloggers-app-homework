@@ -17,9 +17,7 @@ export class PostsQueryRepository {
   /*Метод для поиска поста по ID в БД.*/
   public async findById(id: string): Promise<PostDBType | null> {
     /*Просим модель "PostModel" найти пост по ID в БД.*/
-    const post: PostDBType | null = await PostModel.findById(id).lean();
-    /*Если пост был найден, то возвращаем его, иначе возвращаем null.*/
-    return post ?? null;
+    return await PostModel.findById(id).lean();
   }
 
   /*Метод для поиска постов в БД.*/
@@ -66,21 +64,24 @@ export class PostsQueryRepository {
   /*Метод для поиска данных о лайке поста по ID поста и ID пользователя в БД.*/
   public async findPostLikeDataByPostIdAndUserId(postId: string, userId: string): Promise<PostLikeDataDBType | null> {
     /*Просим модель "PostLikeDataModel" найти данные о лайке поста по ID поста и ID пользователя в БД.*/
-    const postLikeData: PostLikeDataDBType | null = await PostLikeDataModel.findOne({ postId, userId }).lean();
-    /*Если данные о лайке поста были найдены, то возвращаем их, иначе null.*/
-    return postLikeData ?? null;
+    return await PostLikeDataModel.findOne({ postId, userId }).lean();
   }
 
   /*Метод для поиска данных о трех последних лайках поста по ID поста в БД.*/
   public async findLastThreePostLikes(postId: string): Promise<PostLikeDataDBType[]> {
     /*Просим модель "PostLikeDataModel" найти данные о трех последних лайках поста по ID поста в БД.*/
-    return PostLikeDataModel.find(
-      { postId, likeStatus: PostLikeStatus.Like },
-      { addedAt: 1, userId: 1, login: 1, _id: 0 }
-    )
-      .sort({ addedAt: -1 })
-      .limit(3)
-      .lean();
+    return (
+      PostLikeDataModel.find(
+        { postId, likeStatus: PostLikeStatus.Like },
+        /*Указываем какие поля включать в результат.*/
+        { addedAt: 1, userId: 1, login: 1, _id: 0 }
+      )
+        /*Сортируем найденные данные о лайках поста по полю "addedAt" в порядке убывания.*/
+        .sort({ addedAt: -1 })
+        /*Ограничиваем количество возвращаемых данных о лайках поста до трех.*/
+        .limit(3)
+        .lean()
+    );
   }
 
   /*Метод для поиска данных о лайках постов по ID постов и ID пользователя в БД.*/
@@ -94,6 +95,34 @@ export class PostsQueryRepository {
 
   /*Метод для поиска данных о трех последних лайках постов по ID постов в БД.*/
   public async findLastThreeLikesForPostsByPostIds(postIds: string[]): Promise<Map<string, PostLikeDataDBType[]>> {
+    /*Выполняем агрегационный конвейер MongoDB. Плюсы использования агрегационного конвейера здесь:
+    1. Работа с документами происходит внутри MongoDB, без загрузки всех документов в память приложения.
+    2. БД возвращает только нужные трое данных о лайках на пост (или меньше), а не все данные о лайках для всех
+    запрошенных постов.
+    3. При миллионе лайков у поста из БД будет браться только три документа на пост, а не миллион.*/
+    const aggregationResult = await PostLikeDataModel.aggregate([
+      /*Берем только те данные о лайках постов, у которых ID поста входит в переданный массив ID постав и статус лайка
+      установлен как "Like".*/
+      { $match: { postId: { $in: postIds }, likeStatus: PostLikeStatus.Like } },
+      /*Сортируем найденные данные о лайках постов по полю "addedAt" в порядке убывания.*/
+      { $sort: { addedAt: -1 } },
+      /*Создаем отдельные группы данных о лайках поста для каждого уникального ID поста. В поле "likes" собираем все
+      данные о лайках поста в группе (целиком, через "$$ROOT") в массив.*/
+      { $group: { _id: '$postId', likes: { $push: '$$ROOT' } } },
+      /*Делаем проекцию, то есть определяем структуру выходных документов. Обрезаем массив "likes" до первых трех
+      элементов.*/
+      { $project: { likes: { $slice: ['$likes', 3] } } },
+    ]);
+
+    /*Преобразовываем результат агрегации в Map в формате "postId: PostLikeDataDBType[]".*/
+    const map = new Map<string, PostLikeDataDBType[]>();
+    for (const item of aggregationResult) map.set(item._id, item.likes);
+    /*Возвращаем данные о трех последних лайках постов.*/
+    return map;
+  }
+
+  /*Метод для поиска данных о трех последних лайках постов по ID постов в БД.*/
+  public async findLastThreeLikesForPostsByPostIds2(postIds: string[]): Promise<Map<string, PostLikeDataDBType[]>> {
     /*Просим модель "PostLikeDataModel" найти данные о трех последних лайках постов по ID постов в БД.*/
     const postLikesData = await PostLikeDataModel.find({ postId: { $in: postIds }, likeStatus: PostLikeStatus.Like })
       .sort({ addedAt: -1 })

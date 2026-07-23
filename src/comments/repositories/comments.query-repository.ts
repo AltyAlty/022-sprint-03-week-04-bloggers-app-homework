@@ -16,9 +16,7 @@ export class CommentsQueryRepository {
   /*Метод для поиска комментария по ID в БД.*/
   public async findById(id: string): Promise<CommentDBType | null> {
     /*Просим модель "CommentModel" найти комментарий по ID в БД.*/
-    const comment: CommentDBType | null = await CommentModel.findById(id).lean();
-    /*Если комментарий был найден, то возвращаем его, иначе null.*/
-    return comment ?? null;
+    return await CommentModel.findById(id).lean();
   }
 
   /*Метод для поиска комментариев по ID поста в БД.*/
@@ -68,13 +66,7 @@ export class CommentsQueryRepository {
     userId: string
   ): Promise<CommentLikeDataDBType | null> {
     /*Просим модель "CommentLikeDataModel" найти данные о лайке комментария по ID комментария и ID пользователя в БД.*/
-    const commentLikeData: CommentLikeDataDBType | null = await CommentLikeDataModel.findOne({
-      commentId,
-      userId,
-    }).lean();
-
-    /*Если данные о лайке комментария были найдены, то возвращаем их, иначе null.*/
-    return commentLikeData ?? null;
+    return await CommentLikeDataModel.findOne({ commentId, userId }).lean();
   }
 
   /*Метод для поиска данных о лайках комментариев по ID комментариев и ID пользователя в БД.*/

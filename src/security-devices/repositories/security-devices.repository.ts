@@ -20,12 +20,7 @@ export class SecurityDevicesRepository {
   /*Метод для поиска устройства пользователя по ID в БД.*/
   public async findById(id: string): Promise<SecurityDeviceDBType | null> {
     /*Просим модель "SecurityDeviceModel" найти устройство пользователя по ID в БД.*/
-    const securityDevice: SecurityDeviceDBType | null = await SecurityDeviceModel.findOne({
-      deviceId: id,
-    }).lean();
-
-    /*Если устройство пользователя было найдено, то возвращаем его, иначе возвращаем null.*/
-    return securityDevice ?? null;
+    return await SecurityDeviceModel.findOne({ deviceId: id }).lean();
   }
 
   /*Метод для изменения устройства пользователя по ID в БД.*/
@@ -58,7 +53,7 @@ export class SecurityDevicesRepository {
     /*Просим модель "SecurityDeviceModel" удалить все устройства пользователя, кроме текущего, в БД.*/
     const result: DeleteResult = await SecurityDeviceModel.deleteMany({ deviceId: { $ne: id } });
     /*Возвращаем количество удаленных устройств пользователя.*/
-    return result.deletedCount ?? 0;
+    return result.deletedCount;
   }
 
   /*Метод для удаления всех устройств пользователя по ID пользователя в БД.*/
@@ -66,6 +61,6 @@ export class SecurityDevicesRepository {
     /*Просим модель "SecurityDeviceModel" удалить все устройства пользователя по ID пользователя в БД.*/
     const result: DeleteResult = await SecurityDeviceModel.deleteMany({ userId });
     /*Возвращаем количество удаленных устройств пользователя.*/
-    return result.deletedCount ?? 0;
+    return result.deletedCount;
   }
 }

@@ -2,8 +2,8 @@ import { ResultStatuses } from '../../../types/result/result-statuses';
 import { HttpStatuses } from '../../../types/http-statuses';
 
 /*Функция для преобразования статусов кодов ответа сервера из формата ResultObject в формат "HttpStatuses".*/
-export const mapResultCodeToHttpStatus = (resultCode: ResultStatuses): HttpStatuses => {
-  switch (resultCode) {
+export const mapFromResultStatusToHttpStatus = (resultStatus: ResultStatuses): HttpStatuses => {
+  switch (resultStatus) {
     case ResultStatuses.Ok:
       return HttpStatuses.Ok_200;
 

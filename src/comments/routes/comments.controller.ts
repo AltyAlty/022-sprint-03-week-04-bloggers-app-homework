@@ -5,7 +5,7 @@ import { UpdateCommentByIdUriInputDTO } from './input-dto/uri/update-comment-by-
 import { UpdateCommentByIdInputDTO } from './input-dto/update-comment-by-id.input-dto';
 import { ExtensionType, Result } from '../../core/types/result/result.type';
 import { HttpStatuses } from '../../core/types/http-statuses';
-import { mapResultCodeToHttpStatus } from '../../core/utils/result/mappers/map-result-code-to-http-status';
+import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status';
 import { errorsHandler } from '../../core/errors/errors.handler';
 import { DeleteCommentByIdUriInputDTO } from './input-dto/uri/delete-comment-by-id-uri.input-dto';
 import { GetCommentByIdUriInputDTO } from './input-dto/uri/get-comment-by-id-uri.input-dto';
@@ -42,7 +42,7 @@ export class CommentsController {
       );
 
       /*Получаем HTTP-статус операции по изменению комментария по ID.*/
-      const updatedCommentResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(updatedCommentResult.status);
+      const updatedCommentResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(updatedCommentResult.status);
 
       /*Если комментарий не был изменен, то сообщаем об этом клиенту.*/
       if (updatedCommentResultHttpStatus !== HttpStatuses.NoContent_204) {
@@ -70,7 +70,7 @@ export class CommentsController {
       /*Просим сервис "commentsService" удалить комментарий по ID.*/
       const deletedCommentResult: Result<{} | null> = await this.commentsService.deleteById(commentId, userId);
       /*Получаем HTTP-статус операции по удалению комментария по ID.*/
-      const deletedCommentResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(deletedCommentResult.status);
+      const deletedCommentResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(deletedCommentResult.status);
 
       /*Если комментарий не был удален, то сообщаем об этом клиенту.*/
       if (deletedCommentResultHttpStatus !== HttpStatuses.NoContent_204) {
@@ -101,7 +101,7 @@ export class CommentsController {
         await this.commentsQueryService.findById(commentId, userId);
 
       /*Получаем HTTP-статус операции по поиску комментария по ID.*/
-      const commentResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(commentResult.status);
+      const commentResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(commentResult.status);
 
       /*Если комментарий не был найден, то сообщаем об этом клиенту.*/
       if (commentResultHttpStatus !== HttpStatuses.Ok_200) {
@@ -137,7 +137,7 @@ export class CommentsController {
       );
 
       /*Получаем HTTP-статус операции по добавлению лайка комментарию по ID.*/
-      const likedCommentResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(likedCommentResult.status);
+      const likedCommentResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(likedCommentResult.status);
 
       /*Если лайк комментарию не был добавлен, то сообщаем об этом клиенту.*/
       if (likedCommentResultHttpStatus !== HttpStatuses.NoContent_204) {

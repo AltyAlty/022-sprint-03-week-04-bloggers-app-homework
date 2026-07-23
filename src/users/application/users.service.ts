@@ -7,7 +7,7 @@ import { CreateUserInputDTO } from '../routes/input-dto/create-user.input-dto';
 import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { Result } from '../../core/types/result/result.type';
 import { UserOutputDTO } from '../routes/output-dto/user.output-dto';
-import { mapToUserOutputDTO } from '../repositories/mappers/map-to-user-output-dto.util';
+import { mapFromUserDBTypeToUserOutputDTO } from '../repositories/mappers/map-from-user-db-type-to-user-output-dto.util';
 import { UserDBType } from '../repositories/types/user-db.type';
 import { EmailConfirmationType } from '../../auth/application/types/email-сonfirmation.type';
 import { RecoveryCodeDataType } from '../../auth/application/types/recovery-code-data.type';
@@ -65,8 +65,9 @@ export class UsersService {
       };
     }
 
-    /*Если пользователь был найден, то преобразовываем пользователя из БД в подготовленного для отправки пользователя.*/
-    const userOutput: UserOutputDTO = mapToUserOutputDTO(userDB);
+    /*Если пользователь был найден, то преобразовываем пользователя из БД в подготовленного для отправки клиенту
+    пользователя.*/
+    const userOutput: UserOutputDTO = mapFromUserDBTypeToUserOutputDTO(userDB);
     /*Возвращаем ResultObject с преобразованным пользователем.*/
     return { status: ResultStatuses.Ok, data: { userOutput }, extensions: [] };
   }
@@ -86,8 +87,9 @@ export class UsersService {
       };
     }
 
-    /*Если пользователь был найден, то преобразовываем пользователя из БД в подготовленного для отправки пользователя.*/
-    const userOutput: UserOutputDTO = mapToUserOutputDTO(userDB);
+    /*Если пользователь был найден, то преобразовываем пользователя из БД в подготовленного для отправки клиенту
+    пользователя.*/
+    const userOutput: UserOutputDTO = mapFromUserDBTypeToUserOutputDTO(userDB);
     /*Возвращаем ResultObject с преобразованным пользователем.*/
     return { status: ResultStatuses.Ok, data: { userOutput }, extensions: [] };
   }
@@ -113,7 +115,7 @@ export class UsersService {
 
     /*Если пользователь был найден, то преобразовываем пользователя из БД в подготовленного для отправки клиенту
     пользователя.*/
-    const userOutput: UserOutputDTO = mapToUserOutputDTO(userDB);
+    const userOutput: UserOutputDTO = mapFromUserDBTypeToUserOutputDTO(userDB);
 
     /*Возвращаем ResultObject с преобразованным пользователем.*/
     return {

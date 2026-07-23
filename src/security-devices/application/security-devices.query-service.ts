@@ -4,7 +4,7 @@ import { SecurityDeviceListOutputDTO } from '../routes/output-dto/security-devic
 import { SessionType } from '../../auth/application/types/session.type';
 import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { Result } from '../../core/types/result/result.type';
-import { mapToSecurityDeviceListOutputDTO } from '../repositories/mappers/map-to-security-device-list-output-dto.util';
+import { mapFromSecurityDeviceListDBTypeToSecurityDeviceListOutputDTO } from '../repositories/mappers/map-from-security-device-list-db-type-to-security-device-list-output-dto.util';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
 import { SecurityDeviceListDBType } from '../repositories/types/security-device-list-db.type';
@@ -35,7 +35,9 @@ export class SecurityDevicesQueryService {
       await this.securityDevicesQueryRepository.findAllByIds(securityDeviceIds);
 
     /*Преобразовываем устройства пользователя из БД в подготовленные для отправки клиенту устройства пользователя.*/
-    const securityDeviceListOutput: SecurityDeviceListOutputDTO = mapToSecurityDeviceListOutputDTO(securityDevicesDB);
+    const securityDeviceListOutput: SecurityDeviceListOutputDTO =
+      mapFromSecurityDeviceListDBTypeToSecurityDeviceListOutputDTO(securityDevicesDB);
+
     /*Возвращаем ResultObject с преобразованными устройствами пользователя.*/
     return { status: ResultStatuses.Ok, data: { securityDeviceListOutput }, extensions: [] };
   }

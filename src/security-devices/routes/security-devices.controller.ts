@@ -4,7 +4,7 @@ import { SecurityDevicesQueryService } from '../application/security-devices.que
 import { SecurityDeviceListOutputDTO } from './output-dto/security-device-list.output-dto';
 import { HttpStatuses } from '../../core/types/http-statuses';
 import { ExtensionType, Result } from '../../core/types/result/result.type';
-import { mapResultCodeToHttpStatus } from '../../core/utils/result/mappers/map-result-code-to-http-status';
+import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status';
 import { errorsHandler } from '../../core/errors/errors.handler';
 import { IdType } from '../../core/types/id.type';
 import { RevokeSessionByDeviceIdUriInputDTO } from './input-dto/uri/revoke-session-by-device-id-uri.input-dto';
@@ -33,7 +33,9 @@ export class SecurityDevicesController {
         await this.securityDevicesQueryService.findAllByUserId(userId);
 
       /*Получаем HTTP-статус операции по поиску устройств пользователя по ID пользователя.*/
-      const securityDevicesResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(securityDevicesResult.status);
+      const securityDevicesResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(
+        securityDevicesResult.status
+      );
       /*Отправляем найденные устройства пользователя клиенту.*/
       return res.status(securityDevicesResultHttpStatus).send(securityDevicesResult.data!.securityDeviceListOutput);
     } catch (error: unknown) {
@@ -58,7 +60,7 @@ export class SecurityDevicesController {
         await this.authService.revokeSessionsExceptCurrentDevice(userId, deviceId);
 
       /*Получаем HTTP-статус операции по отзыву всех сессий пользователя, кроме текущей.*/
-      const revokeSessionsExceptCurrentDeviceResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(
+      const revokeSessionsExceptCurrentDeviceResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(
         revokeSessionsExceptCurrentDeviceResult.status
       );
 
@@ -88,7 +90,7 @@ export class SecurityDevicesController {
       );
 
       /*Получаем HTTP-статус операции по отзыву сессии по ID пользователя и ID устройства пользователя.*/
-      const revokeSessionByDeviceIdResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(
+      const revokeSessionByDeviceIdResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(
         revokeSessionByDeviceIdResult.status
       );
 

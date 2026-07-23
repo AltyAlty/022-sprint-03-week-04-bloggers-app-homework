@@ -14,9 +14,7 @@ export class BlogsQueryRepository {
   /*Метод для поиска блога по ID в БД.*/
   public async findById(id: string): Promise<BlogDBType | null> {
     /*Просим модель "BlogModel" найти блог по ID в БД.*/
-    const blog: BlogDBType | null = await BlogModel.findById(id).lean();
-    /*Если блог был найден, то возвращаем его, иначе возвращаем null.*/
-    return blog ?? null;
+    return await BlogModel.findById(id).lean();
   }
 
   /*Метод для поиска блогов в БД.*/

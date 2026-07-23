@@ -5,7 +5,7 @@ import { getSanitizedQueryInputWithDefaultPaginationSettings } from '../../core/
 import { BlogSortFieldQueryInputDTO } from './input-dto/query/blog-sort-field-query.input-dto';
 import { ExtensionType, Result } from '../../core/types/result/result.type';
 import { HttpStatuses } from '../../core/types/http-statuses';
-import { mapResultCodeToHttpStatus } from '../../core/utils/result/mappers/map-result-code-to-http-status';
+import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status';
 import { errorsHandler } from '../../core/errors/errors.handler';
 import { CreateBlogInputDTO } from './input-dto/create-blog.input-dto';
 import { BlogOutputDTO } from './output-dto/blog.output-dto';
@@ -54,7 +54,10 @@ export class BlogsController {
         await this.blogsQueryService.findAll(sanitizedQueryInputWithDefaultPaginationSettings);
 
       /*Получаем HTTP-статус операции по поиску блогов.*/
-      const paginatedBlogListResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(paginatedBlogListResult.status);
+      const paginatedBlogListResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(
+        paginatedBlogListResult.status
+      );
+
       /*Отправляем блоги клиенту.*/
       return res.status(paginatedBlogListResultHttpStatus).send(paginatedBlogListResult.data.paginatedBlogListOutput);
     } catch (error: unknown) {
@@ -72,7 +75,7 @@ export class BlogsController {
       /*Просим сервис "blogsService" создать блог.*/
       const createdBlogResult: Result<{ createdBlogId: string }> = await this.blogsService.create(req.body);
       /*Получаем HTTP-статус операции по созданию блога.*/
-      const createdBlogResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(createdBlogResult.status);
+      const createdBlogResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(createdBlogResult.status);
 
       /*Просим query-сервис "blogsQueryService" найти созданный блог по ID.*/
       const blogResult: Result<{ blogOutput: BlogOutputDTO } | null> = await this.blogsQueryService.findById(
@@ -80,7 +83,7 @@ export class BlogsController {
       );
 
       /*Получаем HTTP-статус операции по поиску созданного блога по ID.*/
-      const blogResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(blogResult.status);
+      const blogResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(blogResult.status);
 
       /*Если созданный блог не был найден, то сообщаем об этом клиенту.*/
       if (blogResultHttpStatus !== HttpStatuses.Ok_200) {
@@ -118,7 +121,9 @@ export class BlogsController {
         await this.postsQueryService.findAll(sanitizedQueryInputWithDefaultPaginationSettings, blogId, userId);
 
       /*Получаем HTTP-статус операции по поиску постов в блоге по ID.*/
-      const paginatedPostListResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(paginatedPostListResult.status);
+      const paginatedPostListResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(
+        paginatedPostListResult.status
+      );
 
       /*Если посты в блоге не были найдены, то сообщаем об этом клиенту.*/
       if (paginatedPostListResultHttpStatus !== HttpStatuses.Ok_200) {
@@ -149,7 +154,7 @@ export class BlogsController {
       });
 
       /*Получаем HTTP-статус операции по созданию поста в блоге.*/
-      const createdPostResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(createdPostResult.status);
+      const createdPostResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(createdPostResult.status);
 
       /*Если пост не был создан в блоге, то сообщаем об этом клиенту.*/
       if (createdPostResultHttpStatus !== HttpStatuses.Created_201) {
@@ -162,7 +167,7 @@ export class BlogsController {
       );
 
       /*Получаем HTTP-статус операции по поиску созданного поста в блоге по ID.*/
-      const postResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(postResult.status);
+      const postResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(postResult.status);
 
       /*Если созданный пост не был найден в блоге, то сообщаем об этом клиенту.*/
       if (postResultHttpStatus !== HttpStatuses.Ok_200) {
@@ -188,7 +193,7 @@ export class BlogsController {
       /*Просим query-сервис "blogsQueryService" найти блог по ID.*/
       const blogResult: Result<{ blogOutput: BlogOutputDTO } | null> = await this.blogsQueryService.findById(blogId);
       /*Получаем HTTP-статус операции по поиску блога по ID.*/
-      const blogResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(blogResult.status);
+      const blogResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(blogResult.status);
 
       /*Если блог не был найден, то сообщаем об этом клиенту.*/
       if (blogResultHttpStatus !== HttpStatuses.Ok_200) {
@@ -214,7 +219,7 @@ export class BlogsController {
       /*Просим сервис "blogsService" изменить блог по ID.*/
       const updatedBlogResult: Result<{} | null> = await this.blogsService.updateById(blogId, req.body);
       /*Получаем HTTP-статус операции по изменению блога по ID.*/
-      const updatedBlogResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(updatedBlogResult.status);
+      const updatedBlogResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(updatedBlogResult.status);
 
       /*Если блог не был изменен, то сообщаем об этом клиенту.*/
       if (updatedBlogResultHttpStatus !== HttpStatuses.NoContent_204) {
@@ -240,7 +245,7 @@ export class BlogsController {
       /*Просим сервис "blogsService" удалить блог по ID.*/
       const deletedBlogResult: Result<{} | null> = await this.blogsService.deleteById(blogId);
       /*Получаем HTTP-статус операции по удалению блога по ID.*/
-      const deletedBlogResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(deletedBlogResult.status);
+      const deletedBlogResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(deletedBlogResult.status);
 
       /*Если блог не был удален, то сообщаем об этом клиенту.*/
       if (deletedBlogResultHttpStatus !== HttpStatuses.NoContent_204) {

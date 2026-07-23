@@ -21,28 +21,19 @@ export class UsersRepository {
   /*Метод для поиска пользователя по ID в БД.*/
   public async findById(id: string): Promise<UserDBType | null> {
     /*Просим модель "UserModel" найти пользователя по ID в БД.*/
-    const user: UserDBType | null = await UserModel.findById(id).lean();
-    /*Если пользователь был найден, то возвращаем его, иначе null.*/
-    return user ?? null;
+    return await UserModel.findById(id).lean();
   }
 
   /*Метод для поиска пользователя по email в БД.*/
   public async findByEmail(email: string): Promise<UserDBType | null> {
     /*Просим модель "UserModel" найти пользователя по email в БД.*/
-    const user: UserDBType | null = await UserModel.findOne({ email }).lean();
-    /*Если пользователь был найден, то возвращаем его, иначе null.*/
-    return user ?? null;
+    return await UserModel.findOne({ email }).lean();
   }
 
   /*Метод для поиска пользователя по логину/email в БД.*/
   public async findByLoginOrEmail(loginOrEmail: string): Promise<UserDBType | null> {
     /*Просим модель "UserModel" найти пользователя по логину/email в БД.*/
-    const user: UserDBType | null = await UserModel.findOne({
-      $or: [{ email: normalizeEmail(loginOrEmail) }, { login: loginOrEmail }],
-    }).lean();
-
-    /*Если пользователь был найден, то возвращаем его, иначе null.*/
-    return user ?? null;
+    return await UserModel.findOne({ $or: [{ email: normalizeEmail(loginOrEmail) }, { login: loginOrEmail }] }).lean();
   }
 
   /*Метод для подтверждения регистрации пользователя по ID пользователя в БД.*/

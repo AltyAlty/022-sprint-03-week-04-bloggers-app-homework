@@ -14,9 +14,7 @@ export class UsersQueryRepository {
   /*Метод для поиска пользователя по ID в БД.*/
   public async findById(id: string): Promise<UserDBType | null> {
     /*Просим модель "UserModel" найти пользователя по ID в БД.*/
-    const user: UserDBType | null = await UserModel.findById(id).lean();
-    /*Если пользователь был найден, то возвращаем его, иначе null.*/
-    return user ?? null;
+    return await UserModel.findById(id).lean();
   }
 
   /*Метод для поиска пользователей в БД.*/

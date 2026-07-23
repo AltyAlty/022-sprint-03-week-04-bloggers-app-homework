@@ -3,10 +3,10 @@ import { CommentsQueryRepository } from '../repositories/comments.query-reposito
 import { Result } from '../../core/types/result/result.type';
 import { CommentLikeStatusOutputDTO, CommentOutputDTO } from '../routes/output-dto/comment.output-dto';
 import { ResultStatuses } from '../../core/types/result/result-statuses';
-import { mapToCommentOutputDTO } from '../repositories/mappers/map-to-comment-output-dto.util';
+import { mapFromCommentDBTypeToCommentOutputDTO } from '../repositories/mappers/map-from-comment-db-type-to-comment-output-dto.util';
 import { GetCommentListByPostIdQueryInputDTO } from '../routes/input-dto/query/get-comment-list-by-post-id-query.input-dto';
 import { PaginatedCommentListOutputDTO } from '../routes/output-dto/paginated-comment-list.output-dto';
-import { mapToPaginatedCommentListOutputDTO } from '../repositories/mappers/map-to-paginated-comment-list-output-dto.util';
+import { mapFromCommentListOutputDTOToPaginatedCommentListOutputDTO } from '../repositories/mappers/map-from-comment-list-output-dto-to-paginated-comment-list-output-dto.util';
 import { PostOutputDTO } from '../../posts/routes/output-dto/post.output-dto';
 import { CommentDBType } from '../repositories/types/comment-db.type';
 import { inject, injectable } from 'inversify';
@@ -14,7 +14,7 @@ import { TYPES } from '../../ioc/types';
 import { CommentListDBType } from '../repositories/types/comment-list-db.type';
 import { CommentLikeDataDBType } from '../repositories/types/comment-like-data-db.type';
 import { CommentListOutputDTO } from '../routes/output-dto/comment-list.output-dto';
-import { mapToCommentListOutputDTO } from '../repositories/mappers/map-to-comment-list-output-dto.utils';
+import { mapFromCommentListDBTypeToCommentListOutputDTO } from '../repositories/mappers/map-from-comment-list-db-type-to-comment-list-output-dto.utils';
 
 /*Query-сервис для работы с комментариями.*/
 @injectable()
@@ -42,7 +42,7 @@ export class CommentsQueryService {
     /*Формируем статус лайка комментария.*/
     let likeStatus: CommentLikeStatusOutputDTO = CommentLikeStatusOutputDTO.None;
 
-    /*Если в запрос был указан AT.*/
+    /*Если в запросе был указан AT.*/
     if (userId) {
       /*Просим query-репозиторий "commentsQueryRepository" найти данные о лайке комментария в БД.*/
       const commentLikeDataDB: CommentLikeDataDBType | null =
@@ -54,7 +54,7 @@ export class CommentsQueryService {
 
     /*Если комментарий был найден, то преобразовываем комментарий из БД в подготовленный для отправки клиенту
     комментарий.*/
-    const commentOutput: CommentOutputDTO = mapToCommentOutputDTO(commentDB, likeStatus);
+    const commentOutput: CommentOutputDTO = mapFromCommentDBTypeToCommentOutputDTO(commentDB, likeStatus);
     /*Возвращаем ResultObject с преобразованным комментарием.*/
     return { status: ResultStatuses.Ok, data: { commentOutput }, extensions: [] };
   }
@@ -75,18 +75,20 @@ export class CommentsQueryService {
       await this.commentsQueryRepository.findAllByPostId(postId, queryDTO);
 
     /*Преобразовываем комментарии из БД в подготовленные для отправки клиенту без пагинации комментарии.*/
-    const itemsWithMyStatus: CommentListOutputDTO = await mapToCommentListOutputDTO(
+    const itemsWithMyStatus: CommentListOutputDTO = await mapFromCommentListDBTypeToCommentListOutputDTO(
       items,
       this.commentsQueryRepository,
       userId
     );
 
-    /*Преобразовываем комментарии подготовленные для отправки клиенту без пагинации в подготовленные для пагинации
-    комментарии.*/
-    const paginatedCommentListOutput: PaginatedCommentListOutputDTO = mapToPaginatedCommentListOutputDTO(
-      itemsWithMyStatus,
-      { pageNumber: queryDTO.pageNumber, pageSize: queryDTO.pageSize, totalCount }
-    );
+    /*Преобразовываем подготовленные для отправки клиенту без пагинации комментарии в подготовленные для отправки
+    клиенту с пагинацией комментарии.*/
+    const paginatedCommentListOutput: PaginatedCommentListOutputDTO =
+      mapFromCommentListOutputDTOToPaginatedCommentListOutputDTO(itemsWithMyStatus, {
+        pageNumber: queryDTO.pageNumber,
+        pageSize: queryDTO.pageSize,
+        totalCount,
+      });
 
     /*Возвращаем ResultObject с преобразованными для пагинации комментариями.*/
     return { status: ResultStatuses.Ok, data: { paginatedCommentListOutput }, extensions: [] };

@@ -10,7 +10,7 @@ import { ExtensionType, Result } from '../../core/types/result/result.type';
 import { getSanitizedQueryInputWithDefaultPaginationSettings } from '../../core/utils/pagination/get-sanitized-query-input-with-default-pagination-settings';
 import { CommentSortFieldQueryInputDTO } from '../../comments/routes/input-dto/query/comment-sort-field-query.input-dto';
 import { HttpStatuses } from '../../core/types/http-statuses';
-import { mapResultCodeToHttpStatus } from '../../core/utils/result/mappers/map-result-code-to-http-status';
+import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status';
 import { errorsHandler } from '../../core/errors/errors.handler';
 import { CreateCommentForPostUriInputDTO } from '../../comments/routes/input-dto/uri/create-comment-for-post-uri.input-dto';
 import { CreateCommentForPostInputDTO } from '../../comments/routes/input-dto/create-comment-for-post.input-dto';
@@ -66,7 +66,7 @@ export class PostsController {
         );
 
       /*Получаем HTTP-статус операции по поиску комментариев в посте по ID.*/
-      const paginatedCommentListResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(
+      const paginatedCommentListResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(
         paginatedCommentListResult.status
       );
 
@@ -101,7 +101,7 @@ export class PostsController {
         await this.commentsService.createForPost(postId, userId, req.body);
 
       /*Получаем HTTP-статус операции по созданию комментария в посте.*/
-      const createdCommentResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(createdCommentResult.status);
+      const createdCommentResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(createdCommentResult.status);
 
       /*Если комментарий не был создан в посте, то сообщаем об этом клиенту.*/
       if (createdCommentResultHttpStatus !== HttpStatuses.Created_201) {
@@ -114,7 +114,7 @@ export class PostsController {
         await this.commentsQueryService.findById(createdCommentResult.data!.createdCommentId, userId);
 
       /*Получаем HTTP-статус операции по поиску созданного комментария по ID.*/
-      const commentResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(commentResult.status);
+      const commentResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(commentResult.status);
 
       /*Если созданный комментарий не был найден, то сообщаем об этом клиенту.*/
       if (commentResultHttpStatus !== HttpStatuses.Ok_200) {
@@ -149,7 +149,9 @@ export class PostsController {
         await this.postsQueryService.findAll(sanitizedQueryInputWithDefaultPaginationSettings, undefined, userId);
 
       /*Получаем HTTP-статус операции по поиску постов.*/
-      const paginatedPostListResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(paginatedPostListResult.status);
+      const paginatedPostListResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(
+        paginatedPostListResult.status
+      );
 
       /*Если посты не были найдены, то сообщаем об этом клиенту.*/
       if (paginatedPostListResultHttpStatus !== HttpStatuses.Ok_200) {
@@ -173,7 +175,7 @@ export class PostsController {
       /*Просим сервис "postsService" создать пост.*/
       const createdPostResult: Result<{ createdPostId: string } | null> = await this.postsService.create(req.body);
       /*Получаем HTTP-статус операции по созданию поста.*/
-      const createdPostResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(createdPostResult.status);
+      const createdPostResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(createdPostResult.status);
 
       /*Просим query-сервис "postsQueryService" найти созданный пост по ID.*/
       const postResult: Result<{ postOutput: PostOutputDTO } | null> = await this.postsQueryService.findById(
@@ -181,7 +183,7 @@ export class PostsController {
       );
 
       /*Получаем HTTP-статус операции по поиску созданного поста по ID.*/
-      const postResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(postResult.status);
+      const postResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(postResult.status);
 
       /*Если созданный пост не был найден, то сообщаем об этом клиенту.*/
       if (postResultHttpStatus !== HttpStatuses.Ok_200) {
@@ -214,7 +216,7 @@ export class PostsController {
       );
 
       /*Получаем HTTP-статус операции по поиску поста по ID.*/
-      const postResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(postResult.status);
+      const postResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(postResult.status);
 
       /*Если пост не был найден, то сообщаем об этом клиенту.*/
       if (postResultHttpStatus !== HttpStatuses.Ok_200) {
@@ -240,7 +242,7 @@ export class PostsController {
       /*Просим сервис "postsService" изменить пост по ID.*/
       const updatedPostResult: Result<{} | null> = await this.postsService.updateById(postId, req.body);
       /*Получаем HTTP-статус операции по изменению поста по ID.*/
-      const updatedPostResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(updatedPostResult.status);
+      const updatedPostResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(updatedPostResult.status);
 
       /*Если пост не был изменен, то сообщаем об этом клиенту.*/
       if (updatedPostResultHttpStatus !== HttpStatuses.NoContent_204) {
@@ -266,7 +268,7 @@ export class PostsController {
       /*Просим сервис "postsService" удалить пост по ID.*/
       const deletedPostResult: Result<{} | null> = await this.postsService.deleteById(postId);
       /*Получаем HTTP-статус операции по удалению поста по ID.*/
-      const deletedPostResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(deletedPostResult.status);
+      const deletedPostResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(deletedPostResult.status);
 
       /*Если пост не был удален, то сообщаем об этом клиенту.*/
       if (deletedPostResultHttpStatus !== HttpStatuses.NoContent_204) {
@@ -305,7 +307,7 @@ export class PostsController {
       );
 
       /*Получаем HTTP-статус операции по добавлению лайка поста по ID.*/
-      const likedPostResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(likedPostResult.status);
+      const likedPostResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(likedPostResult.status);
 
       /*Если лайк посту не был добавлен, то сообщаем об этом клиенту.*/
       if (likedPostResultHttpStatus !== HttpStatuses.NoContent_204) {

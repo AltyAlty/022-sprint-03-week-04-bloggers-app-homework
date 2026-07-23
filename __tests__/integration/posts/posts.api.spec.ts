@@ -95,6 +95,12 @@ describe('Posts API', () => {
       blogId: createdPostBlogId,
       blogName: createdPost.blogName,
       createdAt: createdPost.createdAt,
+      extendedLikesInfo: {
+        dislikesCount: 0,
+        likesCount: 0,
+        myStatus: 'None',
+        newestLikes: [],
+      },
     });
   });
 

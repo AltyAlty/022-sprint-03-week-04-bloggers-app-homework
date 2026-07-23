@@ -6,7 +6,7 @@ import { UpdateBlogByIdInputDTO } from '../routes/input-dto/update-blog-by-id.in
 import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { Result } from '../../core/types/result/result.type';
 import { BlogOutputDTO } from '../routes/output-dto/blog.output-dto';
-import { mapToBlogOutputDTO } from '../repositories/mappers/map-to-blog-output-dto.util';
+import { mapFromBlogDBTypeToBlogOutputDTO } from '../repositories/mappers/map-from-blog-db-type-to-blog-output-dto.util';
 import { BlogDBType } from '../repositories/types/blog-db.type';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
@@ -51,7 +51,7 @@ export class BlogsService {
     }
 
     /*Если блог был найден, то преобразовываем блог из БД в подготовленный для отправки клиенту блог.*/
-    const blogOutput: BlogOutputDTO = mapToBlogOutputDTO(blogDB);
+    const blogOutput: BlogOutputDTO = mapFromBlogDBTypeToBlogOutputDTO(blogDB);
     /*Возвращаем ResultObject с преобразованным блогом.*/
     return { status: ResultStatuses.Ok, data: { blogOutput }, extensions: [] };
   }

@@ -20,7 +20,6 @@ export const errorsHandler = (error: any, res: Response): void | Response => {
   }
 
   /*Если же перехваченная ошибка является ошибкой какого-то другого типа, то сообщаем об этом клиенту.*/
-  console.log('HERE');
   console.log(error);
   return res.status(HttpStatuses.InternalServerError_500).json(error);
 };

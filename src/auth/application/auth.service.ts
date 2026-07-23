@@ -13,15 +13,15 @@ import { emailExamples } from '../email/email-examples';
 import { add } from 'date-fns/add';
 import { SETTINGS } from '../../core/settings/settings';
 import { SessionDBType } from '../repositories/types/session-db.type';
-import { mapToSessionList } from '../repositories/mappers/map-to-session-list.util';
+import { mapFromSessionListDBTypeToSessionListType } from '../repositories/mappers/map-from-session-list-db-type-to-session-list-type.util';
 import { SessionListType } from './types/session-list.type';
 import { SecurityDeviceOutputDTO } from '../../security-devices/routes/output-dto/security-device.output-dto';
 import { ObjectId } from 'mongodb';
 import { EmailConfirmationDBType } from '../repositories/types/email-сonfirmation-db.type';
-import { mapToEmailConfirmation } from '../repositories/mappers/map-to-email-confirmation.util';
+import { mapFromEmailConfirmationDBTypeToEmailConfirmationType } from '../repositories/mappers/map-from-email-confirmation-db-type-to-email-confirmation-type.util';
 import { EmailConfirmationType } from './types/email-сonfirmation.type';
 import { RecoveryCodeDataDBType } from '../repositories/types/recovery-code-data-db.type';
-import { mapToRecoveryCodeData } from '../repositories/mappers/map-to-recovery-code-data.util';
+import { mapFromRecoveryCodeDataDBTypeToRecoveryCodeDataType } from '../repositories/mappers/map-from-recovery-code-data-db-type-to-recovery-code-data-type.util';
 import { RecoveryCodeDataType } from './types/recovery-code-data.type';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
@@ -258,7 +258,7 @@ export class AuthService {
     /*Просим репозиторий "authRepository" найти сессии по ID пользователя в БД.*/
     const sessionsDB: SessionListDBType = await this.authRepository.findAllSessionsByUserId(userId);
     /*Преобразовываем сессии из БД в подготовленные для работы внутри приложения сессии.*/
-    const sessionListOutput: SessionListType = mapToSessionList(sessionsDB);
+    const sessionListOutput: SessionListType = mapFromSessionListDBTypeToSessionListType(sessionsDB);
     /*Возвращаем ResultObject с преобразованным сессиями.*/
     return { status: ResultStatuses.Ok, data: { sessionListOutput }, extensions: [] };
   }
@@ -286,7 +286,9 @@ export class AuthService {
     /*Если данные о подтверждении регистрации пользователя были найдены, то преобразовываем данные о подтверждении
     регистрации пользователя из БД в подготовленные для работы внутри приложения данные о подтверждении регистрации
     пользователя.*/
-    const emailConfirmationOutput: EmailConfirmationType = mapToEmailConfirmation(emailConfirmationDB);
+    const emailConfirmationOutput: EmailConfirmationType =
+      mapFromEmailConfirmationDBTypeToEmailConfirmationType(emailConfirmationDB);
+
     /*Возвращаем ResultObject с преобразованными данными о подтверждении регистрации пользователя.*/
     return { status: ResultStatuses.Ok, data: { emailConfirmationOutput }, extensions: [] };
   }
@@ -313,7 +315,9 @@ export class AuthService {
     /*Если данные о коде восстановления пароля пользователя были найдены, то преобразовываем данные о коде
     восстановления пароля пользователя из БД в подготовленные для работы внутри приложения данные о коде восстановления
     пароля пользователя.*/
-    const recoveryCodeDataOutput: RecoveryCodeDataType = mapToRecoveryCodeData(recoveryCodeDataDB);
+    const recoveryCodeDataOutput: RecoveryCodeDataType =
+      mapFromRecoveryCodeDataDBTypeToRecoveryCodeDataType(recoveryCodeDataDB);
+
     /*Возвращаем ResultObject с преобразованным кодом восстановления пароля пользователя.*/
     return { status: ResultStatuses.Ok, data: { recoveryCodeDataOutput }, extensions: [] };
   }

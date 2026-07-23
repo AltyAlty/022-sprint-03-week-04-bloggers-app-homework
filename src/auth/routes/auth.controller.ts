@@ -6,7 +6,7 @@ import { LoginDataInputDTO } from './input-dto/login-data.input-dto';
 import { LoginOutputDTO } from './output-dto/login.output-dto';
 import { ExtensionType, Result } from '../../core/types/result/result.type';
 import { HttpStatuses } from '../../core/types/http-statuses';
-import { mapResultCodeToHttpStatus } from '../../core/utils/result/mappers/map-result-code-to-http-status';
+import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status';
 import { errorsHandler } from '../../core/errors/errors.handler';
 import { CreateUserInputDTO } from '../../users/routes/input-dto/create-user.input-dto';
 import { IdType } from '../../core/types/id.type';
@@ -47,7 +47,7 @@ export class AuthController {
         await this.authService.loginUser(loginOrEmail, password, deviceName, ip);
 
       /*Получаем HTTP-статус операции по аутентификации пользователя по логину/email и паролю.*/
-      const loginUserResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(loginUserResult.status);
+      const loginUserResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(loginUserResult.status);
 
       /*Если аутентификация не прошла успешно, то сообщаем об этом клиенту.*/
       if (loginUserResultHttpStatus !== HttpStatuses.Ok_200) {
@@ -76,7 +76,7 @@ export class AuthController {
       /*Просим query-сервис "usersQueryService" найти пользователя по ID.*/
       const userResult: Result<{ userOutput: UserOutputDTO } | null> = await this.usersQueryService.findById(userId);
       /*Получаем HTTP-статус операции по поиску пользователя по ID.*/
-      const userResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(userResult.status);
+      const userResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(userResult.status);
 
       /*Если пользователь не был найден, то сообщаем об этом клиенту.*/
       if (userResultHttpStatus !== HttpStatuses.Ok_200) {
@@ -107,7 +107,7 @@ export class AuthController {
       );
 
       /*Получаем HTTP-статус операции по регистрации пользователя.*/
-      const registerUserResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(registerUserResult.status);
+      const registerUserResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(registerUserResult.status);
 
       /*Если пользователь не был зарегистрирован, то сообщаем об этом клиенту.*/
       if (registerUserResultHttpStatus !== HttpStatuses.Created_201) {
@@ -133,7 +133,7 @@ export class AuthController {
       /*Просим сервис "usersService" подтвердить регистрацию пользователя по коду.*/
       const confirmEmailResult: Result<{} | null> = await this.usersService.confirmByCode(confirmationCode);
       /*Получаем HTTP-статус операции по подтверждению регистрации пользователя по коду.*/
-      const confirmEmailResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(confirmEmailResult.status);
+      const confirmEmailResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(confirmEmailResult.status);
 
       /*Если подтверждение регистрации пользователя по коду не прошло успешно, то сообщаем об этом клиенту.*/
       if (confirmEmailResultHttpStatus !== HttpStatuses.NoContent_204) {
@@ -160,7 +160,7 @@ export class AuthController {
       const resendConfirmationEmailResult: Result<{} | null> = await this.authService.resendConfirmationEmail(email);
 
       /*Получаем HTTP-статус операции по повторной отправке письма для подтверждения регистрации пользователя.*/
-      const resendConfirmationEmailResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(
+      const resendConfirmationEmailResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(
         resendConfirmationEmailResult.status
       );
 
@@ -199,7 +199,7 @@ export class AuthController {
         await this.authService.refreshAccessAndRefreshTokens(userId, deviceId, ip, currentRefreshToken);
 
       /*Получаем HTTP-статус операции по перевыпуску пары AT/RT.*/
-      const createAccessAndRefreshTokensResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(
+      const createAccessAndRefreshTokensResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(
         createAccessAndRefreshTokensResult.status
       );
 
@@ -232,7 +232,9 @@ export class AuthController {
       /*Просим сервис "authService" отозвать сессию.*/
       const revokeSessionResult: Result<{} | null> = await this.authService.revokeSession(refreshToken);
       /*Получаем HTTP-статус операции по отзыву сессии.*/
-      const revokeRefreshTokenResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(revokeSessionResult.status);
+      const revokeRefreshTokenResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(
+        revokeSessionResult.status
+      );
 
       /*Если отзыв сессии не прошел успешно, то сообщаем об этом клиенту.*/
       if (revokeRefreshTokenResultHttpStatus !== HttpStatuses.NoContent_204) {
@@ -259,7 +261,7 @@ export class AuthController {
       const sendRecoveryPasswordCodeResult: Result<{} | null> = await this.authService.sendRecoveryPasswordCode(email);
 
       /*Получаем HTTP-статус операции по отправке письма с кодом восстановления пароля пользователя.*/
-      const sendRecoveryPasswordCodeResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(
+      const sendRecoveryPasswordCodeResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(
         sendRecoveryPasswordCodeResult.status
       );
 
@@ -287,7 +289,7 @@ export class AuthController {
         await this.usersService.updatePasswordByRecoveryCode(recoveryCode, password);
 
       /*Получаем HTTP-статус операции по установлению нового пароль пользователя по коду восстановления.*/
-      const updatePasswordByRecoveryCodeResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(
+      const updatePasswordByRecoveryCodeResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(
         updatePasswordByRecoveryCodeResult.status
       );
 

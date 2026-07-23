@@ -3,7 +3,7 @@ import { PostDBType } from '../types/post-db.type';
 import { PostLikeDataDBType } from '../types/post-like-data-db.type';
 
 /*Функция для преобразования поста из БД в подготовленный для отправки клиенту пост.*/
-export const mapToPostOutputDTO = (
+export const mapFromPostDBTypeToPostOutputDTO = (
   post: PostDBType,
   likeStatus: PostLikeStatusOutputDTO,
   newestLikes: PostLikeDataDBType[]
@@ -20,10 +20,10 @@ export const mapToPostOutputDTO = (
       likesCount: post.extendedLikesInfo.likesCount,
       dislikesCount: post.extendedLikesInfo.dislikesCount,
       myStatus: likeStatus,
-      newestLikes: newestLikes.map((like: PostLikeDataDBType) => ({
-        addedAt: like.addedAt,
-        userId: like.userId,
-        login: like.login,
+      newestLikes: newestLikes.map((postLikeData: PostLikeDataDBType) => ({
+        addedAt: postLikeData.addedAt,
+        userId: postLikeData.userId,
+        login: postLikeData.login,
       })),
     },
   };

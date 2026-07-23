@@ -4,7 +4,7 @@ import { SecurityDeviceDBType } from '../repositories/types/security-device-db.t
 import { Result } from '../../core/types/result/result.type';
 import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { SecurityDeviceOutputDTO } from '../routes/output-dto/security-device.output-dto';
-import { mapToSecurityDeviceOutputDTO } from '../repositories/mappers/map-to-security-device-output-dto.util';
+import { mapFromSecurityDeviceDBTypeToSecurityDeviceOutputDTO } from '../repositories/mappers/map-from-security-device-db-type-to-security-device-output-dto.util';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
 
@@ -40,7 +40,9 @@ export class SecurityDevicesService {
 
     /*Если устройство пользователя было найдено, то преобразовываем устройство пользователя из БД в подготовленное для
     отправки клиенту устройство пользователя.*/
-    const securityDeviceOutput: SecurityDeviceOutputDTO = mapToSecurityDeviceOutputDTO(securityDeviceDB);
+    const securityDeviceOutput: SecurityDeviceOutputDTO =
+      mapFromSecurityDeviceDBTypeToSecurityDeviceOutputDTO(securityDeviceDB);
+
     /*Возвращаем ResultObject с преобразованным устройством пользователя.*/
     return { status: ResultStatuses.Ok, data: { securityDeviceOutput }, extensions: [] };
   }

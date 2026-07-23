@@ -6,7 +6,7 @@ import { getSanitizedQueryInputWithDefaultPaginationSettings } from '../../core/
 import { UserSortFieldQueryInputDTO } from './input-dto/query/user-sort-field-query.input-dto';
 import { ExtensionType, Result } from '../../core/types/result/result.type';
 import { HttpStatuses } from '../../core/types/http-statuses';
-import { mapResultCodeToHttpStatus } from '../../core/utils/result/mappers/map-result-code-to-http-status';
+import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status';
 import { errorsHandler } from '../../core/errors/errors.handler';
 import { PaginatedUserListOutputDTO } from './output-dto/paginated-user-list.output-dto';
 import { CreateUserInputDTO } from './input-dto/create-user.input-dto';
@@ -40,7 +40,9 @@ export class UsersController {
         await this.usersQueryService.findAll(sanitizedQueryInputWithDefaultPaginationSettings);
 
       /*Получаем HTTP-статус операции по поиску пользователей.*/
-      const paginatedUserListResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(paginatedUserListResult.status);
+      const paginatedUserListResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(
+        paginatedUserListResult.status
+      );
       /*Отправляем пользователей клиенту.*/
       return res.status(paginatedUserListResultHttpStatus).send(paginatedUserListResult.data.paginatedUserListOutput);
     } catch (error: unknown) {
@@ -58,7 +60,7 @@ export class UsersController {
       /*Просим сервис "usersService" создать пользователя.*/
       const createdUserResult: Result<{ createdUserId: string }> = await this.usersService.create(req.body, false);
       /*Получаем HTTP-статус операции по созданию пользователя.*/
-      const createdUserResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(createdUserResult.status);
+      const createdUserResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(createdUserResult.status);
 
       /*Просим query-сервис "usersQueryService" найти созданного пользователя по ID.*/
       const userResult: Result<{ userOutput: UserOutputDTO } | null> = await this.usersQueryService.findById(
@@ -66,7 +68,7 @@ export class UsersController {
       );
 
       /*Получаем HTTP-статус операции по поиску созданного пользователя по ID.*/
-      const userResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(userResult.status);
+      const userResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(userResult.status);
 
       /*Если созданный пользователь не был найден, то сообщаем об этом клиенту.*/
       if (userResultHttpStatus !== HttpStatuses.Ok_200) {
@@ -92,7 +94,7 @@ export class UsersController {
       /*Просим сервис "usersService" удалить пользователя по ID.*/
       const deletedUserResult: Result<{} | null> = await this.usersService.deleteById(userId);
       /*Получаем HTTP-статус операции по удалению пользователя по ID.*/
-      const deletedUserResultHttpStatus: HttpStatuses = mapResultCodeToHttpStatus(deletedUserResult.status);
+      const deletedUserResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(deletedUserResult.status);
 
       /*Если пользователь не был удален, то сообщаем об этом клиенту.*/
       if (deletedUserResultHttpStatus !== HttpStatuses.NoContent_204) {

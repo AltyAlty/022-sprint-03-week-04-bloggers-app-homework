@@ -44,10 +44,7 @@ export class CommentsService {
       postId: postId,
       commentatorInfo: { userId, userLogin: userResult.data!.userOutput.login },
       createdAt: new Date(),
-      likesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-      },
+      likesInfo: { likesCount: 0, dislikesCount: 0 },
     };
 
     /*Просим репозиторий "commentsRepository" создать комментарий в БД.*/
@@ -85,7 +82,6 @@ export class CommentsService {
     /*Если пользователь является автором комментария, то просим репозиторий "commentsRepository" изменить комментарий по
     ID в БД.*/
     await this.commentsRepository.updateById(id, dto);
-
     /*Возвращаем ResultObject с информацией об изменении комментария.*/
     return { status: ResultStatuses.NoContent, data: {}, extensions: [] };
   }

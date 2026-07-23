@@ -1,9 +1,9 @@
 import { BlogsQueryService } from '../../blogs/application/blogs.query-service';
 import { PostsQueryRepository } from '../repositories/posts.query-repository';
 import { GetPostListQueryInputDTO } from '../routes/input-dto/query/get-post-list-query.input-dto';
-import { mapToPaginatedPostListOutputDTO } from '../repositories/mappers/map-to-paginated-post-list-output-dto.util';
+import { mapFromPostListOutputDTOToPaginatedPostListOutputDTO } from '../repositories/mappers/map-from-post-list-output-dto-to-paginated-post-list-output-dto.util';
 import { PaginatedPostListOutputDTO } from '../routes/output-dto/paginated-post-list.output-dto';
-import { mapToPostOutputDTO } from '../repositories/mappers/map-to-post-output-dto.util';
+import { mapFromPostDBTypeToPostOutputDTO } from '../repositories/mappers/map-from-post-db-type-to-post-output-dto.util';
 import { PostLikeStatusOutputDTO, PostOutputDTO } from '../routes/output-dto/post.output-dto';
 import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { Result } from '../../core/types/result/result.type';
@@ -14,7 +14,7 @@ import { TYPES } from '../../ioc/types';
 import { PostListDBType } from '../repositories/types/post-list-db.type';
 import { PostLikeDataDBType } from '../repositories/types/post-like-data-db.type';
 import { PostListOutputDTO } from '../routes/output-dto/post-list.output-dto';
-import { mapToPostListOutputDTO } from '../repositories/mappers/map-to-post-list-output-dto.utils';
+import { mapFromPostListDBTypeToPostListOutputDTO } from '../repositories/mappers/map-from-post-list-db-type-to-post-list-output-dto.utils';
 
 /*Query-сервис для работы с постами.*/
 @injectable()
@@ -42,7 +42,7 @@ export class PostsQueryService {
     /*Формируем статус лайка поста.*/
     let likeStatus: PostLikeStatusOutputDTO = PostLikeStatusOutputDTO.None;
 
-    /*Если в запрос был указан AT.*/
+    /*Если в запросе был указан AT.*/
     if (userId) {
       /*Просим query-репозиторий "postsQueryRepository" найти данные о лайке поста в БД.*/
       const postLikeDataDB: PostLikeDataDBType | null =
@@ -55,7 +55,7 @@ export class PostsQueryService {
     /*Просим query-репозиторий "postsQueryRepository" найти данные о трех последних лайках поста по ID поста в БД.*/
     const newestLikes: PostLikeDataDBType[] = await this.postsQueryRepository.findLastThreePostLikes(id);
     /*Если пост был найден, то преобразовываем пост из БД в подготовленный для отправки клиенту пост.*/
-    const postOutput: PostOutputDTO = mapToPostOutputDTO(postDB, likeStatus, newestLikes);
+    const postOutput: PostOutputDTO = mapFromPostDBTypeToPostOutputDTO(postDB, likeStatus, newestLikes);
     /*Возвращаем ResultObject с преобразованным постом.*/
     return { status: ResultStatuses.Ok, data: { postOutput }, extensions: [] };
   }
@@ -79,20 +79,17 @@ export class PostsQueryService {
       await this.postsQueryRepository.findAll(queryDTO, blogId);
 
     /*Преобразовываем посты из БД в подготовленные для отправки клиенту без пагинации посты.*/
-    const itemsWithMyStatusAndNewestLikes: PostListOutputDTO = await mapToPostListOutputDTO(
+    const itemsWithMyStatusAndNewestLikes: PostListOutputDTO = await mapFromPostListDBTypeToPostListOutputDTO(
       items,
       this.postsQueryRepository,
       userId
     );
 
-    /*Преобразовываем посты из БД в подготовленные для пагинации посты.*/
-    const paginatedPostListOutput: PaginatedPostListOutputDTO = mapToPaginatedPostListOutputDTO(
+    /*Преобразовываем подготовленные для отправки клиенту без пагинации посты в подготовленные для отправки клиенту с
+    пагинацией посты.*/
+    const paginatedPostListOutput: PaginatedPostListOutputDTO = mapFromPostListOutputDTOToPaginatedPostListOutputDTO(
       itemsWithMyStatusAndNewestLikes,
-      {
-        pageNumber: queryDTO.pageNumber,
-        pageSize: queryDTO.pageSize,
-        totalCount,
-      }
+      { pageNumber: queryDTO.pageNumber, pageSize: queryDTO.pageSize, totalCount }
     );
 
     /*Возвращаем ResultObject с преобразованными для пагинации постами.*/

@@ -3,7 +3,9 @@ import { SecurityDeviceOutputDTO } from '../../routes/output-dto/security-device
 
 /*Функция для преобразования устройства пользователя из БД в подготовленное для отправки клиенту устройство
 пользователя.*/
-export const mapToSecurityDeviceOutputDTO = (securityDevice: SecurityDeviceDBType): SecurityDeviceOutputDTO => {
+export const mapFromSecurityDeviceDBTypeToSecurityDeviceOutputDTO = (
+  securityDevice: SecurityDeviceDBType
+): SecurityDeviceOutputDTO => {
   return {
     deviceId: securityDevice.deviceId,
     title: securityDevice.title,

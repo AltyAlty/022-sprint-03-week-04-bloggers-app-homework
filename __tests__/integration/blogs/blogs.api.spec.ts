@@ -30,7 +30,6 @@ import { validUserAgents } from '../../test-data/auth.test-data';
 import { likeCommentById } from '../../utils/comments/like-comment-by-id.test-util';
 import { CommentLikeStatusInputDTO } from '../../../src/comments/routes/input-dto/like-comment-by-id.input-dto';
 import { container } from '../../../src/ioc/container';
-import { AuthRepository } from '../../../src/auth/repositories/auth.repository';
 import { TYPES } from '../../../src/ioc/types';
 import { CommentsRepository } from '../../../src/comments/repositories/comments.repository';
 import { UserOutputDTO } from '../../../src/users/routes/output-dto/user.output-dto';

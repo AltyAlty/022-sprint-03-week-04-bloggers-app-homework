@@ -2,7 +2,7 @@ import { BlogOutputDTO } from '../../routes/output-dto/blog.output-dto';
 import { BlogDBType } from '../types/blog-db.type';
 
 /*Функция для преобразовывания блога из БД в подготовленный для отправки клиенту блог.*/
-export const mapToBlogOutputDTO = (blog: BlogDBType): BlogOutputDTO => {
+export const mapFromBlogDBTypeToBlogOutputDTO = (blog: BlogDBType): BlogOutputDTO => {
   return {
     id: blog._id.toString(),
     name: blog.name,

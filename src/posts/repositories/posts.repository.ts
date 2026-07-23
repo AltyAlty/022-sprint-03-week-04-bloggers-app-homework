@@ -34,9 +34,7 @@ export class PostsRepository {
   /*Метод для поиска поста по ID в БД.*/
   public async findById(id: string): Promise<PostDBType | null> {
     /*Просим модель "PostModel" найти пост по ID в БД.*/
-    const post: PostDBType | null = await PostModel.findById(id).lean();
-    /*Если пост был найден, то возвращаем его, иначе возвращаем null.*/
-    return post ?? null;
+    return await PostModel.findById(id).lean();
   }
 
   /*Метод для поиска постов по ID блога в БД.*/
@@ -50,21 +48,24 @@ export class PostsRepository {
   /*Метод для поиска данных о лайке поста по ID поста и ID пользователя в БД.*/
   public async findPostLikeDataByPostIdAndUserId(postId: string, userId: string): Promise<PostLikeDataDBType | null> {
     /*Просим модель "PostLikeDataModel" найти данные о лайке поста по ID поста и ID пользователя в БД.*/
-    const postLikeData: PostLikeDataDBType | null = await PostLikeDataModel.findOne({ postId, userId }).lean();
-    /*Если данные о лайке поста были найдены, то возвращаем их, иначе null.*/
-    return postLikeData ?? null;
+    return await PostLikeDataModel.findOne({ postId, userId }).lean();
   }
 
   /*Метод для поиска данных о трех последних лайках поста по ID поста в БД.*/
   public async findLastThreePostLikes(postId: string): Promise<PostLikeDataDBType[]> {
     /*Просим модель "PostLikeDataModel" найти данные о трех последних лайках поста по ID поста в БД.*/
-    return PostLikeDataModel.find(
-      { postId, likeStatus: PostLikeStatus.Like },
-      { addedAt: 1, userId: 1, login: 1, _id: 0 }
-    )
-      .sort({ addedAt: -1 })
-      .limit(3)
-      .lean();
+    return (
+      PostLikeDataModel.find(
+        { postId, likeStatus: PostLikeStatus.Like },
+        /*Указываем какие поля включать в результат.*/
+        { addedAt: 1, userId: 1, login: 1, _id: 0 }
+      )
+        /*Сортируем найденные данные о лайках поста по полю "addedAt" в порядке убывания.*/
+        .sort({ addedAt: -1 })
+        /*Ограничиваем количество возвращаемых данных о лайках поста до трех.*/
+        .limit(3)
+        .lean()
+    );
   }
 
   /*Метод для изменения поста по ID в БД.*/
@@ -127,7 +128,7 @@ export class PostsRepository {
     /*Просим модель "PostModel" удалить посты по ID блога в БД.*/
     const result: DeleteResult = await PostModel.deleteMany({ blogId });
     /*Возвращаем количество удаленных постов.*/
-    return result.deletedCount ?? 0;
+    return result.deletedCount;
   }
 
   /*Метод для удаления данных о лайке поста по ID поста и ID пользователя в БД.*/

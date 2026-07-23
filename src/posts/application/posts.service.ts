@@ -8,7 +8,7 @@ import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { Result } from '../../core/types/result/result.type';
 import { BlogOutputDTO } from '../../blogs/routes/output-dto/blog.output-dto';
 import { PostLikeStatusOutputDTO, PostOutputDTO } from '../routes/output-dto/post.output-dto';
-import { mapToPostOutputDTO } from '../repositories/mappers/map-to-post-output-dto.util';
+import { mapFromPostDBTypeToPostOutputDTO } from '../repositories/mappers/map-from-post-db-type-to-post-output-dto.util';
 import { PostDBType } from '../repositories/types/post-db.type';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
@@ -40,10 +40,7 @@ export class PostsService {
       blogId: dto.blogId,
       blogName: blogResult.data!.blogOutput.name,
       createdAt: new Date(),
-      extendedLikesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-      },
+      extendedLikesInfo: { likesCount: 0, dislikesCount: 0 },
     };
 
     /*Просим репозиторий "postsRepository" создать пост в БД.*/
@@ -70,7 +67,7 @@ export class PostsService {
     /*Формируем статус лайка поста.*/
     let likeStatus: PostLikeStatusOutputDTO = PostLikeStatusOutputDTO.None;
 
-    /*Если в запрос был указан AT.*/
+    /*Если в запросе был указан AT.*/
     if (userId) {
       /*Просим репозиторий "postsRepository" найти данные о лайке поста в БД.*/
       const postLikeDataDB: PostLikeDataDBType | null = await this.postsRepository.findPostLikeDataByPostIdAndUserId(
@@ -86,7 +83,7 @@ export class PostsService {
     const newestLikes: PostLikeDataDBType[] = await this.postsRepository.findLastThreePostLikes(id);
 
     /*Если пост был найден, то преобразовываем пост из БД в подготовленный для отправки клиенту пост.*/
-    const postOutput: PostOutputDTO = mapToPostOutputDTO(postDB, likeStatus, newestLikes);
+    const postOutput: PostOutputDTO = mapFromPostDBTypeToPostOutputDTO(postDB, likeStatus, newestLikes);
     /*Возвращаем ResultObject с преобразованным постом.*/
     return { status: ResultStatuses.Ok, data: { postOutput }, extensions: [] };
   }

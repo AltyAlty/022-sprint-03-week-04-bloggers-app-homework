@@ -1,8 +1,8 @@
 import { BlogsQueryRepository } from '../repositories/blogs.query-repository';
 import { GetBlogListQueryInputDTO } from '../routes/input-dto/query/get-blog-list-query.input-dto';
-import { mapToPaginatedBlogListOutputDTO } from '../repositories/mappers/map-to-paginated-blog-list-output-dto.util';
+import { mapFromBlogListDBTypeToPaginatedBlogListOutputDTO } from '../repositories/mappers/map-from-blog-list-db-type-to-paginated-blog-list-output-dto.util';
 import { PaginatedBlogListOutputDTO } from '../routes/output-dto/paginated-blog-list.output-dto';
-import { mapToBlogOutputDTO } from '../repositories/mappers/map-to-blog-output-dto.util';
+import { mapFromBlogDBTypeToBlogOutputDTO } from '../repositories/mappers/map-from-blog-db-type-to-blog-output-dto.util';
 import { BlogOutputDTO } from '../routes/output-dto/blog.output-dto';
 import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { Result } from '../../core/types/result/result.type';
@@ -32,7 +32,7 @@ export class BlogsQueryService {
     }
 
     /*Если блог был найден, то преобразовываем блог из БД в подготовленный для отправки клиенту блог.*/
-    const blogOutput: BlogOutputDTO = mapToBlogOutputDTO(blogDB);
+    const blogOutput: BlogOutputDTO = mapFromBlogDBTypeToBlogOutputDTO(blogDB);
     /*Возвращаем ResultObject с преобразованным блогом.*/
     return { status: ResultStatuses.Ok, data: { blogOutput }, extensions: [] };
   }
@@ -45,12 +45,11 @@ export class BlogsQueryService {
     const { items, totalCount }: { items: BlogListDBType; totalCount: number } =
       await this.blogsQueryRepository.findAll(queryDTO);
 
-    /*Преобразовываем блоги из БД в подготовленные для пагинации блоги.*/
-    const paginatedBlogListOutput: PaginatedBlogListOutputDTO = mapToPaginatedBlogListOutputDTO(items, {
-      pageNumber: queryDTO.pageNumber,
-      pageSize: queryDTO.pageSize,
-      totalCount,
-    });
+    /*Преобразовываем блоги из БД в подготовленные для отправки клиенту с пагинацией блоги.*/
+    const paginatedBlogListOutput: PaginatedBlogListOutputDTO = mapFromBlogListDBTypeToPaginatedBlogListOutputDTO(
+      items,
+      { pageNumber: queryDTO.pageNumber, pageSize: queryDTO.pageSize, totalCount }
+    );
 
     /*Возвращаем ResultObject с преобразованными для пагинации блогами.*/
     return { status: ResultStatuses.Ok, data: { paginatedBlogListOutput }, extensions: [] };

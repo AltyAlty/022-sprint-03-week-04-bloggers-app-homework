@@ -59,9 +59,7 @@ export class AuthRepository {
   /*Метод для поиска сессии по ID пользователя и ID устройства пользователя в БД.*/
   public async findSessionByUserIdAndDeviceId(userId: string, deviceId: string): Promise<SessionDBType | null> {
     /*Просим модель "SessionModel" найти сессию по ID пользователя и ID устройства пользователя в БД.*/
-    const session: SessionDBType | null = await SessionModel.findOne({ userId, deviceId }).lean();
-    /*Если сессия была найдена, то возвращаем ее, иначе возвращаем null.*/
-    return session ?? null;
+    return await SessionModel.findOne({ userId, deviceId }).lean();
   }
 
   /*Метод для поиска сессии по ID пользователя, ID устройства пользователя и дате выдачи RT в БД.*/
@@ -71,9 +69,7 @@ export class AuthRepository {
     iat: Date
   ): Promise<SessionDBType | null> {
     /*Просим модель "SessionModel" найти сессию по ID пользователя, ID устройства пользователя и дате выдачи RT в БД.*/
-    const session: SessionDBType | null = await SessionModel.findOne({ userId, deviceId, iat }).lean();
-    /*Если сессия была найдена, то возвращаем ее, иначе возвращаем null.*/
-    return session ?? null;
+    return await SessionModel.findOne({ userId, deviceId, iat }).lean();
   }
 
   /*Метод для поиска сессий по ID пользователя в БД.*/
@@ -86,21 +82,14 @@ export class AuthRepository {
   public async findEmailConfirmationByCode(confirmationCode: string): Promise<EmailConfirmationDBType | null> {
     /*Просим модель "EmailConfirmationModel" найти данные о подтверждении регистрации пользователя по коду подтверждения
     в БД.*/
-    const emailConfirmation: EmailConfirmationDBType | null = await EmailConfirmationModel.findOne({
-      confirmationCode,
-    }).lean();
-
-    /*Если данные о подтверждении регистрации пользователя были найдены, то возвращаем их, иначе возвращаем null.*/
-    return emailConfirmation ?? null;
+    return await EmailConfirmationModel.findOne({ confirmationCode }).lean();
   }
 
   /*Метод для поиска данных о подтверждении регистрации пользователя по ID пользователя в БД.*/
   public async findEmailConfirmationByUserId(userId: string): Promise<EmailConfirmationDBType | null> {
     /*Просим модель "EmailConfirmationModel" найти данные о подтверждении регистрации пользователя по ID пользователя в
     БД.*/
-    const emailConfirmation: EmailConfirmationDBType | null = await EmailConfirmationModel.findOne({ userId }).lean();
-    /*Если данные о подтверждении регистрации пользователя были найдены, то возвращаем их, иначе возвращаем null.*/
-    return emailConfirmation ?? null;
+    return await EmailConfirmationModel.findOne({ userId }).lean();
   }
 
   /*Метод для подсчета количества записей в журнале лимитов запросов за указанный период по IP-адресу и URL в БД.*/
@@ -117,21 +106,14 @@ export class AuthRepository {
   /*Метод для поиска данных о коде восстановления пароля пользователя по коду в БД.*/
   public async findRecoveryPasswordCodeDataByCode(recoveryCode: string): Promise<RecoveryCodeDataDBType | null> {
     /*Просим модель "RecoveryCodeDataModel" найти данные о коде восстановления пароля пользователя по коду в БД.*/
-    const recoveryCodeData: RecoveryCodeDataDBType | null = await RecoveryCodeDataModel.findOne({
-      recoveryCode,
-    }).lean();
-
-    /*Если данные о коде восстановления пароля пользователя были найдены, то возвращаем их, иначе возвращаем null.*/
-    return recoveryCodeData ?? null;
+    return await RecoveryCodeDataModel.findOne({ recoveryCode }).lean();
   }
 
   /*Метод для поиска данных о коде восстановления пароля пользователя по ID пользователя в БД.*/
   public async findRecoveryPasswordCodeDataByUserId(userId: string): Promise<RecoveryCodeDataDBType | null> {
     /*Просим модель "RecoveryCodeDataModel" найти данные о коде восстановления пароля пользователя по ID пользователя в
     БД.*/
-    const recoveryCodeData: RecoveryCodeDataDBType | null = await RecoveryCodeDataModel.findOne({ userId }).lean();
-    /*Если данные о коде восстановления пароля пользователя были найдены, то возвращаем их, иначе возвращаем null.*/
-    return recoveryCodeData ?? null;
+    return await RecoveryCodeDataModel.findOne({ userId }).lean();
   }
 
   /*Метод для изменения сессии по дате создания RT в БД.*/
@@ -192,7 +174,7 @@ export class AuthRepository {
     /*Просим модель "SessionModel" удалить все сессии пользователя, кроме текущей, в БД.*/
     const result: DeleteResult = await SessionModel.deleteMany({ userId, deviceId: { $ne: deviceId } });
     /*Возвращаем количество удаленных устройств пользователя.*/
-    return result.deletedCount ?? 0;
+    return result.deletedCount;
   }
 
   /*Метод для удаления всех сессий пользователя по ID пользователя в БД.*/
@@ -200,7 +182,7 @@ export class AuthRepository {
     /*Просим модель "SessionModel" удалить все сессии пользователя по ID пользователя в БД.*/
     const result: DeleteResult = await SessionModel.deleteMany({ userId });
     /*Возвращаем количество удаленных устройств пользователя.*/
-    return result.deletedCount ?? 0;
+    return result.deletedCount;
   }
 
   /*Метод для удаления данных о подтверждении регистрации пользователя по ID пользователя в БД.*/
