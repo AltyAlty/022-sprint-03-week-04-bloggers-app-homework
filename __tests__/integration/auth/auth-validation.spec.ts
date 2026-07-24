@@ -1,29 +1,20 @@
-import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
-import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
-import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
-import { PaginatedUserListOutputDTO } from '../../../src/users/routes/output-dto/paginated-user-list.output-dto';
-import { getUserList } from '../../utils/users/get-user-list.test-util';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
-import { registerUser } from '../../utils/auth/register-user.test-util';
-import { UserOutputDTO } from '../../../src/users/routes/output-dto/user.output-dto';
-import { createUser } from '../../utils/users/create-user.test-util';
+import { container } from '../../../src/ioc/container';
+import { TYPES } from '../../../src/ioc/types';
+import { setTimeout } from 'timers/promises';
+import { AuthService } from '../../../src/auth/application/auth.service';
 import { UsersService } from '../../../src/users/application/users.service';
+import { AuthRepository } from '../../../src/auth/repositories/auth.repository';
+import { UsersRepository } from '../../../src/users/repositories/users.repository';
+import { EmailConfirmationDBType } from '../../../src/auth/repositories/types/email-сonfirmation-db.type';
+import { RecoveryCodeDataDBType } from '../../../src/auth/repositories/types/recovery-code-data-db.type';
+import { SessionListDBType } from '../../../src/auth/repositories/types/session-list-db.type';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { Result } from '../../../src/core/types/result/result.type';
 import { UserDBType } from '../../../src/users/repositories/types/user-db.type';
-import { UsersRepository } from '../../../src/users/repositories/users.repository';
-import { confirmUserByCode } from '../../utils/auth/confirm-user-by-code.test-util';
-import { resendConfirmationEmail } from '../../utils/auth/resend-confirmation-email.test-util';
-import {
-  createAuthRepositoryCreateRecoveryPasswordCodeDataSpy,
-  createAuthRepositoryDeleteAllRecoveryCodesDataByUserIdSpy,
-  createAuthServiceDeleteRecoveryCodeDataSpy,
-  createAuthServiceRevokeAllSessionsByUserIdSpy,
-  createAuthServiceUpdateEmailConfirmationByUserIdSpy,
-  createUsersRepositoryUpdatePasswordHashByIdSpy,
-  createUsersServiceConfirmByCodeSpy,
-  createUsersServiceCreateSpy,
-  createUsersServiceUpdatePasswordByRecoveryCodeSpy,
-} from '../../test-doubles/spies';
+import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
+import { SecurityDeviceListOutputDTO } from '../../../src/security-devices/routes/output-dto/security-device-list.output-dto';
+import { PaginatedUserListOutputDTO } from '../../../src/users/routes/output-dto/paginated-user-list.output-dto';
+import { UserOutputDTO } from '../../../src/users/routes/output-dto/user.output-dto';
 import {
   expiredRecoveryCodeData,
   expiredUserEmailConfirmationData,
@@ -41,21 +32,30 @@ import {
   validUserLogins,
   validUserPasswords,
 } from '../../test-data/users.test-data';
-import { delay } from '../../utils/common/delay.test-util';
-import { setTimeout } from 'timers/promises';
-import { createNodemailerAdapterSendMailSpyAndMock } from '../../test-doubles/spies-mocks';
-import { EmailConfirmationDBType } from '../../../src/auth/repositories/types/email-сonfirmation-db.type';
-import { AuthRepository } from '../../../src/auth/repositories/auth.repository';
-import { AuthService } from '../../../src/auth/application/auth.service';
+import {
+  createAuthRepositoryCreateRecoveryPasswordCodeDataSpy,
+  createAuthRepositoryDeleteAllRecoveryCodesDataByUserIdSpy,
+  createAuthServiceDeleteRecoveryCodeDataSpy,
+  createAuthServiceRevokeAllSessionsByUserIdSpy,
+  createAuthServiceUpdateEmailConfirmationByUserIdSpy,
+  createUsersRepositoryUpdatePasswordHashByIdSpy,
+  createUsersServiceConfirmByCodeSpy,
+  createUsersServiceCreateSpy,
+  createUsersServiceUpdatePasswordByRecoveryCodeSpy,
+} from '../../test-doubles/spies.test-util';
+import { createNodemailerAdapterSendMailSpyAndMock } from '../../test-doubles/spies-mocks.test-util';
+import { confirmUserByCode } from '../../utils/auth/confirm-user-by-code.test-util';
 import { loginUserReturnAccessAndRefreshTokens } from '../../utils/auth/login-user-return-access-and-refresh-tokens.test-util';
-import { RecoveryCodeDataDBType } from '../../../src/auth/repositories/types/recovery-code-data-db.type';
-import { SecurityDeviceListOutputDTO } from '../../../src/security-devices/routes/output-dto/security-device-list.output-dto';
-import { getSecurityDeviceList } from '../../utils/security-devices/get-security-device-list.test-util';
+import { registerUser } from '../../utils/auth/register-user.test-util';
+import { resendConfirmationEmail } from '../../utils/auth/resend-confirmation-email.test-util';
 import { sendRecoveryPasswordCode } from '../../utils/auth/send-recovery-password-code.test-util';
 import { setNewPasswordByRecoveryCode } from '../../utils/auth/set-new-password-by-recovery-code.test-util';
-import { container } from '../../../src/ioc/container';
-import { TYPES } from '../../../src/ioc/types';
-import { SessionListDBType } from '../../../src/auth/repositories/types/session-list-db.type';
+import { delay } from '../../utils/common/delay.test-util';
+import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
+import { getSecurityDeviceList } from '../../utils/security-devices/get-security-device-list.test-util';
+import { createUser } from '../../utils/users/create-user.test-util';
+import { getUserList } from '../../utils/users/get-user-list.test-util';
+import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
 
 describe('Auth Validation', () => {
   const app = doBeforeTestsWithMongoMemoryServer();

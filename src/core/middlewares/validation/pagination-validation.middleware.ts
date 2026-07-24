@@ -1,6 +1,6 @@
 import { query, ValidationChain } from 'express-validator';
-import { SortDirection } from '../../types/pagination/sort-direction';
 import { DefaultPaginationSettingsType } from '../../types/pagination/default-pagination-settings.type';
+import { SortDirection } from '../../types/pagination/sort-direction.type';
 import { SETTINGS } from '../../settings/settings';
 
 /*Объект с дефолтными настройками для пагинации.*/

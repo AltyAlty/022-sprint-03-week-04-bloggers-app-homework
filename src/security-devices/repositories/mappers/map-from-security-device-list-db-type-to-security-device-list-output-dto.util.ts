@@ -1,6 +1,6 @@
-import { SecurityDeviceListOutputDTO } from '../../routes/output-dto/security-device-list.output-dto';
-import { SecurityDeviceOutputDTO } from '../../routes/output-dto/security-device.output-dto';
 import { SecurityDeviceListDBType } from '../types/security-device-list-db.type';
+import { SecurityDeviceOutputDTO } from '../../routes/output-dto/security-device.output-dto';
+import { SecurityDeviceListOutputDTO } from '../../routes/output-dto/security-device-list.output-dto';
 
 /*Функция для преобразования устройств пользователя из БД в подготовленные для отправки клиенту устройства
 пользователя.*/

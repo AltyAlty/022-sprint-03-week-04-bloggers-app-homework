@@ -1,8 +1,8 @@
 import { Express } from 'express';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
+import request from 'supertest';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { PaginatedPostListOutputDTO } from '../../../src/posts/routes/output-dto/paginated-post-list.output-dto';
 import { SETTINGS } from '../../../src/core/settings/settings';
-import request from 'supertest';
 
 export const getPostList = async (
   app: Express,

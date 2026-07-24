@@ -1,8 +1,8 @@
 import { Express } from 'express';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
 import request from 'supertest';
-import { SETTINGS } from '../../../src/core/settings/settings';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { generateBasicAuthToken } from '../auth/generate-admin-auth-token.test-util';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 export const deleteUserById = async (
   app: Express,

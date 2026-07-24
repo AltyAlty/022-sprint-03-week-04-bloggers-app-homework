@@ -32,6 +32,7 @@ pnpm add -D typescript@6.0.3 @types/express jest ts-jest @types/jest @types/node
 27. Установка Mongoose: pnpm add mongoose
 28. Установка babel-jest, ядро компилятора Babel и пресет плагинов для Babel: pnpm add -D babel-jest @babel/core @babel/preset-env
 29. Установка inversify-inject-decorators: pnpm add inversify-inject-decorators
+30. Установка eslint-plugin-simple-import-sort: pnpm add -D eslint-plugin-simple-import-sort
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 
@@ -69,6 +70,8 @@ pnpm add -D typescript@6.0.3 @types/express jest ts-jest @types/jest @types/node
 6. Показывает предупреждение для неиспользуемых переменных.
 7. Показывает ошибку, если используется == или !=.
 8. Отключает правила ESLint, которые конфликтуют с Prettier.
+9. В разделе "rules" добавлен раздел "simple-import-sort/imports" для настройки правил сортировки импортов при помощи
+плагина eslint-plugin-simple-import-sort.
 
 Файл ".prettierrc" создан вручную. Правила в этом файле:
 1. В конце ставятся точки с запятой.
@@ -130,8 +133,8 @@ ES-модуля (ESM), используя современный синтакс�
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 Настройка Swagger:
-1. Файл "/src/core/swagger/setup-swagger.ts" - создание функции для инициализации документации Swagger.
-2. Файл "/src/setup-app.ts" - вызов функции для инициализации документации Swagger.
+1. Файл "/src/core/swagger/setup-swagger.util.ts" - создание функции для инициализации документации Swagger.
+2. Файл "/src/setup-app.util.ts" - вызов функции для инициализации документации Swagger.
 3. Во всех роутерах добавить путь "/app/".
 4. Во всех тестах добавить путь "/app/".
 5. Создать вручную файлы .yml, описывающие документацию Swagger:
@@ -139,6 +142,7 @@ ES-модуля (ESM), используя современный синтакс�
 5.2 Файл "/src/blogs/docs/blogs.swagger.yml".
 5.3 Файл "/src/posts/docs/posts.swagger.yml".
 5.4 Файл "/src/testing/docs/testing.swagger.yml".
+5.5 Схожие файлы для других сущностей.
 
 Настройка деплоя приложения на vercel.com:
 1. Создать файл "vercel.json".
@@ -155,7 +159,7 @@ ES-модуля (ESM), используя современный синтакс�
 10. Указать "Install Command" как "pnpm install".
 
 Настройка Swagger, чтобы он корректно отображался и работал на vercel.com:
-1. Использовать файл "setup-swagger.ts" вместо файла "setup-swagger-original.ts".
+1. Использовать файл "setup-swagger.util.ts" вместо файла "setup-swagger-original.util.ts".
 2. В файле "vercel.json" добавить, чтобы не игнорировались файлы .yml:
 "builds": [
     {
@@ -246,6 +250,9 @@ babel-jest - это пакет, являющийся плагином-посре
 inversify-inject-decorators - это официальное дополнение для InversifyJS, которое делает "ленивую" подгрузку. Оно выдает
 классу нужный сервис не сразу при старте, а только в момент первого обращения к нему. Это позволяет обойти замкнутый
 круг зависимостей.
+
+eslint-plugin-simple-import-sort - это плагин для ESLint, позволяющий сортировать импорты. Требуется донастройка файла
+"eslint.config.mjs".
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 
@@ -1404,9 +1411,19 @@ private get postsService() {
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 
+Импорты с побочными эффектами (Side-effect imports) - это импорты не с целью получения каких-то переменных, а с целью
+выполнить код в каком-то файле. Такой импорт что-то делает с глобальным состоянием приложения, даже если в итоге никакие
+переменные не используются из него. Примеры импортов с побочными эффектами:
+1. import 'dotenv/config' - внутри этого файла лежит код, который читает файл ".env" и записывает все переменные оттуда
+в глобальный объект "process.env". Это побочный эффект на глобальное окружение Node.js.
+2. import 'reflect-metadata' - библиотека reflect-metadata добавляет полифиллы в глобальный встроенный JavaScript объект
+Reflect.
+
+/*--------------------------------------------------------------------------------------------------------------------*/
+
 Структура приложения:
 0.1 Файл "/src/index.ts" - точка входа приложения.
-0.2 Файл "/src/setup-app.ts" - настройка приложения.
+0.2 Файл "/src/setup-app.util.ts" - настройка приложения.
 
 1. "/src/auth/" - код, связанный с аутентификацией и авторизацией.
 1.1 "/src/auth/adapters/argon2.adapter.ts" - адаптер для работы с библиотекой @node-rs/argon2.
@@ -1479,8 +1496,8 @@ private get postsService() {
 различных ID в запросах.
 4.5 "/src/core/settings/settings.ts" - глобальные настройки приложения.
 4.6 "/src/core/swagger/openapi.swagger.yml" - документация Swagger для приложения.
-4.7 "/src/core/swagger/setup-swagger.ts" - настройка Swagger для приложения.
-4.8 "/src/core/swagger/setup-swagger-original.ts" - настройка Swagger для приложения.
+4.7 "/src/core/swagger/setup-swagger.util.ts" - настройка Swagger для приложения.
+4.8 "/src/core/swagger/setup-swagger-original.util.ts" - настройка Swagger для приложения.
 4.9 "/src/core/types/" - общие типы приложения.
 4.10 "/src/core/types/pagination" - типы для пагинации.
 4.11 "/src/core/types/result" - типы для ResultObject.
@@ -1563,3 +1580,30 @@ private get postsService() {
 11.3 "/__tests__/test-date/" - данные, используемые в тестировании приложения.
 11.4 "/__tests__/test-doubles/" - моки и шпионы, используемые в тестировании приложения.
 11.5 "/__tests__/utils/" - утилиты, используемые в тестировании приложения.
+
+
+import { lazyInject } from '../../ioc/decorators';
+import { TYPES } from '../../ioc/types';
+import { inject, injectable } from 'inversify';
+import { Argon2Adapter } from '../../auth/adapters/argon2.adapter';
+import { AuthService } from '../../auth/application/auth.service';
+import { CommentsService } from '../../comments/application/comments.service';
+import { UsersRepository } from '../repositories/users.repository';
+import { EmailConfirmationType } from '../../auth/application/types/email-сonfirmation.type';
+import { UserType } from './types/user.type';
+import { UserDBType } from '../repositories/types/user-db.type';
+import { RecoveryCodeDataType } from '../../auth/application/types/recovery-code-data.type';
+import { Result } from '../../core/types/result/result.type';
+import { ResultStatuses } from '../../core/types/result/result-statuses.type';
+import { CreateUserInputDTO } f rom '../routes/input-dto/create-user.input-dto';
+import { UserOutputDTO } from '../routes/output-dto/user.output-dto';
+import { mapFromUserDBTypeToUserOutputDTO } from '../repositories/mappers/map-from-user-db-type-to-user-output-dto.util';
+import { normalizeEmail } from '../../core/utils/email/normalize-email.util';
+
+
+import 'reflect-metadata';
+import 'dotenv/config';
+import { db } from './db/mongodb/mongo.db';
+import express, { Express } from 'express';
+import { setupApp } from './setup-app.util';
+import { SETTINGS } from './core/settings/settings';

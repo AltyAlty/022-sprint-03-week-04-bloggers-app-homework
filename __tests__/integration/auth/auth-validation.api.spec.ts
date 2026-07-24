@@ -1,12 +1,15 @@
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
-import { createUser } from '../../utils/users/create-user.test-util';
-import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
-import { loginUserReturnAccessToken } from '../../utils/auth/login-user-return-access-token.test-util';
-import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
-import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
-import { UserOutputDTO } from '../../../src/users/routes/output-dto/user.output-dto';
+import { container } from '../../../src/ioc/container';
+import { TYPES } from '../../../src/ioc/types';
+import { setTimeout } from 'timers/promises';
+import { JwtAdapter } from '../../../src/auth/adapters/jwt.adapter';
+import { AuthRepository } from '../../../src/auth/repositories/auth.repository';
+import { SessionListDBType } from '../../../src/auth/repositories/types/session-list-db.type';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { LoginDataInputDTO } from '../../../src/auth/routes/input-dto/login-data.input-dto';
-import { getAuthDataByAccessToken } from '../../utils/auth/get-auth-data-by-access-token.test-util';
+import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
+import { SecurityDeviceOutputDTO } from '../../../src/security-devices/routes/output-dto/security-device.output-dto';
+import { SecurityDeviceListOutputDTO } from '../../../src/security-devices/routes/output-dto/security-device-list.output-dto';
+import { UserOutputDTO } from '../../../src/users/routes/output-dto/user.output-dto';
 import {
   invalidAccessTokens,
   invalidRefreshTokens,
@@ -15,10 +18,6 @@ import {
   validRefreshTokens,
   validUserAgents,
 } from '../../test-data/auth.test-data';
-import { loginUserReturnAccessAndRefreshTokens } from '../../utils/auth/login-user-return-access-and-refresh-tokens.test-util';
-import { refreshAccessAndRefreshTokens } from '../../utils/auth/refresh-access-and-refresh-tokens.test-util';
-import { JwtAdapter } from '../../../src/auth/adapters/jwt.adapter';
-import { revokeSession } from '../../utils/auth/revoke-session.test-util';
 import {
   invalidUserLoginsOrEmails,
   invalidUserPasswords,
@@ -26,16 +25,17 @@ import {
   validUserLogins,
   validUserPasswords,
 } from '../../test-data/users.test-data';
-import { delay } from '../../utils/common/delay.test-util';
-import { setTimeout } from 'timers/promises';
-import { AuthRepository } from '../../../src/auth/repositories/auth.repository';
-import { SecurityDeviceListOutputDTO } from '../../../src/security-devices/routes/output-dto/security-device-list.output-dto';
-import { getSecurityDeviceList } from '../../utils/security-devices/get-security-device-list.test-util';
-import { SecurityDeviceOutputDTO } from '../../../src/security-devices/routes/output-dto/security-device.output-dto';
-import { container } from '../../../src/ioc/container';
-import { TYPES } from '../../../src/ioc/types';
-import { SessionListDBType } from '../../../src/auth/repositories/types/session-list-db.type';
+import { getAuthDataByAccessToken } from '../../utils/auth/get-auth-data-by-access-token.test-util';
 import { loginUser } from '../../utils/auth/login-user.test-util';
+import { loginUserReturnAccessAndRefreshTokens } from '../../utils/auth/login-user-return-access-and-refresh-tokens.test-util';
+import { loginUserReturnAccessToken } from '../../utils/auth/login-user-return-access-token.test-util';
+import { refreshAccessAndRefreshTokens } from '../../utils/auth/refresh-access-and-refresh-tokens.test-util';
+import { revokeSession } from '../../utils/auth/revoke-session.test-util';
+import { delay } from '../../utils/common/delay.test-util';
+import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
+import { getSecurityDeviceList } from '../../utils/security-devices/get-security-device-list.test-util';
+import { createUser } from '../../utils/users/create-user.test-util';
+import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
 
 describe('Auth API Validation', () => {
   const app = doBeforeTestsWithMongoMemoryServer();

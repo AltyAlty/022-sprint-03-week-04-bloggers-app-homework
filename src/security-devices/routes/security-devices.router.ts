@@ -1,8 +1,8 @@
-import { Router } from 'express';
-import { SETTINGS } from '../../core/settings/settings';
-import { idValidation } from '../../core/middlewares/validation/params-id-validation.middlewares';
-import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
 import { refreshTokenGuardMiddleware, securityDevicesController } from '../../ioc/composition-root';
+import { Router } from 'express';
+import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
+import { idValidation } from '../../core/middlewares/validation/params-id-validation.middlewares';
+import { SETTINGS } from '../../core/settings/settings';
 
 /*Роутер из Express.js для работы с устройствами пользователя.*/
 export const securityDevicesRouter: Router = Router({});

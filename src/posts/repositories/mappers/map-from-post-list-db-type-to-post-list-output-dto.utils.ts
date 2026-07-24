@@ -1,9 +1,9 @@
-import { PostListDBType } from '../types/post-list-db.type';
 import { PostsQueryRepository } from '../posts.query-repository';
-import { PostListOutputDTO } from '../../routes/output-dto/post-list.output-dto';
 import { PostDBType } from '../types/post-db.type';
-import { PostLikeStatusOutputDTO, PostOutputDTO } from '../../routes/output-dto/post.output-dto';
 import { PostLikeDataDBType } from '../types/post-like-data-db.type';
+import { PostListDBType } from '../types/post-list-db.type';
+import { PostLikeStatusOutputDTO, PostOutputDTO } from '../../routes/output-dto/post.output-dto';
+import { PostListOutputDTO } from '../../routes/output-dto/post-list.output-dto';
 import { mapFromPostDBTypeToPostOutputDTO } from './map-from-post-db-type-to-post-output-dto.util';
 
 /*Функция для преобразования постов из БД в подготовленные для отправки клиенту без пагинации посты.*/

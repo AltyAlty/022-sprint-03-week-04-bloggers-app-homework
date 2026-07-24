@@ -1,15 +1,15 @@
-import { Filter } from 'mongodb';
-import { PostType } from '../application/types/post.type';
-import { GetPostListQueryInputDTO } from '../routes/input-dto/query/get-post-list-query.input-dto';
-import { SortDirection } from '../../core/types/pagination/sort-direction';
-import { PostSortFieldQueryInputDTO } from '../routes/input-dto/query/post-sort-field-query.input-dto';
-import { PostDBType } from './types/post-db.type';
 import { injectable } from 'inversify';
-import { PostListDBType } from './types/post-list-db.type';
+import { Filter } from 'mongodb';
 import { PostModel } from './models/post.model';
-import { PostLikeDataDBType } from './types/post-like-data-db.type';
 import { PostLikeDataModel } from './models/post-like-data.model';
+import { SortDirection } from '../../core/types/pagination/sort-direction.type';
+import { PostType } from '../application/types/post.type';
 import { PostLikeStatus } from '../application/types/post-like-data.type';
+import { PostDBType } from './types/post-db.type';
+import { PostLikeDataDBType } from './types/post-like-data-db.type';
+import { PostListDBType } from './types/post-list-db.type';
+import { GetPostListQueryInputDTO } from '../routes/input-dto/query/get-post-list-query.input-dto';
+import { PostSortFieldQueryInputDTO } from '../routes/input-dto/query/post-sort-field-query.input-dto';
 import { NewestPostLikeListOutputDTO } from '../routes/output-dto/post.output-dto';
 
 /*Query-репозиторий для работы с постами в БД.*/

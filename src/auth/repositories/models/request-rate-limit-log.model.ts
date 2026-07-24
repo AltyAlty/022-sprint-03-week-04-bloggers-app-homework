@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { SETTINGS } from '../../../core/settings/settings';
 import { RequestRateLimitLogDBType } from '../types/request-rate-limit-log-db.type';
+import { SETTINGS } from '../../../core/settings/settings';
 
 /*Схема для записи в журнале лимитов запросов в БД.*/
 const RequestRateLimitLogSchema = new mongoose.Schema<RequestRateLimitLogDBType>({

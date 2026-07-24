@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { SETTINGS } from '../../../core/settings/settings';
 import { EmailConfirmationDBType } from '../types/email-сonfirmation-db.type';
+import { SETTINGS } from '../../../core/settings/settings';
 
 /*Схема для данных о подтверждении регистрации пользователя в БД.*/
 const EmailConfirmationSchema = new mongoose.Schema<EmailConfirmationDBType>({

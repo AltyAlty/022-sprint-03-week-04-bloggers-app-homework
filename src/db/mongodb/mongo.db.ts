@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
-import { BlogModel } from '../../blogs/repositories/models/blog.model';
-import { PostModel } from '../../posts/repositories/models/post.model';
-import { CommentModel } from '../../comments/repositories/models/comment.model';
-import { UserModel } from '../../users/repositories/models/user.model';
 import { EmailConfirmationModel } from '../../auth/repositories/models/email-сonfirmation.model';
-import { SessionModel } from '../../auth/repositories/models/session.model';
-import { SecurityDeviceModel } from '../../security-devices/repositories/models/security-device.model';
-import { RequestRateLimitLogModel } from '../../auth/repositories/models/request-rate-limit-log.model';
 import { RecoveryCodeDataModel } from '../../auth/repositories/models/recovery-code-data.model';
+import { RequestRateLimitLogModel } from '../../auth/repositories/models/request-rate-limit-log.model';
+import { SessionModel } from '../../auth/repositories/models/session.model';
+import { BlogModel } from '../../blogs/repositories/models/blog.model';
+import { CommentModel } from '../../comments/repositories/models/comment.model';
 import { CommentLikeDataModel } from '../../comments/repositories/models/comment-like-data.model';
+import { PostModel } from '../../posts/repositories/models/post.model';
+import { SecurityDeviceModel } from '../../security-devices/repositories/models/security-device.model';
+import { UserModel } from '../../users/repositories/models/user.model';
 
 /*Объект для работы с MongoDB.*/
 export const db = {

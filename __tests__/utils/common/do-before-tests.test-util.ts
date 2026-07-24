@@ -1,9 +1,9 @@
-import express, { Express } from 'express';
-import { setupApp } from '../../../src/setup-app';
 import { db } from '../../../src/db/mongodb/mongo.db';
-import { SETTINGS } from '../../../src/core/settings/settings';
-import { clearDB } from '../db/clear-db.test-util';
+import express, { Express } from 'express';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import { setupApp } from '../../../src/setup-app.util';
+import { clearDB } from '../db/clear-db.test-util';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 /*Функция для предварительных действий перед запуском тестов, используя моковый сервер.*/
 export const doBeforeTestsWithMongoMemoryServer = (): Express => {

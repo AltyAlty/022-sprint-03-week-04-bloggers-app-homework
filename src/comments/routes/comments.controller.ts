@@ -1,19 +1,19 @@
+import { TYPES } from '../../ioc/types';
 import { Request, Response } from 'express';
+import { inject, injectable } from 'inversify';
 import { CommentsService } from '../application/comments.service';
 import { CommentsQueryService } from '../application/comments.query-service';
-import { UpdateCommentByIdUriInputDTO } from './input-dto/uri/update-comment-by-id-uri.input-dto';
-import { UpdateCommentByIdInputDTO } from './input-dto/update-comment-by-id.input-dto';
+import { HttpStatuses } from '../../core/types/http-statuses.type';
 import { ExtensionType, Result } from '../../core/types/result/result.type';
-import { HttpStatuses } from '../../core/types/http-statuses';
-import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status';
-import { errorsHandler } from '../../core/errors/errors.handler';
+import { CommentLikeStatusInputDTO, LikeCommentByIdInputDTO } from './input-dto/like-comment-by-id.input-dto';
+import { UpdateCommentByIdInputDTO } from './input-dto/update-comment-by-id.input-dto';
 import { DeleteCommentByIdUriInputDTO } from './input-dto/uri/delete-comment-by-id-uri.input-dto';
 import { GetCommentByIdUriInputDTO } from './input-dto/uri/get-comment-by-id-uri.input-dto';
-import { CommentOutputDTO } from './output-dto/comment.output-dto';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../ioc/types';
 import { LikeCommentByIdUriInputDTO } from './input-dto/uri/like-comment-by-id-uri.input-dto';
-import { CommentLikeStatusInputDTO, LikeCommentByIdInputDTO } from './input-dto/like-comment-by-id.input-dto';
+import { UpdateCommentByIdUriInputDTO } from './input-dto/uri/update-comment-by-id-uri.input-dto';
+import { CommentOutputDTO } from './output-dto/comment.output-dto';
+import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status.util';
+import { errorsHandler } from '../../core/errors/errors-handler.util';
 
 /*Контроллер для работы с комментариями.*/
 @injectable()

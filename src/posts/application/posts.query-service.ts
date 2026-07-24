@@ -1,23 +1,23 @@
+import { TYPES } from '../../ioc/types';
+import { inject, injectable } from 'inversify';
 import { BlogsQueryService } from '../../blogs/application/blogs.query-service';
 import { PostsQueryRepository } from '../repositories/posts.query-repository';
+import { Result } from '../../core/types/result/result.type';
+import { ResultStatuses } from '../../core/types/result/result-statuses.type';
+import { PostDBType } from '../repositories/types/post-db.type';
+import { PostLikeDataDBType } from '../repositories/types/post-like-data-db.type';
+import { PostListDBType } from '../repositories/types/post-list-db.type';
 import { GetPostListQueryInputDTO } from '../routes/input-dto/query/get-post-list-query.input-dto';
-import { mapFromPostListOutputDTOToPaginatedPostListOutputDTO } from '../repositories/mappers/map-from-post-list-output-dto-to-paginated-post-list-output-dto.util';
+import { BlogOutputDTO } from '../../blogs/routes/output-dto/blog.output-dto';
 import { PaginatedPostListOutputDTO } from '../routes/output-dto/paginated-post-list.output-dto';
-import { mapFromPostDBTypeToPostOutputDTO } from '../repositories/mappers/map-from-post-db-type-to-post-output-dto.util';
 import {
   NewestPostLikeListOutputDTO,
   PostLikeStatusOutputDTO,
   PostOutputDTO,
 } from '../routes/output-dto/post.output-dto';
-import { ResultStatuses } from '../../core/types/result/result-statuses';
-import { Result } from '../../core/types/result/result.type';
-import { BlogOutputDTO } from '../../blogs/routes/output-dto/blog.output-dto';
-import { PostDBType } from '../repositories/types/post-db.type';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../ioc/types';
-import { PostListDBType } from '../repositories/types/post-list-db.type';
-import { PostLikeDataDBType } from '../repositories/types/post-like-data-db.type';
 import { PostListOutputDTO } from '../routes/output-dto/post-list.output-dto';
+import { mapFromPostDBTypeToPostOutputDTO } from '../repositories/mappers/map-from-post-db-type-to-post-output-dto.util';
+import { mapFromPostListOutputDTOToPaginatedPostListOutputDTO } from '../repositories/mappers/map-from-post-list-output-dto-to-paginated-post-list-output-dto.util';
 import { mapFromPostListDBTypeToPostListOutputDTO } from '../repositories/mappers/map-from-post-list-db-type-to-post-list-output-dto.utils';
 
 /*Query-сервис для работы с постами.*/

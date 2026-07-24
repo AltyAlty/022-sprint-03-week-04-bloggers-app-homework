@@ -1,5 +1,5 @@
-import { ResultStatuses } from '../../../types/result/result-statuses';
-import { HttpStatuses } from '../../../types/http-statuses';
+import { HttpStatuses } from '../../../types/http-statuses.type';
+import { ResultStatuses } from '../../../types/result/result-statuses.type';
 
 /*Функция для преобразования статусов кодов ответа сервера из формата ResultObject в формат "HttpStatuses".*/
 export const mapFromResultStatusToHttpStatus = (resultStatus: ResultStatuses): HttpStatuses => {

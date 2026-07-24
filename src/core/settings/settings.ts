@@ -1,4 +1,4 @@
-import { SortDirection } from '../types/pagination/sort-direction';
+import { SortDirection } from '../types/pagination/sort-direction.type';
 
 export const SETTINGS = {
   PORT: Number(process.env.PORT || 5003),

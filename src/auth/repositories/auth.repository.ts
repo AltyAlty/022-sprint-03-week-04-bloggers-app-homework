@@ -1,18 +1,18 @@
-import { DeleteResult } from 'mongodb';
-import { SessionType } from '../application/types/session.type';
-import { SessionDBType } from './types/session-db.type';
-import { RequestRateLimitLogType } from '../application/types/request-rate-limit-log.type';
-import { EmailConfirmationType } from '../application/types/email-сonfirmation.type';
-import { EmailConfirmationDBType } from './types/email-сonfirmation-db.type';
-import { RecoveryCodeDataType } from '../application/types/recovery-code-data.type';
-import { RecoveryCodeDataDBType } from './types/recovery-code-data-db.type';
 import { injectable } from 'inversify';
-import { SessionListDBType } from './types/session-list-db.type';
-import { SessionModel } from './models/session.model';
+import { DeleteResult } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
 import { EmailConfirmationModel } from './models/email-сonfirmation.model';
-import { RequestRateLimitLogModel } from './models/request-rate-limit-log.model';
 import { RecoveryCodeDataModel } from './models/recovery-code-data.model';
+import { RequestRateLimitLogModel } from './models/request-rate-limit-log.model';
+import { SessionModel } from './models/session.model';
+import { EmailConfirmationType } from '../application/types/email-сonfirmation.type';
+import { RecoveryCodeDataType } from '../application/types/recovery-code-data.type';
+import { RequestRateLimitLogType } from '../application/types/request-rate-limit-log.type';
+import { SessionType } from '../application/types/session.type';
+import { EmailConfirmationDBType } from './types/email-сonfirmation-db.type';
+import { RecoveryCodeDataDBType } from './types/recovery-code-data-db.type';
+import { SessionDBType } from './types/session-db.type';
+import { SessionListDBType } from './types/session-list-db.type';
 
 /*Репозиторий для работы с аутентификацией и авторизацией в БД.*/
 @injectable()

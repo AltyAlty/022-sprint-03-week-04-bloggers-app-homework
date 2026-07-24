@@ -1,10 +1,10 @@
+import { PostDBType } from '../types/post-db.type';
 import {
   NewestPostLikeListOutputDTO,
   NewestPostLikeOutputDTO,
   PostLikeStatusOutputDTO,
   PostOutputDTO,
 } from '../../routes/output-dto/post.output-dto';
-import { PostDBType } from '../types/post-db.type';
 
 /*Функция для преобразования поста из БД в подготовленный для отправки клиенту пост.*/
 export const mapFromPostDBTypeToPostOutputDTO = (

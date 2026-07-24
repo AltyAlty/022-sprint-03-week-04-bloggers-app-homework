@@ -1,19 +1,19 @@
+import { TYPES } from '../../ioc/types';
+import { inject, injectable } from 'inversify';
 import { PostsQueryService } from '../../posts/application/posts.query-service';
 import { CommentsQueryRepository } from '../repositories/comments.query-repository';
 import { Result } from '../../core/types/result/result.type';
-import { CommentLikeStatusOutputDTO, CommentOutputDTO } from '../routes/output-dto/comment.output-dto';
-import { ResultStatuses } from '../../core/types/result/result-statuses';
-import { mapFromCommentDBTypeToCommentOutputDTO } from '../repositories/mappers/map-from-comment-db-type-to-comment-output-dto.util';
-import { GetCommentListByPostIdQueryInputDTO } from '../routes/input-dto/query/get-comment-list-by-post-id-query.input-dto';
-import { PaginatedCommentListOutputDTO } from '../routes/output-dto/paginated-comment-list.output-dto';
-import { mapFromCommentListOutputDTOToPaginatedCommentListOutputDTO } from '../repositories/mappers/map-from-comment-list-output-dto-to-paginated-comment-list-output-dto.util';
-import { PostOutputDTO } from '../../posts/routes/output-dto/post.output-dto';
+import { ResultStatuses } from '../../core/types/result/result-statuses.type';
 import { CommentDBType } from '../repositories/types/comment-db.type';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../ioc/types';
-import { CommentListDBType } from '../repositories/types/comment-list-db.type';
 import { CommentLikeDataDBType } from '../repositories/types/comment-like-data-db.type';
+import { CommentListDBType } from '../repositories/types/comment-list-db.type';
+import { GetCommentListByPostIdQueryInputDTO } from '../routes/input-dto/query/get-comment-list-by-post-id-query.input-dto';
+import { PostOutputDTO } from '../../posts/routes/output-dto/post.output-dto';
+import { CommentLikeStatusOutputDTO, CommentOutputDTO } from '../routes/output-dto/comment.output-dto';
 import { CommentListOutputDTO } from '../routes/output-dto/comment-list.output-dto';
+import { PaginatedCommentListOutputDTO } from '../routes/output-dto/paginated-comment-list.output-dto';
+import { mapFromCommentDBTypeToCommentOutputDTO } from '../repositories/mappers/map-from-comment-db-type-to-comment-output-dto.util';
+import { mapFromCommentListOutputDTOToPaginatedCommentListOutputDTO } from '../repositories/mappers/map-from-comment-list-output-dto-to-paginated-comment-list-output-dto.util';
 import { mapFromCommentListDBTypeToCommentListOutputDTO } from '../repositories/mappers/map-from-comment-list-db-type-to-comment-list-output-dto.utils';
 
 /*Query-сервис для работы с комментариями.*/

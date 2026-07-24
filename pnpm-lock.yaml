@@ -117,6 +117,9 @@ importers:
       eslint-plugin-prettier:
         specifier: ^5.5.6
         version: 5.5.6(eslint-config-prettier@10.1.8(eslint@10.7.0(supports-color@5.5.0)))(eslint@10.7.0(supports-color@5.5.0))(prettier@3.9.5)
+      eslint-plugin-simple-import-sort:
+        specifier: ^14.0.0
+        version: 14.0.0(eslint@10.7.0(supports-color@5.5.0))
       jest:
         specifier: ^30.4.2
         version: 30.4.2(@types/node@26.1.1)(supports-color@5.5.0)(ts-node@10.9.2(@types/node@26.1.1)(typescript@6.0.3))
@@ -1954,6 +1957,11 @@ packages:
         optional: true
       eslint-config-prettier:
         optional: true
+
+  eslint-plugin-simple-import-sort@14.0.0:
+    resolution: {integrity: sha512-NUJO0+XFCkk+o5EsAJruTgnfMEpeWrPWeJS15UVF60GgXmqz1BJ9/3hzlvG7lkL8Bubzos5cCLptThbFfPnSMQ==}
+    peerDependencies:
+      eslint: '>=5.0.0'
 
   eslint-scope@9.1.2:
     resolution: {integrity: sha512-xS90H51cKw0jltxmvmHy2Iai1LIqrfbw57b79w/J7MfvDfkIkFZ+kj6zC3BjtUwh150HsSSdxXZcsuv72miDFQ==}
@@ -5472,6 +5480,10 @@ snapshots:
       synckit: 0.11.13
     optionalDependencies:
       eslint-config-prettier: 10.1.8(eslint@10.7.0(supports-color@5.5.0))
+
+  eslint-plugin-simple-import-sort@14.0.0(eslint@10.7.0(supports-color@5.5.0)):
+    dependencies:
+      eslint: 10.7.0(supports-color@5.5.0)
 
   eslint-scope@9.1.2:
     dependencies:

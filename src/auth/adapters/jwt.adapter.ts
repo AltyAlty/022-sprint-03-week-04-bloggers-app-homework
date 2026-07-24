@@ -1,5 +1,5 @@
-import jwt, { SignOptions } from 'jsonwebtoken';
 import { injectable } from 'inversify';
+import jwt, { SignOptions } from 'jsonwebtoken';
 
 /*Адаптер для работы с библиотекой jsonwebtoken.*/
 @injectable()

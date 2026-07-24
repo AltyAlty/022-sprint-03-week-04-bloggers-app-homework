@@ -1,5 +1,5 @@
-import { PaginatedCommentListOutputDTO } from '../../routes/output-dto/paginated-comment-list.output-dto';
 import { CommentListOutputDTO } from '../../routes/output-dto/comment-list.output-dto';
+import { PaginatedCommentListOutputDTO } from '../../routes/output-dto/paginated-comment-list.output-dto';
 
 /*Функция для преобразования подготовленных для отправки клиенту без пагинации комментариев в подготовленные для
 отправки клиенту с пагинацией комментарии.*/

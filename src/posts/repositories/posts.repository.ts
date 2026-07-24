@@ -1,14 +1,14 @@
-import { PostType } from '../application/types/post.type';
-import { DeleteResult } from 'mongodb';
-import { UpdatePostByIdInputDTO } from '../routes/input-dto/update-post-by-id.input-dto';
-import { PostDBType } from './types/post-db.type';
 import { injectable } from 'inversify';
-import { PostListDBType } from './types/post-list-db.type';
-import { PostModel } from './models/post.model';
+import { DeleteResult } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
-import { PostLikeDataDBType } from './types/post-like-data-db.type';
+import { PostModel } from './models/post.model';
 import { PostLikeDataModel } from './models/post-like-data.model';
+import { PostType } from '../application/types/post.type';
 import { PostLikeDataType, PostLikeStatus } from '../application/types/post-like-data.type';
+import { PostDBType } from './types/post-db.type';
+import { PostLikeDataDBType } from './types/post-like-data-db.type';
+import { PostListDBType } from './types/post-list-db.type';
+import { UpdatePostByIdInputDTO } from '../routes/input-dto/update-post-by-id.input-dto';
 import { NewestPostLikeListOutputDTO } from '../routes/output-dto/post.output-dto';
 
 /*Репозиторий для работы с постами в БД.*/

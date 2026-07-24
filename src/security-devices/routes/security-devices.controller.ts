@@ -1,15 +1,15 @@
+import { TYPES } from '../../ioc/types';
 import { Request, Response } from 'express';
+import { inject, injectable } from 'inversify';
 import { AuthService } from '../../auth/application/auth.service';
 import { SecurityDevicesQueryService } from '../application/security-devices.query-service';
-import { SecurityDeviceListOutputDTO } from './output-dto/security-device-list.output-dto';
-import { HttpStatuses } from '../../core/types/http-statuses';
-import { ExtensionType, Result } from '../../core/types/result/result.type';
-import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status';
-import { errorsHandler } from '../../core/errors/errors.handler';
+import { HttpStatuses } from '../../core/types/http-statuses.type';
 import { IdType } from '../../core/types/id.type';
+import { ExtensionType, Result } from '../../core/types/result/result.type';
 import { RevokeSessionByDeviceIdUriInputDTO } from './input-dto/uri/revoke-session-by-device-id-uri.input-dto';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../ioc/types';
+import { SecurityDeviceListOutputDTO } from './output-dto/security-device-list.output-dto';
+import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status.util';
+import { errorsHandler } from '../../core/errors/errors-handler.util';
 
 /*Контроллер для работы с постами устройствами пользователя.*/
 @injectable()

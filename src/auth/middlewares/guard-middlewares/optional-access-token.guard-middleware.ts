@@ -1,13 +1,13 @@
-import { NextFunction, Request, Response } from 'express';
-import { IdType } from '../../../core/types/id.type';
-import { HttpStatuses } from '../../../core/types/http-statuses';
-import { SETTINGS } from '../../../core/settings/settings';
-import { ObjectId } from 'mongodb';
-import { inject, injectable } from 'inversify';
 import { TYPES } from '../../../ioc/types';
+import { NextFunction, Request, Response } from 'express';
+import { inject, injectable } from 'inversify';
+import { ObjectId } from 'mongodb';
 import { JwtAdapter } from '../../adapters/jwt.adapter';
 import { UsersRepository } from '../../../users/repositories/users.repository';
+import { HttpStatuses } from '../../../core/types/http-statuses.type';
+import { IdType } from '../../../core/types/id.type';
 import { UserDBType } from '../../../users/repositories/types/user-db.type';
+import { SETTINGS } from '../../../core/settings/settings';
 
 /*Guard-middleware для проверки опционального AT.*/
 @injectable()

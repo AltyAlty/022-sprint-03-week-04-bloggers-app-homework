@@ -1,8 +1,8 @@
 import { Express } from 'express';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
 import request from 'supertest';
-import { SETTINGS } from '../../../src/core/settings/settings';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { settingNewPasswordByRecoveryCodeInputDTO } from '../../../src/auth/routes/input-dto/setting-new-password-by-recovery-code.input-dto';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 export const setNewPasswordByRecoveryCode = async (
   app: Express,

@@ -1,6 +1,6 @@
+import { injectable } from 'inversify';
 import nodemailer from 'nodemailer';
 import { SETTINGS } from '../../core/settings/settings';
-import { injectable } from 'inversify';
 
 /*Адаптер для работы с библиотекой nodemailer.*/
 @injectable()

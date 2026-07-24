@@ -1,14 +1,14 @@
-import { Filter } from 'mongodb';
-import { CommentType } from '../application/types/comment.type';
-import { GetCommentListByPostIdQueryInputDTO } from '../routes/input-dto/query/get-comment-list-by-post-id-query.input-dto';
-import { SortDirection } from '../../core/types/pagination/sort-direction';
-import { CommentSortFieldQueryInputDTO } from '../routes/input-dto/query/comment-sort-field-query.input-dto';
-import { CommentDBType } from './types/comment-db.type';
 import { injectable } from 'inversify';
-import { CommentListDBType } from './types/comment-list-db.type';
+import { Filter } from 'mongodb';
 import { CommentModel } from './models/comment.model';
-import { CommentLikeDataDBType } from './types/comment-like-data-db.type';
 import { CommentLikeDataModel } from './models/comment-like-data.model';
+import { SortDirection } from '../../core/types/pagination/sort-direction.type';
+import { CommentType } from '../application/types/comment.type';
+import { CommentDBType } from './types/comment-db.type';
+import { CommentLikeDataDBType } from './types/comment-like-data-db.type';
+import { CommentListDBType } from './types/comment-list-db.type';
+import { CommentSortFieldQueryInputDTO } from '../routes/input-dto/query/comment-sort-field-query.input-dto';
+import { GetCommentListByPostIdQueryInputDTO } from '../routes/input-dto/query/get-comment-list-by-post-id-query.input-dto';
 
 /*Query-репозиторий для работы с комментариями в БД.*/
 @injectable()

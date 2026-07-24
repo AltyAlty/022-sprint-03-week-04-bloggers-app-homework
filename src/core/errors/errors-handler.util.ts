@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { HttpStatuses } from '../types/http-statuses';
-import { DomainError } from './domain.error';
 import { createErrorMessages } from '../middlewares/validation/input-validation-result.middleware';
+import { HttpStatuses } from '../types/http-statuses.type';
+import { DomainError } from './domain.error';
 
 /*Функция для перехвата ошибок в UI слое.*/
 export const errorsHandler = (error: any, res: Response): void | Response => {

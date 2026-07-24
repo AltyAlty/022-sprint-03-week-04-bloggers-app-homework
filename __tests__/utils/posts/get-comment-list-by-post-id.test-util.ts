@@ -1,8 +1,8 @@
 import { Express } from 'express';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
-import { SETTINGS } from '../../../src/core/settings/settings';
 import request from 'supertest';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { PaginatedCommentListOutputDTO } from '../../../src/comments/routes/output-dto/paginated-comment-list.output-dto';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 export const getCommentListByPostId = async (
   app: Express,

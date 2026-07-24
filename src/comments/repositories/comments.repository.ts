@@ -1,13 +1,13 @@
-import { UpdateCommentByIdInputDTO } from '../routes/input-dto/update-comment-by-id.input-dto';
-import { DeleteResult } from 'mongodb';
-import { CommentType } from '../application/types/comment.type';
-import { CommentDBType } from './types/comment-db.type';
 import { injectable } from 'inversify';
-import { CommentModel } from './models/comment.model';
+import { DeleteResult } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
-import { CommentLikeDataDBType } from './types/comment-like-data-db.type';
+import { CommentModel } from './models/comment.model';
 import { CommentLikeDataModel } from './models/comment-like-data.model';
+import { CommentType } from '../application/types/comment.type';
 import { CommentLikeDataType, CommentLikeStatus } from '../application/types/comment-like-data.type';
+import { CommentDBType } from './types/comment-db.type';
+import { CommentLikeDataDBType } from './types/comment-like-data-db.type';
+import { UpdateCommentByIdInputDTO } from '../routes/input-dto/update-comment-by-id.input-dto';
 
 /*Репозиторий для работы с комментариями в БД.*/
 @injectable()

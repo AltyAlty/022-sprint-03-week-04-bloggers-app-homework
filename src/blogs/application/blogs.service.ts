@@ -1,16 +1,16 @@
+import { lazyInject } from '../../ioc/decorators';
+import { TYPES } from '../../ioc/types';
+import { inject, injectable } from 'inversify';
 import { PostsService } from '../../posts/application/posts.service';
 import { BlogsRepository } from '../repositories/blogs.repository';
+import { Result } from '../../core/types/result/result.type';
+import { ResultStatuses } from '../../core/types/result/result-statuses.type';
+import { BlogDBType } from '../repositories/types/blog-db.type';
 import { BlogType } from './types/blog.type';
 import { CreateBlogInputDTO } from '../routes/input-dto/create-blog.input-dto';
 import { UpdateBlogByIdInputDTO } from '../routes/input-dto/update-blog-by-id.input-dto';
-import { ResultStatuses } from '../../core/types/result/result-statuses';
-import { Result } from '../../core/types/result/result.type';
 import { BlogOutputDTO } from '../routes/output-dto/blog.output-dto';
 import { mapFromBlogDBTypeToBlogOutputDTO } from '../repositories/mappers/map-from-blog-db-type-to-blog-output-dto.util';
-import { BlogDBType } from '../repositories/types/blog-db.type';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../ioc/types';
-import { lazyInject } from '../../ioc/decorators';
 
 /*Сервис для работы с блогами.*/
 @injectable()

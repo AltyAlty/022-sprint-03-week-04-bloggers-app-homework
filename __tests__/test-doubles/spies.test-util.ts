@@ -1,7 +1,7 @@
 import { container } from '../../src/ioc/container';
 import { TYPES } from '../../src/ioc/types';
-import { UsersService } from '../../src/users/application/users.service';
 import { AuthService } from '../../src/auth/application/auth.service';
+import { UsersService } from '../../src/users/application/users.service';
 import { AuthRepository } from '../../src/auth/repositories/auth.repository';
 import { UsersRepository } from '../../src/users/repositories/users.repository';
 

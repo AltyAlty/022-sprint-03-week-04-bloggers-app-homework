@@ -1,28 +1,28 @@
-import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
-import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
-import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
-import { createUser } from '../../utils/users/create-user.test-util';
+import { container } from '../../../src/ioc/container';
+import { TYPES } from '../../../src/ioc/types';
+import { JwtAdapter } from '../../../src/auth/adapters/jwt.adapter';
+import { AuthRepository } from '../../../src/auth/repositories/auth.repository';
+import { SessionListDBType } from '../../../src/auth/repositories/types/session-list-db.type';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { LoginDataInputDTO } from '../../../src/auth/routes/input-dto/login-data.input-dto';
+import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
+import { SecurityDeviceOutputDTO } from '../../../src/security-devices/routes/output-dto/security-device.output-dto';
+import { SecurityDeviceListOutputDTO } from '../../../src/security-devices/routes/output-dto/security-device-list.output-dto';
+import { UserOutputDTO } from '../../../src/users/routes/output-dto/user.output-dto';
 import {
   invalidRefreshTokens,
   invalidUserAgents,
   validRefreshTokens,
   validUserAgents,
 } from '../../test-data/auth.test-data';
-import { loginUserReturnAccessAndRefreshTokens } from '../../utils/auth/login-user-return-access-and-refresh-tokens.test-util';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
-import { getSecurityDeviceList } from '../../utils/security-devices/get-security-device-list.test-util';
-import { revokeSessionsExceptCurrentDevice } from '../../utils/security-devices/revoke-sessions-except-current-device.test-util';
-import { JwtAdapter } from '../../../src/auth/adapters/jwt.adapter';
-import { SecurityDeviceListOutputDTO } from '../../../src/security-devices/routes/output-dto/security-device-list.output-dto';
-import { AuthRepository } from '../../../src/auth/repositories/auth.repository';
-import { SecurityDeviceOutputDTO } from '../../../src/security-devices/routes/output-dto/security-device.output-dto';
-import { UserOutputDTO } from '../../../src/users/routes/output-dto/user.output-dto';
-import { revokeSessionByDeviceId } from '../../utils/security-devices/revoke-session-by-device-id.test-util';
 import { invalidDeviceIds, validDeviceIds } from '../../test-data/security-devices.test-data';
-import { container } from '../../../src/ioc/container';
-import { TYPES } from '../../../src/ioc/types';
-import { SessionListDBType } from '../../../src/auth/repositories/types/session-list-db.type';
+import { loginUserReturnAccessAndRefreshTokens } from '../../utils/auth/login-user-return-access-and-refresh-tokens.test-util';
+import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
+import { getSecurityDeviceList } from '../../utils/security-devices/get-security-device-list.test-util';
+import { revokeSessionByDeviceId } from '../../utils/security-devices/revoke-session-by-device-id.test-util';
+import { revokeSessionsExceptCurrentDevice } from '../../utils/security-devices/revoke-sessions-except-current-device.test-util';
+import { createUser } from '../../utils/users/create-user.test-util';
+import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
 
 describe('Security Devices API Validation', () => {
   const app = doBeforeTestsWithMongoMemoryServer();

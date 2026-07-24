@@ -1,12 +1,12 @@
-import { Filter } from 'mongodb';
-import { UserType } from '../application/types/user.type';
-import { GetUserListQueryInputDTO } from '../routes/input-dto/query/get-user-list-query.input-dto';
-import { SortDirection } from '../../core/types/pagination/sort-direction';
-import { UserSortFieldQueryInputDTO } from '../routes/input-dto/query/user-sort-field-query.input-dto';
-import { UserDBType } from './types/user-db.type';
 import { injectable } from 'inversify';
-import { UserListDBType } from './types/user-list-db.type';
+import { Filter } from 'mongodb';
 import { UserModel } from './models/user.model';
+import { SortDirection } from '../../core/types/pagination/sort-direction.type';
+import { UserType } from '../application/types/user.type';
+import { UserDBType } from './types/user-db.type';
+import { UserListDBType } from './types/user-list-db.type';
+import { GetUserListQueryInputDTO } from '../routes/input-dto/query/get-user-list-query.input-dto';
+import { UserSortFieldQueryInputDTO } from '../routes/input-dto/query/user-sort-field-query.input-dto';
 
 /*Query-репозиторий для работы с пользователями в БД.*/
 @injectable()

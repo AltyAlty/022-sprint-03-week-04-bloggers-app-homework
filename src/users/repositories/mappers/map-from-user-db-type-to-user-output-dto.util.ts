@@ -1,5 +1,5 @@
-import { UserOutputDTO } from '../../routes/output-dto/user.output-dto';
 import { UserDBType } from '../types/user-db.type';
+import { UserOutputDTO } from '../../routes/output-dto/user.output-dto';
 
 /*Функция для преобразования пользователя из БД в подготовленного для отправки клиенту пользователя.*/
 export const mapFromUserDBTypeToUserOutputDTO = (user: UserDBType): UserOutputDTO => {

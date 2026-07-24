@@ -1,11 +1,11 @@
-import { Router } from 'express';
-import { paginationValidationMiddleware } from '../../core/middlewares/validation/pagination-validation.middleware';
-import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
-import { idValidation } from '../../core/middlewares/validation/params-id-validation.middlewares';
-import { UserSortFieldQueryInputDTO } from './input-dto/query/user-sort-field-query.input-dto';
-import { createUserInputValidation } from '../validation/users-input-validation.middlewares';
-import { SETTINGS } from '../../core/settings/settings';
 import { basicAuthGuardMiddleware, usersController } from '../../ioc/composition-root';
+import { Router } from 'express';
+import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
+import { paginationValidationMiddleware } from '../../core/middlewares/validation/pagination-validation.middleware';
+import { idValidation } from '../../core/middlewares/validation/params-id-validation.middlewares';
+import { createUserInputValidation } from '../validation/users-input-validation.middlewares';
+import { UserSortFieldQueryInputDTO } from './input-dto/query/user-sort-field-query.input-dto';
+import { SETTINGS } from '../../core/settings/settings';
 
 /*Роутер из Express.js для работы с пользователями.*/
 export const usersRouter: Router = Router({});

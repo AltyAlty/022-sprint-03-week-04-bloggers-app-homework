@@ -1,17 +1,17 @@
-import { Router } from 'express';
-import { blogIdValidation, idValidation } from '../../core/middlewares/validation/params-id-validation.middlewares';
-import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
-import { createBlogInputValidation, updateBlogInputValidation } from '../validation/blogs-input-validation.middlewares';
-import { paginationValidationMiddleware } from '../../core/middlewares/validation/pagination-validation.middleware';
-import { BlogSortFieldQueryInputDTO } from './input-dto/query/blog-sort-field-query.input-dto';
-import { createPostForBlogInputValidation } from '../../posts/validation/posts-input-validation.middlewares';
-import { PostSortFieldQueryInputDTO } from '../../posts/routes/input-dto/query/post-sort-field-query.input-dto';
-import { SETTINGS } from '../../core/settings/settings';
 import {
   basicAuthGuardMiddleware,
   blogsController,
   optionalAccessTokenGuardMiddleware,
 } from '../../ioc/composition-root';
+import { Router } from 'express';
+import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
+import { paginationValidationMiddleware } from '../../core/middlewares/validation/pagination-validation.middleware';
+import { blogIdValidation, idValidation } from '../../core/middlewares/validation/params-id-validation.middlewares';
+import { createPostForBlogInputValidation } from '../../posts/validation/posts-input-validation.middlewares';
+import { createBlogInputValidation, updateBlogInputValidation } from '../validation/blogs-input-validation.middlewares';
+import { PostSortFieldQueryInputDTO } from '../../posts/routes/input-dto/query/post-sort-field-query.input-dto';
+import { BlogSortFieldQueryInputDTO } from './input-dto/query/blog-sort-field-query.input-dto';
+import { SETTINGS } from '../../core/settings/settings';
 
 /*Роутер из Express.js для работы с блогами.*/
 export const blogsRouter: Router = Router({});

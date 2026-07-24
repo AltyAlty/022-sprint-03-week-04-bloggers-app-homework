@@ -1,22 +1,22 @@
-import { Router } from 'express';
-import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
-import { idValidation, postIdValidation } from '../../core/middlewares/validation/params-id-validation.middlewares';
-import {
-  createPostInputValidation,
-  likePostInputValidation,
-  updatePostInputValidation,
-} from '../validation/posts-input-validation.middlewares';
-import { paginationValidationMiddleware } from '../../core/middlewares/validation/pagination-validation.middleware';
-import { PostSortFieldQueryInputDTO } from './input-dto/query/post-sort-field-query.input-dto';
-import { CommentSortFieldQueryInputDTO } from '../../comments/routes/input-dto/query/comment-sort-field-query.input-dto';
-import { createCommentForPostInputValidation } from '../../comments/validation/comments-input-validation.middlewares';
-import { SETTINGS } from '../../core/settings/settings';
 import {
   accessTokenGuardMiddleware,
   basicAuthGuardMiddleware,
   optionalAccessTokenGuardMiddleware,
   postsController,
 } from '../../ioc/composition-root';
+import { Router } from 'express';
+import { createCommentForPostInputValidation } from '../../comments/validation/comments-input-validation.middlewares';
+import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
+import { paginationValidationMiddleware } from '../../core/middlewares/validation/pagination-validation.middleware';
+import { idValidation, postIdValidation } from '../../core/middlewares/validation/params-id-validation.middlewares';
+import {
+  createPostInputValidation,
+  likePostInputValidation,
+  updatePostInputValidation,
+} from '../validation/posts-input-validation.middlewares';
+import { CommentSortFieldQueryInputDTO } from '../../comments/routes/input-dto/query/comment-sort-field-query.input-dto';
+import { PostSortFieldQueryInputDTO } from './input-dto/query/post-sort-field-query.input-dto';
+import { SETTINGS } from '../../core/settings/settings';
 
 /*Роутер из Express.js для работы с постами.*/
 export const postsRouter: Router = Router({});

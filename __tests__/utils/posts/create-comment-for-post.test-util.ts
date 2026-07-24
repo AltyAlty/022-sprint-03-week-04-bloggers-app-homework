@@ -1,10 +1,10 @@
-import { CreateCommentForPostInputDTO } from '../../../src/comments/routes/input-dto/create-comment-for-post.input-dto';
 import { Express } from 'express';
+import request from 'supertest';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
+import { CreateCommentForPostInputDTO } from '../../../src/comments/routes/input-dto/create-comment-for-post.input-dto';
 import { CommentOutputDTO } from '../../../src/comments/routes/output-dto/comment.output-dto';
 import { getCreateCommentForPostInputDTO } from '../comments/input-dto-utils/get-create-comment-for-post-input-dto.test-util';
-import request from 'supertest';
 import { SETTINGS } from '../../../src/core/settings/settings';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
 
 export const createCommentForPost = async (
   app: Express,

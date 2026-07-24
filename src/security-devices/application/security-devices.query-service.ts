@@ -1,13 +1,13 @@
+import { TYPES } from '../../ioc/types';
+import { inject, injectable } from 'inversify';
 import { AuthService } from '../../auth/application/auth.service';
 import { SecurityDevicesQueryRepository } from '../repositories/security-devices.query-repository';
-import { SecurityDeviceListOutputDTO } from '../routes/output-dto/security-device-list.output-dto';
 import { SessionType } from '../../auth/application/types/session.type';
-import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { Result } from '../../core/types/result/result.type';
-import { mapFromSecurityDeviceListDBTypeToSecurityDeviceListOutputDTO } from '../repositories/mappers/map-from-security-device-list-db-type-to-security-device-list-output-dto.util';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../ioc/types';
+import { ResultStatuses } from '../../core/types/result/result-statuses.type';
 import { SecurityDeviceListDBType } from '../repositories/types/security-device-list-db.type';
+import { SecurityDeviceListOutputDTO } from '../routes/output-dto/security-device-list.output-dto';
+import { mapFromSecurityDeviceListDBTypeToSecurityDeviceListOutputDTO } from '../repositories/mappers/map-from-security-device-list-db-type-to-security-device-list-output-dto.util';
 
 /*Query-сервис для работы с устройствами пользователей.*/
 @injectable()

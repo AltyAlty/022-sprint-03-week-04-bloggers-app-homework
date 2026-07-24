@@ -1,20 +1,20 @@
+import { lazyInject } from '../../ioc/decorators';
+import { TYPES } from '../../ioc/types';
+import { inject, injectable } from 'inversify';
 import { PostsService } from '../../posts/application/posts.service';
 import { UsersService } from '../../users/application/users.service';
 import { CommentsRepository } from '../repositories/comments.repository';
-import { UpdateCommentByIdInputDTO } from '../routes/input-dto/update-comment-by-id.input-dto';
 import { Result } from '../../core/types/result/result.type';
-import { ResultStatuses } from '../../core/types/result/result-statuses';
-import { CreateCommentForPostInputDTO } from '../routes/input-dto/create-comment-for-post.input-dto';
-import { CommentType } from './types/comment.type';
-import { UserOutputDTO } from '../../users/routes/output-dto/user.output-dto';
-import { PostOutputDTO } from '../../posts/routes/output-dto/post.output-dto';
+import { ResultStatuses } from '../../core/types/result/result-statuses.type';
 import { CommentDBType } from '../repositories/types/comment-db.type';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../ioc/types';
-import { lazyInject } from '../../ioc/decorators';
-import { CommentLikeStatusInputDTO } from '../routes/input-dto/like-comment-by-id.input-dto';
 import { CommentLikeDataDBType } from '../repositories/types/comment-like-data-db.type';
+import { CommentType } from './types/comment.type';
 import { CommentLikeStatus } from './types/comment-like-data.type';
+import { CreateCommentForPostInputDTO } from '../routes/input-dto/create-comment-for-post.input-dto';
+import { CommentLikeStatusInputDTO } from '../routes/input-dto/like-comment-by-id.input-dto';
+import { UpdateCommentByIdInputDTO } from '../routes/input-dto/update-comment-by-id.input-dto';
+import { PostOutputDTO } from '../../posts/routes/output-dto/post.output-dto';
+import { UserOutputDTO } from '../../users/routes/output-dto/user.output-dto';
 
 /*Сервис для работы с комментариями.*/
 @injectable()

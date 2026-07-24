@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { SETTINGS } from '../../../core/settings/settings';
 import { SessionDBType } from '../types/session-db.type';
+import { SETTINGS } from '../../../core/settings/settings';
 
 /*Схема для сессии в БД.*/
 const SessionSchema = new mongoose.Schema<SessionDBType>({

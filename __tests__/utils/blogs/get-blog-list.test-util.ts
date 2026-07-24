@@ -1,8 +1,8 @@
 import { Express } from 'express';
 import request from 'supertest';
-import { SETTINGS } from '../../../src/core/settings/settings';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { PaginatedBlogListOutputDTO } from '../../../src/blogs/routes/output-dto/paginated-blog-list.output-dto';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 export const getBlogList = async (
   app: Express,

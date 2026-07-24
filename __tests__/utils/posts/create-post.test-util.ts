@@ -1,12 +1,12 @@
-import request from 'supertest';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
 import { Express } from 'express';
-import { generateBasicAuthToken } from '../auth/generate-admin-auth-token.test-util';
-import { getCreatePostInputDTO } from './input-dto-utils/get-create-post-input-dto.test-util';
-import { SETTINGS } from '../../../src/core/settings/settings';
+import request from 'supertest';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { CreatePostInputDTO } from '../../../src/posts/routes/input-dto/create-post.input-dto';
 import { PostOutputDTO } from '../../../src/posts/routes/output-dto/post.output-dto';
+import { generateBasicAuthToken } from '../auth/generate-admin-auth-token.test-util';
 import { createBlog } from '../blogs/create-blog.test-util';
+import { getCreatePostInputDTO } from './input-dto-utils/get-create-post-input-dto.test-util';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 export const createPost = async (
   app: Express,

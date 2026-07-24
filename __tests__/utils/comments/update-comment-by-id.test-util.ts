@@ -1,9 +1,9 @@
 import { Express } from 'express';
 import request from 'supertest';
-import { SETTINGS } from '../../../src/core/settings/settings';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
-import { getUpdateCommentInputDTO } from './input-dto-utils/get-update-comment-input-dto.test-util';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { UpdateCommentByIdInputDTO } from '../../../src/comments/routes/input-dto/update-comment-by-id.input-dto';
+import { getUpdateCommentInputDTO } from './input-dto-utils/get-update-comment-input-dto.test-util';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 export const updateCommentById = async (
   app: Express,

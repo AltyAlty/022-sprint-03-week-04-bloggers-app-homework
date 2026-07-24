@@ -1,10 +1,10 @@
-import { NextFunction, Request, Response } from 'express';
-import { RequestRateLimitLogType } from '../../application/types/request-rate-limit-log.type';
-import { HttpStatuses } from '../../../core/types/http-statuses';
-import { SETTINGS } from '../../../core/settings/settings';
-import { inject, injectable } from 'inversify';
 import { TYPES } from '../../../ioc/types';
+import { NextFunction, Request, Response } from 'express';
+import { inject, injectable } from 'inversify';
 import { AuthRepository } from '../../repositories/auth.repository';
+import { HttpStatuses } from '../../../core/types/http-statuses.type';
+import { RequestRateLimitLogType } from '../../application/types/request-rate-limit-log.type';
+import { SETTINGS } from '../../../core/settings/settings';
 
 /*Guard-middleware для лимитирования запросов.*/
 @injectable()

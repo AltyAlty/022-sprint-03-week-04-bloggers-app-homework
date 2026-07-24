@@ -1,10 +1,10 @@
-import { SETTINGS } from '../../src/core/settings/settings';
-import { invalidUserIds } from './users.test-data';
-import { invalidDeviceIds } from './security-devices.test-data';
-import { ObjectId } from 'mongodb';
 import { randomUUID } from 'crypto';
 import { add } from 'date-fns/add';
+import { ObjectId } from 'mongodb';
 import { JwtAdapter } from '../../src/auth/adapters/jwt.adapter';
+import { invalidDeviceIds } from './security-devices.test-data';
+import { invalidUserIds } from './users.test-data';
+import { SETTINGS } from '../../src/core/settings/settings';
 
 /*В тестах создаем локальный экземпляр, так как:
 1. Тестовые данные будут полностью независимы от того, как сконфигурирован контейнер в самом приложении.

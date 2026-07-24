@@ -1,9 +1,9 @@
-import { SecurityDeviceType } from '../application/types/security-device.type';
-import { DeleteResult } from 'mongodb';
-import { SecurityDeviceDBType } from './types/security-device-db.type';
 import { injectable } from 'inversify';
-import { SecurityDeviceModel } from './models/security-device.model';
+import { DeleteResult } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
+import { SecurityDeviceModel } from './models/security-device.model';
+import { SecurityDeviceType } from '../application/types/security-device.type';
+import { SecurityDeviceDBType } from './types/security-device-db.type';
 
 /*Репозиторий для работы с устройствами пользователей в БД.*/
 @injectable()

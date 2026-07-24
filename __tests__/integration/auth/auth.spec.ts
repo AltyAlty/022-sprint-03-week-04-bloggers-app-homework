@@ -1,15 +1,22 @@
-import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
-import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
-import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
+import { container } from '../../../src/ioc/container';
+import { TYPES } from '../../../src/ioc/types';
 import { NodemailerAdapter } from '../../../src/auth/adapters/nodemailer.adapter';
 import { AuthService } from '../../../src/auth/application/auth.service';
-import { ResultStatuses } from '../../../src/core/types/result/result-statuses';
-import { emailExamples } from '../../../src/auth/email/email-examples';
+import { AuthRepository } from '../../../src/auth/repositories/auth.repository';
 import { UsersRepository } from '../../../src/users/repositories/users.repository';
-import { UserDBType } from '../../../src/users/repositories/types/user-db.type';
-import { confirmUserByCode } from '../../utils/auth/confirm-user-by-code.test-util';
+import { EmailConfirmationDBType } from '../../../src/auth/repositories/types/email-сonfirmation-db.type';
+import { RecoveryCodeDataDBType } from '../../../src/auth/repositories/types/recovery-code-data-db.type';
+import { SessionListDBType } from '../../../src/auth/repositories/types/session-list-db.type';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { Result } from '../../../src/core/types/result/result.type';
-import { createMockEmailAdapter } from '../../test-doubles/mocks';
+import { ResultStatuses } from '../../../src/core/types/result/result-statuses.type';
+import { UserDBType } from '../../../src/users/repositories/types/user-db.type';
+import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
+import { SecurityDeviceListOutputDTO } from '../../../src/security-devices/routes/output-dto/security-device-list.output-dto';
+import { UserOutputDTO } from '../../../src/users/routes/output-dto/user.output-dto';
+import { validUserAgents, validUUIDRegExp } from '../../test-data/auth.test-data';
+import { validUserPasswords } from '../../test-data/users.test-data';
+import { createMockEmailAdapter } from '../../test-doubles/mocks.test-util';
 import {
   createAuthRepositoryCreateRecoveryPasswordCodeDataSpy,
   createAuthRepositoryDeleteAllRecoveryCodesDataByUserIdSpy,
@@ -20,22 +27,15 @@ import {
   createUsersServiceConfirmByCodeSpy,
   createUsersServiceCreateSpy,
   createUsersServiceUpdatePasswordByRecoveryCodeSpy,
-} from '../../test-doubles/spies';
-import { validUserAgents, validUUIDRegExp } from '../../test-data/auth.test-data';
-import { EmailConfirmationDBType } from '../../../src/auth/repositories/types/email-сonfirmation-db.type';
-import { AuthRepository } from '../../../src/auth/repositories/auth.repository';
-import { UserOutputDTO } from '../../../src/users/routes/output-dto/user.output-dto';
-import { createUser } from '../../utils/users/create-user.test-util';
-import { RecoveryCodeDataDBType } from '../../../src/auth/repositories/types/recovery-code-data-db.type';
-import { setNewPasswordByRecoveryCode } from '../../utils/auth/set-new-password-by-recovery-code.test-util';
-import { validUserPasswords } from '../../test-data/users.test-data';
-import { SecurityDeviceListOutputDTO } from '../../../src/security-devices/routes/output-dto/security-device-list.output-dto';
-import { getSecurityDeviceList } from '../../utils/security-devices/get-security-device-list.test-util';
+} from '../../test-doubles/spies.test-util';
+import { confirmUserByCode } from '../../utils/auth/confirm-user-by-code.test-util';
 import { loginUserReturnAccessAndRefreshTokens } from '../../utils/auth/login-user-return-access-and-refresh-tokens.test-util';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
-import { container } from '../../../src/ioc/container';
-import { TYPES } from '../../../src/ioc/types';
-import { SessionListDBType } from '../../../src/auth/repositories/types/session-list-db.type';
+import { setNewPasswordByRecoveryCode } from '../../utils/auth/set-new-password-by-recovery-code.test-util';
+import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
+import { getSecurityDeviceList } from '../../utils/security-devices/get-security-device-list.test-util';
+import { createUser } from '../../utils/users/create-user.test-util';
+import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
+import { emailExamples } from '../../../src/auth/email/email-examples';
 
 describe('Auth', () => {
   const app = doBeforeTestsWithMongoMemoryServer();

@@ -1,12 +1,8 @@
-import { SETTINGS } from '../../../src/core/settings/settings';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
-import { createUser } from '../../utils/users/create-user.test-util';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
-import { UserOutputDTO } from '../../../src/users/routes/output-dto/user.output-dto';
-import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
 import { PaginatedUserListOutputDTO } from '../../../src/users/routes/output-dto/paginated-user-list.output-dto';
-import { getUserList } from '../../utils/users/get-user-list.test-util';
-import { deleteUserById } from '../../utils/users/delete-user-by-id.test-util';
+import { UserOutputDTO } from '../../../src/users/routes/output-dto/user.output-dto';
+import { invalidBasicAuthTokens } from '../../test-data/auth.test-data';
 import {
   invalidUserEmails,
   invalidUserIds,
@@ -19,8 +15,12 @@ import {
   validUserLogins,
   validUsersPaginationSettings,
 } from '../../test-data/users.test-data';
+import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
+import { createUser } from '../../utils/users/create-user.test-util';
+import { deleteUserById } from '../../utils/users/delete-user-by-id.test-util';
+import { getUserList } from '../../utils/users/get-user-list.test-util';
 import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
-import { invalidBasicAuthTokens } from '../../test-data/auth.test-data';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 describe('Users API Validation', () => {
   const app = doBeforeTestsWithMongoMemoryServer();

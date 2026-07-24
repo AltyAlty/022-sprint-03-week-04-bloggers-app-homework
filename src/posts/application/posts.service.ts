@@ -1,11 +1,19 @@
+import { lazyInject } from '../../ioc/decorators';
+import { TYPES } from '../../ioc/types';
+import { inject, injectable } from 'inversify';
 import { BlogsService } from '../../blogs/application/blogs.service';
 import { CommentsService } from '../../comments/application/comments.service';
 import { PostsRepository } from '../repositories/posts.repository';
-import { PostType } from './types/post.type';
-import { CreatePostInputDTO } from '../routes/input-dto/create-post.input-dto';
-import { UpdatePostByIdInputDTO } from '../routes/input-dto/update-post-by-id.input-dto';
-import { ResultStatuses } from '../../core/types/result/result-statuses';
 import { Result } from '../../core/types/result/result.type';
+import { ResultStatuses } from '../../core/types/result/result-statuses.type';
+import { PostDBType } from '../repositories/types/post-db.type';
+import { PostLikeDataDBType } from '../repositories/types/post-like-data-db.type';
+import { PostListDBType } from '../repositories/types/post-list-db.type';
+import { PostType } from './types/post.type';
+import { PostLikeStatus } from './types/post-like-data.type';
+import { CreatePostInputDTO } from '../routes/input-dto/create-post.input-dto';
+import { PostLikeStatusInputDTO } from '../routes/input-dto/like-post-by-id.input-dto';
+import { UpdatePostByIdInputDTO } from '../routes/input-dto/update-post-by-id.input-dto';
 import { BlogOutputDTO } from '../../blogs/routes/output-dto/blog.output-dto';
 import {
   NewestPostLikeListOutputDTO,
@@ -13,14 +21,6 @@ import {
   PostOutputDTO,
 } from '../routes/output-dto/post.output-dto';
 import { mapFromPostDBTypeToPostOutputDTO } from '../repositories/mappers/map-from-post-db-type-to-post-output-dto.util';
-import { PostDBType } from '../repositories/types/post-db.type';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../ioc/types';
-import { lazyInject } from '../../ioc/decorators';
-import { PostListDBType } from '../repositories/types/post-list-db.type';
-import { PostLikeStatusInputDTO } from '../routes/input-dto/like-post-by-id.input-dto';
-import { PostLikeDataDBType } from '../repositories/types/post-like-data-db.type';
-import { PostLikeStatus } from './types/post-like-data.type';
 
 /*Сервис для работы с постами.*/
 @injectable()

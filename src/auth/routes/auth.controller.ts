@@ -1,24 +1,24 @@
-import { AuthService } from '../application/auth.service';
-import { UsersService } from '../../users/application/users.service';
-import { UsersQueryService } from '../../users/application/users.query-service';
+import { TYPES } from '../../ioc/types';
 import { Request, Response } from 'express';
-import { LoginDataInputDTO } from './input-dto/login-data.input-dto';
-import { LoginOutputDTO } from './output-dto/login.output-dto';
-import { ExtensionType, Result } from '../../core/types/result/result.type';
-import { HttpStatuses } from '../../core/types/http-statuses';
-import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status';
-import { errorsHandler } from '../../core/errors/errors.handler';
-import { CreateUserInputDTO } from '../../users/routes/input-dto/create-user.input-dto';
+import { inject, injectable } from 'inversify';
+import { UsersService } from '../../users/application/users.service';
+import { AuthService } from '../application/auth.service';
+import { UsersQueryService } from '../../users/application/users.query-service';
+import { HttpStatuses } from '../../core/types/http-statuses.type';
 import { IdType } from '../../core/types/id.type';
-import { MeOutputDTO } from './output-dto/me.output-dto';
-import { UserOutputDTO } from '../../users/routes/output-dto/user.output-dto';
+import { ExtensionType, Result } from '../../core/types/result/result.type';
+import { CreateUserInputDTO } from '../../users/routes/input-dto/create-user.input-dto';
+import { LoginDataInputDTO } from './input-dto/login-data.input-dto';
+import { PasswordRecoveryEmailInputDTO } from './input-dto/password-recovery-email.input-dto';
 import { RegistrationConfirmationCodeInputDTO } from './input-dto/registration-confirmation-code.input-dto';
 import { ResendConfirmationEmailInputDTO } from './input-dto/resend-confirmation-email.input-dto';
-import { RefreshAccessAndRefreshTokensOutputDTO } from './output-dto/refresh-token.output-dto';
-import { PasswordRecoveryEmailInputDTO } from './input-dto/password-recovery-email.input-dto';
 import { settingNewPasswordByRecoveryCodeInputDTO } from './input-dto/setting-new-password-by-recovery-code.input-dto';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../ioc/types';
+import { UserOutputDTO } from '../../users/routes/output-dto/user.output-dto';
+import { LoginOutputDTO } from './output-dto/login.output-dto';
+import { MeOutputDTO } from './output-dto/me.output-dto';
+import { RefreshAccessAndRefreshTokensOutputDTO } from './output-dto/refresh-token.output-dto';
+import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status.util';
+import { errorsHandler } from '../../core/errors/errors-handler.util';
 
 /*Контроллер для работы с аутентификацией и авторизацией.*/
 @injectable()

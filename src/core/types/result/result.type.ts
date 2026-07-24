@@ -1,4 +1,4 @@
-import { ResultStatuses } from './result-statuses';
+import { ResultStatuses } from './result-statuses.type';
 
 /*Тип для поля "ExtensionType" в ResultObject.*/
 export type ExtensionType = {

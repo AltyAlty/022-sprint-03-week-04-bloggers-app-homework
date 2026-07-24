@@ -1,11 +1,11 @@
+import { container } from '../../ioc/container';
+import { TYPES } from '../../ioc/types';
 import { body, ValidationChain } from 'express-validator';
+import { UsersRepository } from '../../users/repositories/users.repository';
+import { AuthRepository } from '../repositories/auth.repository';
 import { UserDBType } from '../../users/repositories/types/user-db.type';
 import { EmailConfirmationDBType } from '../repositories/types/email-сonfirmation-db.type';
 import { RecoveryCodeDataDBType } from '../repositories/types/recovery-code-data-db.type';
-import { container } from '../../ioc/container';
-import { TYPES } from '../../ioc/types';
-import { AuthRepository } from '../repositories/auth.repository';
-import { UsersRepository } from '../../users/repositories/users.repository';
 import { normalizeEmail } from '../../core/utils/email/normalize-email.util';
 
 /*Функция для валидации логина.*/

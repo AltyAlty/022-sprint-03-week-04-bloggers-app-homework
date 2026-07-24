@@ -1,16 +1,8 @@
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
-import { SETTINGS } from '../../../src/core/settings/settings';
-import { createBlog } from '../../utils/blogs/create-blog.test-util';
-import { getBlogById } from '../../utils/blogs/get-blog-by-id.test-util';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { BlogOutputDTO } from '../../../src/blogs/routes/output-dto/blog.output-dto';
-import { getBlogList } from '../../utils/blogs/get-blog-list.test-util';
-import { getPostListByBlogId } from '../../utils/blogs/get-post-list-by-blog-id.test-util';
-import { PaginatedPostListOutputDTO } from '../../../src/posts/routes/output-dto/paginated-post-list.output-dto';
 import { PaginatedBlogListOutputDTO } from '../../../src/blogs/routes/output-dto/paginated-blog-list.output-dto';
-import { createPostForBlog } from '../../utils/blogs/create-post-for-blog.test-util';
-import { updateBlogById } from '../../utils/blogs/update-blog-by-id.test-util';
-import { deleteBlogById } from '../../utils/blogs/delete-blog-by-id.test-util';
-import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
+import { PaginatedPostListOutputDTO } from '../../../src/posts/routes/output-dto/paginated-post-list.output-dto';
+import { invalidBasicAuthTokens } from '../../test-data/auth.test-data';
 import {
   invalidBlogDescriptions,
   invalidBlogIds,
@@ -27,7 +19,15 @@ import {
   invalidPostTitles,
   validPostsPaginationSettings,
 } from '../../test-data/posts.test-data';
-import { invalidBasicAuthTokens } from '../../test-data/auth.test-data';
+import { createBlog } from '../../utils/blogs/create-blog.test-util';
+import { createPostForBlog } from '../../utils/blogs/create-post-for-blog.test-util';
+import { deleteBlogById } from '../../utils/blogs/delete-blog-by-id.test-util';
+import { getBlogById } from '../../utils/blogs/get-blog-by-id.test-util';
+import { getBlogList } from '../../utils/blogs/get-blog-list.test-util';
+import { getPostListByBlogId } from '../../utils/blogs/get-post-list-by-blog-id.test-util';
+import { updateBlogById } from '../../utils/blogs/update-blog-by-id.test-util';
+import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 describe('Blogs API Validation', () => {
   const app = doBeforeTestsWithMongoMemoryServer();

@@ -1,8 +1,8 @@
-import request from 'supertest';
 import { Express } from 'express';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
-import { SETTINGS } from '../../../src/core/settings/settings';
+import request from 'supertest';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { BlogOutputDTO } from '../../../src/blogs/routes/output-dto/blog.output-dto';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 export const getBlogById = async (
   app: Express,

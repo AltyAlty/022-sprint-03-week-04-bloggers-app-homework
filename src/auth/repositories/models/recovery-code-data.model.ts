@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { SETTINGS } from '../../../core/settings/settings';
 import { RecoveryCodeDataDBType } from '../types/recovery-code-data-db.type';
+import { SETTINGS } from '../../../core/settings/settings';
 
 /*Схема для данных о коде восстановления пароля пользователя в БД.*/
 const RecoveryCodeDataSchema = new mongoose.Schema<RecoveryCodeDataDBType>({

@@ -1,5 +1,5 @@
-import { RecoveryCodeDataDBType } from '../types/recovery-code-data-db.type';
 import { RecoveryCodeDataType } from '../../application/types/recovery-code-data.type';
+import { RecoveryCodeDataDBType } from '../types/recovery-code-data-db.type';
 
 /*Функция для преобразования данных о коде восстановления пароля пользователя из БД в подготовленные для работы внутри
 приложения данные о коде восстановления пароля пользователя.*/

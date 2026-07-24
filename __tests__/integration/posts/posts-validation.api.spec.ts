@@ -1,22 +1,9 @@
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
-import { SETTINGS } from '../../../src/core/settings/settings';
-import { createBlog } from '../../utils/blogs/create-blog.test-util';
-import { createPost } from '../../utils/posts/create-post.test-util';
-import { BlogOutputDTO } from '../../../src/blogs/routes/output-dto/blog.output-dto';
-import { PostOutputDTO } from '../../../src/posts/routes/output-dto/post.output-dto';
-import { getPostById } from '../../utils/posts/get-post-by-id.test-util';
-import { createUser } from '../../utils/users/create-user.test-util';
-import { loginUserReturnAccessToken } from '../../utils/auth/login-user-return-access-token.test-util';
-import { createCommentForPost } from '../../utils/posts/create-comment-for-post.test-util';
-import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
-import { getPostList } from '../../utils/posts/get-post-list.test-util';
-import { PaginatedPostListOutputDTO } from '../../../src/posts/routes/output-dto/paginated-post-list.output-dto';
-import { updatePostById } from '../../utils/posts/update-post-by-id.test-util';
-import { deletePostById } from '../../utils/posts/delete-post-by-id.test-util';
-import { getCommentListByPostId } from '../../utils/posts/get-comment-list-by-post-id.test-util';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
-import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
+import { BlogOutputDTO } from '../../../src/blogs/routes/output-dto/blog.output-dto';
 import { PaginatedCommentListOutputDTO } from '../../../src/comments/routes/output-dto/paginated-comment-list.output-dto';
+import { PaginatedPostListOutputDTO } from '../../../src/posts/routes/output-dto/paginated-post-list.output-dto';
+import { PostOutputDTO } from '../../../src/posts/routes/output-dto/post.output-dto';
 import {
   invalidAccessTokens,
   invalidBasicAuthTokens,
@@ -26,6 +13,11 @@ import {
 } from '../../test-data/auth.test-data';
 import { invalidBlogIds } from '../../test-data/blogs.test-data';
 import {
+  invalidCommentContents,
+  invalidCommentsPaginationSettings,
+  validCommentsPaginationSettings,
+} from '../../test-data/comments.test-data';
+import {
   invalidPostContents,
   invalidPostIds,
   invalidPostShortDescriptions,
@@ -34,11 +26,19 @@ import {
   validPostIds,
   validPostsPaginationSettings,
 } from '../../test-data/posts.test-data';
-import {
-  invalidCommentContents,
-  invalidCommentsPaginationSettings,
-  validCommentsPaginationSettings,
-} from '../../test-data/comments.test-data';
+import { loginUserReturnAccessToken } from '../../utils/auth/login-user-return-access-token.test-util';
+import { createBlog } from '../../utils/blogs/create-blog.test-util';
+import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
+import { createCommentForPost } from '../../utils/posts/create-comment-for-post.test-util';
+import { createPost } from '../../utils/posts/create-post.test-util';
+import { deletePostById } from '../../utils/posts/delete-post-by-id.test-util';
+import { getCommentListByPostId } from '../../utils/posts/get-comment-list-by-post-id.test-util';
+import { getPostById } from '../../utils/posts/get-post-by-id.test-util';
+import { getPostList } from '../../utils/posts/get-post-list.test-util';
+import { updatePostById } from '../../utils/posts/update-post-by-id.test-util';
+import { createUser } from '../../utils/users/create-user.test-util';
+import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 describe('Posts API Validation', () => {
   const app = doBeforeTestsWithMongoMemoryServer();

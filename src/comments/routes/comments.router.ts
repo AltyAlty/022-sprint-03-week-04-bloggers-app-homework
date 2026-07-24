@@ -1,16 +1,16 @@
-import { Router } from 'express';
-import { idValidation } from '../../core/middlewares/validation/params-id-validation.middlewares';
-import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
-import {
-  likeCommentInputValidation,
-  updateCommentInputValidation,
-} from '../validation/comments-input-validation.middlewares';
-import { SETTINGS } from '../../core/settings/settings';
 import {
   accessTokenGuardMiddleware,
   commentsController,
   optionalAccessTokenGuardMiddleware,
 } from '../../ioc/composition-root';
+import { Router } from 'express';
+import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
+import { idValidation } from '../../core/middlewares/validation/params-id-validation.middlewares';
+import {
+  likeCommentInputValidation,
+  updateCommentInputValidation,
+} from '../validation/comments-input-validation.middlewares';
+import { SETTINGS } from '../../core/settings/settings';
 
 /*Роутер из Express.js для работы с комментариями.*/
 export const commentsRouter: Router = Router({});

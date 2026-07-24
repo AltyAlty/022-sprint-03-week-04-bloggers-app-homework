@@ -1,10 +1,10 @@
-import { CommentListDBType } from '../types/comment-list-db.type';
 import { CommentsQueryRepository } from '../comments.query-repository';
-import { CommentListOutputDTO } from '../../routes/output-dto/comment-list.output-dto';
-import { CommentLikeStatusOutputDTO, CommentOutputDTO } from '../../routes/output-dto/comment.output-dto';
-import { CommentLikeDataDBType } from '../types/comment-like-data-db.type';
-import { mapFromCommentDBTypeToCommentOutputDTO } from './map-from-comment-db-type-to-comment-output-dto.util';
 import { CommentDBType } from '../types/comment-db.type';
+import { CommentLikeDataDBType } from '../types/comment-like-data-db.type';
+import { CommentListDBType } from '../types/comment-list-db.type';
+import { CommentLikeStatusOutputDTO, CommentOutputDTO } from '../../routes/output-dto/comment.output-dto';
+import { CommentListOutputDTO } from '../../routes/output-dto/comment-list.output-dto';
+import { mapFromCommentDBTypeToCommentOutputDTO } from './map-from-comment-db-type-to-comment-output-dto.util';
 
 /*Функция для преобразования комментариев из БД в подготовленные для отправки клиенту без пагинации комментарии.*/
 export const mapFromCommentListDBTypeToCommentListOutputDTO = async (

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { PostLikeDataDBType } from '../types/post-like-data-db.type';
 import { PostLikeStatus } from '../../application/types/post-like-data.type';
+import { PostLikeDataDBType } from '../types/post-like-data-db.type';
 
 /*Схема для данных о лайке поста в БД.*/
 const PostLikeDataSchema = new mongoose.Schema<PostLikeDataDBType>({

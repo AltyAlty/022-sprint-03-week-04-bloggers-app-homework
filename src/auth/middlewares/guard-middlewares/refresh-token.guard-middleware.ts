@@ -1,17 +1,17 @@
-import { NextFunction, Request, Response } from 'express';
-import { HttpStatuses } from '../../../core/types/http-statuses';
-import { SETTINGS } from '../../../core/settings/settings';
-import { IdType } from '../../../core/types/id.type';
-import { SessionDBType } from '../../repositories/types/session-db.type';
-import { SecurityDeviceDBType } from '../../../security-devices/repositories/types/security-device-db.type';
-import { UserDBType } from '../../../users/repositories/types/user-db.type';
-import { ObjectId } from 'mongodb';
-import { inject, injectable } from 'inversify';
 import { TYPES } from '../../../ioc/types';
+import { NextFunction, Request, Response } from 'express';
+import { inject, injectable } from 'inversify';
+import { ObjectId } from 'mongodb';
 import { JwtAdapter } from '../../adapters/jwt.adapter';
+import { SecurityDevicesRepository } from '../../../security-devices/repositories/security-devices.repository';
 import { UsersRepository } from '../../../users/repositories/users.repository';
 import { AuthRepository } from '../../repositories/auth.repository';
-import { SecurityDevicesRepository } from '../../../security-devices/repositories/security-devices.repository';
+import { HttpStatuses } from '../../../core/types/http-statuses.type';
+import { IdType } from '../../../core/types/id.type';
+import { SecurityDeviceDBType } from '../../../security-devices/repositories/types/security-device-db.type';
+import { UserDBType } from '../../../users/repositories/types/user-db.type';
+import { SessionDBType } from '../../repositories/types/session-db.type';
+import { SETTINGS } from '../../../core/settings/settings';
 
 /*Guard-middleware для проверки RT.*/
 @injectable()

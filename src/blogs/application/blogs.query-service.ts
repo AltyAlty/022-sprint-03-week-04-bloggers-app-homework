@@ -1,15 +1,15 @@
+import { TYPES } from '../../ioc/types';
+import { inject, injectable } from 'inversify';
 import { BlogsQueryRepository } from '../repositories/blogs.query-repository';
+import { Result } from '../../core/types/result/result.type';
+import { ResultStatuses } from '../../core/types/result/result-statuses.type';
+import { BlogDBType } from '../repositories/types/blog-db.type';
+import { BlogListDBType } from '../repositories/types/blog-list-db.type';
 import { GetBlogListQueryInputDTO } from '../routes/input-dto/query/get-blog-list-query.input-dto';
-import { mapFromBlogListDBTypeToPaginatedBlogListOutputDTO } from '../repositories/mappers/map-from-blog-list-db-type-to-paginated-blog-list-output-dto.util';
+import { BlogOutputDTO } from '../routes/output-dto/blog.output-dto';
 import { PaginatedBlogListOutputDTO } from '../routes/output-dto/paginated-blog-list.output-dto';
 import { mapFromBlogDBTypeToBlogOutputDTO } from '../repositories/mappers/map-from-blog-db-type-to-blog-output-dto.util';
-import { BlogOutputDTO } from '../routes/output-dto/blog.output-dto';
-import { ResultStatuses } from '../../core/types/result/result-statuses';
-import { Result } from '../../core/types/result/result.type';
-import { BlogDBType } from '../repositories/types/blog-db.type';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../ioc/types';
-import { BlogListDBType } from '../repositories/types/blog-list-db.type';
+import { mapFromBlogListDBTypeToPaginatedBlogListOutputDTO } from '../repositories/mappers/map-from-blog-list-db-type-to-paginated-blog-list-output-dto.util';
 
 /*Query-сервис для работы с блогами.*/
 @injectable()

@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import { matchedData } from 'express-validator';
-import { applyDefaultPaginationSettings } from './apply-default-pagination-settings';
 import { DefaultPaginationSettingsType } from '../../types/pagination/default-pagination-settings.type';
+import { applyDefaultPaginationSettings } from './apply-default-pagination-settings.util';
 
 /*Функция для извлечения и санитизации query-параметров при помощи функции "matchedData()" из библиотеки
 express-validator, применения к ним дефолтных настроек пагинации и возвращения полностью заполненного объекта типа

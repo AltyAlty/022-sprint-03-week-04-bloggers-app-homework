@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
-import { HttpStatuses } from '../../core/types/http-statuses';
 import { db } from '../../db/mongodb/mongo.db';
-import { errorsHandler } from '../../core/errors/errors.handler';
+import { Request, Response } from 'express';
 import { injectable } from 'inversify';
+import { HttpStatuses } from '../../core/types/http-statuses.type';
+import { errorsHandler } from '../../core/errors/errors-handler.util';
 
 /*Контроллер для тестирования приложения.*/
 @injectable()

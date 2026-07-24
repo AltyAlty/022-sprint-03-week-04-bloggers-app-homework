@@ -1,10 +1,10 @@
-import { BlogType } from '../application/types/blog.type';
-import { UpdateBlogByIdInputDTO } from '../routes/input-dto/update-blog-by-id.input-dto';
-import { BlogDBType } from './types/blog-db.type';
 import { injectable } from 'inversify';
-import { BlogModel } from './models/blog.model';
-import { HydratedDocument } from 'mongoose';
 import { DeleteResult } from 'mongodb';
+import { HydratedDocument } from 'mongoose';
+import { BlogModel } from './models/blog.model';
+import { BlogType } from '../application/types/blog.type';
+import { BlogDBType } from './types/blog-db.type';
+import { UpdateBlogByIdInputDTO } from '../routes/input-dto/update-blog-by-id.input-dto';
 
 /*Репозиторий для работы с блогами в БД.*/
 @injectable()

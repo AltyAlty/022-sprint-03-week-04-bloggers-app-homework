@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
-import { SecurityDeviceListDBType } from './types/security-device-list-db.type';
 import { SecurityDeviceModel } from './models/security-device.model';
+import { SecurityDeviceListDBType } from './types/security-device-list-db.type';
 
 /*Query-репозиторий для работы с устройствами пользователей в БД.*/
 @injectable()

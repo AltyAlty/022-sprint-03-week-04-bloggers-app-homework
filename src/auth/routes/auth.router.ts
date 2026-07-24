@@ -1,4 +1,12 @@
+import {
+  accessTokenGuardMiddleware,
+  authController,
+  refreshTokenGuardMiddleware,
+  requestRateLimitGuardMiddleware,
+} from '../../ioc/composition-root';
 import { Router } from 'express';
+import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
+import { createUserInputValidation } from '../../users/validation/users-input-validation.middlewares';
 import {
   authUserInputValidation,
   confirmationCodeValidation,
@@ -6,15 +14,7 @@ import {
   registrationEmailResendingValidation,
   setNewPasswordByRecoveryCodeInputValidation,
 } from '../validation/auth-input-validation.middlewares';
-import { inputValidationResultMiddleware } from '../../core/middlewares/validation/input-validation-result.middleware';
-import { createUserInputValidation } from '../../users/validation/users-input-validation.middlewares';
 import { SETTINGS } from '../../core/settings/settings';
-import {
-  accessTokenGuardMiddleware,
-  authController,
-  refreshTokenGuardMiddleware,
-  requestRateLimitGuardMiddleware,
-} from '../../ioc/composition-root';
 
 /*Роутер из Express.js для работы с аутентификацией и авторизацией.*/
 export const authRouter: Router = Router({});

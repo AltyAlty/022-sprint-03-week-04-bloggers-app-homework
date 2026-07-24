@@ -1,12 +1,12 @@
+import { TYPES } from '../../ioc/types';
+import { inject, injectable } from 'inversify';
 import { SecurityDevicesRepository } from '../repositories/security-devices.repository';
-import { SecurityDeviceType } from './types/security-device.type';
-import { SecurityDeviceDBType } from '../repositories/types/security-device-db.type';
 import { Result } from '../../core/types/result/result.type';
-import { ResultStatuses } from '../../core/types/result/result-statuses';
+import { ResultStatuses } from '../../core/types/result/result-statuses.type';
+import { SecurityDeviceDBType } from '../repositories/types/security-device-db.type';
+import { SecurityDeviceType } from './types/security-device.type';
 import { SecurityDeviceOutputDTO } from '../routes/output-dto/security-device.output-dto';
 import { mapFromSecurityDeviceDBTypeToSecurityDeviceOutputDTO } from '../repositories/mappers/map-from-security-device-db-type-to-security-device-output-dto.util';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../ioc/types';
 
 /*Сервис для работы с устройствами пользователей.*/
 @injectable()

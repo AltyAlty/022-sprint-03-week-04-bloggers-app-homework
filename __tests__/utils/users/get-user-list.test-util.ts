@@ -1,9 +1,9 @@
 import { Express } from 'express';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
-import { SETTINGS } from '../../../src/core/settings/settings';
 import request from 'supertest';
-import { generateBasicAuthToken } from '../auth/generate-admin-auth-token.test-util';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { PaginatedUserListOutputDTO } from '../../../src/users/routes/output-dto/paginated-user-list.output-dto';
+import { generateBasicAuthToken } from '../auth/generate-admin-auth-token.test-util';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 export const getUserList = async (
   app: Express,

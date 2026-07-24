@@ -1,19 +1,19 @@
+import { lazyInject } from '../../ioc/decorators';
+import { TYPES } from '../../ioc/types';
+import { inject, injectable } from 'inversify';
 import { Argon2Adapter } from '../../auth/adapters/argon2.adapter';
-import { CommentsService } from '../../comments/application/comments.service';
 import { AuthService } from '../../auth/application/auth.service';
+import { CommentsService } from '../../comments/application/comments.service';
 import { UsersRepository } from '../repositories/users.repository';
-import { UserType } from './types/user.type';
-import { CreateUserInputDTO } from '../routes/input-dto/create-user.input-dto';
-import { ResultStatuses } from '../../core/types/result/result-statuses';
-import { Result } from '../../core/types/result/result.type';
-import { UserOutputDTO } from '../routes/output-dto/user.output-dto';
-import { mapFromUserDBTypeToUserOutputDTO } from '../repositories/mappers/map-from-user-db-type-to-user-output-dto.util';
-import { UserDBType } from '../repositories/types/user-db.type';
 import { EmailConfirmationType } from '../../auth/application/types/email-сonfirmation.type';
 import { RecoveryCodeDataType } from '../../auth/application/types/recovery-code-data.type';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../ioc/types';
-import { lazyInject } from '../../ioc/decorators';
+import { Result } from '../../core/types/result/result.type';
+import { ResultStatuses } from '../../core/types/result/result-statuses.type';
+import { UserDBType } from '../repositories/types/user-db.type';
+import { UserType } from './types/user.type';
+import { CreateUserInputDTO } from '../routes/input-dto/create-user.input-dto';
+import { UserOutputDTO } from '../routes/output-dto/user.output-dto';
+import { mapFromUserDBTypeToUserOutputDTO } from '../repositories/mappers/map-from-user-db-type-to-user-output-dto.util';
 import { normalizeEmail } from '../../core/utils/email/normalize-email.util';
 
 /*Сервис для работы с пользователями.*/

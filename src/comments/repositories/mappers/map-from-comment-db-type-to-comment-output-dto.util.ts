@@ -1,5 +1,5 @@
-import { CommentLikeStatusOutputDTO, CommentOutputDTO } from '../../routes/output-dto/comment.output-dto';
 import { CommentDBType } from '../types/comment-db.type';
+import { CommentLikeStatusOutputDTO, CommentOutputDTO } from '../../routes/output-dto/comment.output-dto';
 
 /*Функция для преобразования комментария из БД в подготовленный для отправки клиенту комментарий.*/
 export const mapFromCommentDBTypeToCommentOutputDTO = (

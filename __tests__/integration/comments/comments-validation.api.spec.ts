@@ -1,18 +1,9 @@
-import { PostOutputDTO } from '../../../src/posts/routes/output-dto/post.output-dto';
-import { createPost } from '../../utils/posts/create-post.test-util';
-import { createUser } from '../../utils/users/create-user.test-util';
-import { loginUserReturnAccessToken } from '../../utils/auth/login-user-return-access-token.test-util';
-import { CommentOutputDTO } from '../../../src/comments/routes/output-dto/comment.output-dto';
-import { createCommentForPost } from '../../utils/posts/create-comment-for-post.test-util';
-import { getCommentById } from '../../utils/comments/get-comment-by-id.test-util';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
+import { CommentLikeStatusInputDTO } from '../../../src/comments/routes/input-dto/like-comment-by-id.input-dto';
 import { UpdateCommentByIdInputDTO } from '../../../src/comments/routes/input-dto/update-comment-by-id.input-dto';
-import { updateCommentById } from '../../utils/comments/update-comment-by-id.test-util';
-import { getUpdateCommentInputDTO } from '../../utils/comments/input-dto-utils/get-update-comment-input-dto.test-util';
-import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
 import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
-import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
-import { deleteCommentById } from '../../utils/comments/delete-comment-by-id.test-util';
+import { CommentOutputDTO } from '../../../src/comments/routes/output-dto/comment.output-dto';
+import { PostOutputDTO } from '../../../src/posts/routes/output-dto/post.output-dto';
 import {
   invalidAccessTokens,
   invalidUserAgents,
@@ -25,8 +16,17 @@ import {
   invalidCommentLikesData,
   validCommentIds,
 } from '../../test-data/comments.test-data';
+import { loginUserReturnAccessToken } from '../../utils/auth/login-user-return-access-token.test-util';
+import { deleteCommentById } from '../../utils/comments/delete-comment-by-id.test-util';
+import { getCommentById } from '../../utils/comments/get-comment-by-id.test-util';
+import { getUpdateCommentInputDTO } from '../../utils/comments/input-dto-utils/get-update-comment-input-dto.test-util';
 import { likeCommentById } from '../../utils/comments/like-comment-by-id.test-util';
-import { CommentLikeStatusInputDTO } from '../../../src/comments/routes/input-dto/like-comment-by-id.input-dto';
+import { updateCommentById } from '../../utils/comments/update-comment-by-id.test-util';
+import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
+import { createCommentForPost } from '../../utils/posts/create-comment-for-post.test-util';
+import { createPost } from '../../utils/posts/create-post.test-util';
+import { createUser } from '../../utils/users/create-user.test-util';
+import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
 
 describe('Comments API Validation', () => {
   const app = doBeforeTestsWithMongoMemoryServer();

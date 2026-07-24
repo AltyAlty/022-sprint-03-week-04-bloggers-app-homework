@@ -1,8 +1,8 @@
-import { CommentOutputDTO } from '../../../src/comments/routes/output-dto/comment.output-dto';
 import { Express } from 'express';
 import request from 'supertest';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
+import { CommentOutputDTO } from '../../../src/comments/routes/output-dto/comment.output-dto';
 import { SETTINGS } from '../../../src/core/settings/settings';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
 
 export const getCommentById = async (
   app: Express,

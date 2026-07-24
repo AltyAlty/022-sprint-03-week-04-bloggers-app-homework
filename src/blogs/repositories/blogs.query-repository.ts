@@ -1,12 +1,12 @@
-import { GetBlogListQueryInputDTO } from '../routes/input-dto/query/get-blog-list-query.input-dto';
-import { Filter } from 'mongodb';
-import { BlogType } from '../application/types/blog.type';
-import { BlogSortFieldQueryInputDTO } from '../routes/input-dto/query/blog-sort-field-query.input-dto';
-import { SortDirection } from '../../core/types/pagination/sort-direction';
-import { BlogDBType } from './types/blog-db.type';
 import { injectable } from 'inversify';
-import { BlogListDBType } from './types/blog-list-db.type';
+import { Filter } from 'mongodb';
 import { BlogModel } from './models/blog.model';
+import { SortDirection } from '../../core/types/pagination/sort-direction.type';
+import { BlogType } from '../application/types/blog.type';
+import { BlogDBType } from './types/blog-db.type';
+import { BlogListDBType } from './types/blog-list-db.type';
+import { BlogSortFieldQueryInputDTO } from '../routes/input-dto/query/blog-sort-field-query.input-dto';
+import { GetBlogListQueryInputDTO } from '../routes/input-dto/query/get-blog-list-query.input-dto';
 
 /*Query-репозиторий для работы с блогами в БД.*/
 @injectable()

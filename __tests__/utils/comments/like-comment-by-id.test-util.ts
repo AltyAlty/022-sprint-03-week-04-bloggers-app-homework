@@ -1,8 +1,8 @@
 import { Express } from 'express';
 import request from 'supertest';
-import { SETTINGS } from '../../../src/core/settings/settings';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { LikeCommentByIdInputDTO } from '../../../src/comments/routes/input-dto/like-comment-by-id.input-dto';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 export const likeCommentById = async (
   app: Express,

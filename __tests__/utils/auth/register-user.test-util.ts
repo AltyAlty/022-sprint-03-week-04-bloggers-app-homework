@@ -1,9 +1,9 @@
 import { Express } from 'express';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
 import request from 'supertest';
-import { SETTINGS } from '../../../src/core/settings/settings';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
 import { getCreateUserInputDTO } from '../users/input-dto-utils/get-create-user-input-dto.test-util';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 export const registerUser = async (
   app: Express,

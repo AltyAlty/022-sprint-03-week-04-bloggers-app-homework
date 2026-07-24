@@ -1,15 +1,15 @@
-import { UsersQueryRepository } from '../repositories/users.query-repository';
-import { GetUserListQueryInputDTO } from '../routes/input-dto/query/get-user-list-query.input-dto';
-import { mapFromUserListDBTypeToPaginatedUserListOutputDTO } from '../repositories/mappers/map-from-user-list-db-type-to-paginated-user-list-output-dto.util';
-import { PaginatedUserListOutputDTO } from '../routes/output-dto/paginated-user-list.output-dto';
-import { mapFromUserDBTypeToUserOutputDTO } from '../repositories/mappers/map-from-user-db-type-to-user-output-dto.util';
-import { UserOutputDTO } from '../routes/output-dto/user.output-dto';
-import { Result } from '../../core/types/result/result.type';
-import { ResultStatuses } from '../../core/types/result/result-statuses';
-import { UserDBType } from '../repositories/types/user-db.type';
-import { inject, injectable } from 'inversify';
 import { TYPES } from '../../ioc/types';
+import { inject, injectable } from 'inversify';
+import { UsersQueryRepository } from '../repositories/users.query-repository';
+import { Result } from '../../core/types/result/result.type';
+import { ResultStatuses } from '../../core/types/result/result-statuses.type';
+import { UserDBType } from '../repositories/types/user-db.type';
 import { UserListDBType } from '../repositories/types/user-list-db.type';
+import { GetUserListQueryInputDTO } from '../routes/input-dto/query/get-user-list-query.input-dto';
+import { PaginatedUserListOutputDTO } from '../routes/output-dto/paginated-user-list.output-dto';
+import { UserOutputDTO } from '../routes/output-dto/user.output-dto';
+import { mapFromUserDBTypeToUserOutputDTO } from '../repositories/mappers/map-from-user-db-type-to-user-output-dto.util';
+import { mapFromUserListDBTypeToPaginatedUserListOutputDTO } from '../repositories/mappers/map-from-user-list-db-type-to-paginated-user-list-output-dto.util';
 
 /*Query-сервис для работы с пользователями.*/
 @injectable()

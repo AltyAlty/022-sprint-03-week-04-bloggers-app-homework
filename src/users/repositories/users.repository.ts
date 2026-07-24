@@ -1,9 +1,9 @@
+import { injectable } from 'inversify';
 import { DeleteResult } from 'mongodb';
+import { HydratedDocument } from 'mongoose';
+import { UserModel } from './models/user.model';
 import { UserType } from '../application/types/user.type';
 import { UserDBType } from './types/user-db.type';
-import { injectable } from 'inversify';
-import { UserModel } from './models/user.model';
-import { HydratedDocument } from 'mongoose';
 import { normalizeEmail } from '../../core/utils/email/normalize-email.util';
 
 /*Репозиторий для работы с пользователями в БД.*/

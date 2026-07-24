@@ -1,16 +1,16 @@
-import express, { Express, Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import { HttpStatuses } from './core/types/http-statuses';
-import { setupSwagger } from './core/swagger/setup-swagger';
-import { SETTINGS } from './core/settings/settings';
+import express, { Express, Request, Response } from 'express';
+import { authRouter } from './auth/routes/auth.router';
 import { blogsRouter } from './blogs/routes/blogs.router';
+import { commentsRouter } from './comments/routes/comments.router';
 import { postsRouter } from './posts/routes/posts.router';
+import { securityDevicesRouter } from './security-devices/routes/security-devices.router';
 import { testingRouter } from './testing/routes/testing.router';
 import { usersRouter } from './users/routes/users.router';
-import { authRouter } from './auth/routes/auth.router';
-import { commentsRouter } from './comments/routes/comments.router';
-import cookieParser from 'cookie-parser';
-import { securityDevicesRouter } from './security-devices/routes/security-devices.router';
+import { HttpStatuses } from './core/types/http-statuses.type';
+import { setupSwagger } from './core/swagger/setup-swagger.util';
+import { SETTINGS } from './core/settings/settings';
 
 /*Функция для конфигурирования экземпляров приложения Express.js.*/
 export const setupApp = async (app: Express): Promise<Express> => {

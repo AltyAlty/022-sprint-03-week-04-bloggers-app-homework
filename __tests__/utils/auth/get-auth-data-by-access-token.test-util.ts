@@ -1,8 +1,8 @@
 import { Express } from 'express';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
 import request from 'supertest';
-import { SETTINGS } from '../../../src/core/settings/settings';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { MeOutputDTO } from '../../../src/auth/routes/output-dto/me.output-dto';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 export const getAuthDataByAccessToken = async (
   app: Express,

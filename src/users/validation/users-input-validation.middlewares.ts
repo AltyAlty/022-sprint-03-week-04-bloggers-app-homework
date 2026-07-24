@@ -1,8 +1,8 @@
-import { body, ValidationChain } from 'express-validator';
-import { UserDBType } from '../repositories/types/user-db.type';
 import { container } from '../../ioc/container';
-import { UsersRepository } from '../repositories/users.repository';
 import { TYPES } from '../../ioc/types';
+import { body, ValidationChain } from 'express-validator';
+import { UsersRepository } from '../repositories/users.repository';
+import { UserDBType } from '../repositories/types/user-db.type';
 import { normalizeEmail } from '../../core/utils/email/normalize-email.util';
 
 /*Middleware для проверки, что поле "login":

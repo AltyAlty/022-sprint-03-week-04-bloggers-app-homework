@@ -1,11 +1,11 @@
-import request from 'supertest';
 import { Express } from 'express';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
-import { generateBasicAuthToken } from '../auth/generate-admin-auth-token.test-util';
-import { SETTINGS } from '../../../src/core/settings/settings';
+import request from 'supertest';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
 import { CreateBlogInputDTO } from '../../../src/blogs/routes/input-dto/create-blog.input-dto';
 import { BlogOutputDTO } from '../../../src/blogs/routes/output-dto/blog.output-dto';
+import { generateBasicAuthToken } from '../auth/generate-admin-auth-token.test-util';
 import { getCreateBlogInputDTO } from './input-dto-utils/get-create-blog-input-dto.test-util';
+import { SETTINGS } from '../../../src/core/settings/settings';
 
 export const createBlog = async (
   app: Express,

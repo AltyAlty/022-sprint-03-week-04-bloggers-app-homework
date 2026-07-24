@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { HttpStatuses } from '../../../core/types/http-statuses';
-import { SETTINGS } from '../../../core/settings/settings';
 import { injectable } from 'inversify';
+import { HttpStatuses } from '../../../core/types/http-statuses.type';
+import { SETTINGS } from '../../../core/settings/settings';
 
 /*Guard-middleware для basic авторизации.*/
 @injectable()

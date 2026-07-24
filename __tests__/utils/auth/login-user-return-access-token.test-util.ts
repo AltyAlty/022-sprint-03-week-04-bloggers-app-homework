@@ -1,10 +1,10 @@
-import { LoginDataInputDTO } from '../../../src/auth/routes/input-dto/login-data.input-dto';
 import { Express } from 'express';
+import request from 'supertest';
+import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
+import { LoginDataInputDTO } from '../../../src/auth/routes/input-dto/login-data.input-dto';
+import { validUserAgents } from '../../test-data/auth.test-data';
 import { getLoginDataInputDTO } from './input-dto-utils/get-login-data-input-dto.test-util';
 import { SETTINGS } from '../../../src/core/settings/settings';
-import { HttpStatuses } from '../../../src/core/types/http-statuses';
-import request from 'supertest';
-import { validUserAgents } from '../../test-data/auth.test-data';
 
 export const loginUserReturnAccessToken = async (
   app: Express,

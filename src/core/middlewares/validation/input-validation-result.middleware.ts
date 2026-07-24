@@ -1,10 +1,10 @@
+import { NextFunction, Request, Response } from 'express';
 /*Импортируем функцию "validationResult()" из библиотеки express-validator для извлечения ошибок валидации из тела
 запроса.*/
 import { FieldValidationError, ValidationError, validationResult } from 'express-validator';
-import { NextFunction, Request, Response } from 'express';
-import { HttpStatuses } from '../../types/http-statuses';
-import { ValidationErrorListOutputDTO } from '../../types/validation/validation-error-list.output-dto';
+import { HttpStatuses } from '../../types/http-statuses.type';
 import { ValidationErrorOutputDTO } from '../../types/validation/validation-error.output-dto';
+import { ValidationErrorListOutputDTO } from '../../types/validation/validation-error-list.output-dto';
 
 /*Функция для формирования объекта с сообщениями об ошибках валидации, отправляемых клиенту.*/
 export const createErrorMessages = (errors: ValidationErrorOutputDTO[]): ValidationErrorListOutputDTO => ({

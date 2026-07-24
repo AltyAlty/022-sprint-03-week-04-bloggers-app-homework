@@ -1,19 +1,19 @@
+import { TYPES } from '../../ioc/types';
 import { Request, Response } from 'express';
+import { inject, injectable } from 'inversify';
 import { UsersService } from '../application/users.service';
 import { UsersQueryService } from '../application/users.query-service';
-import { GetUserListQueryInputDTO } from './input-dto/query/get-user-list-query.input-dto';
-import { getSanitizedQueryInputWithDefaultPaginationSettings } from '../../core/utils/pagination/get-sanitized-query-input-with-default-pagination-settings';
-import { UserSortFieldQueryInputDTO } from './input-dto/query/user-sort-field-query.input-dto';
+import { HttpStatuses } from '../../core/types/http-statuses.type';
 import { ExtensionType, Result } from '../../core/types/result/result.type';
-import { HttpStatuses } from '../../core/types/http-statuses';
-import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status';
-import { errorsHandler } from '../../core/errors/errors.handler';
-import { PaginatedUserListOutputDTO } from './output-dto/paginated-user-list.output-dto';
 import { CreateUserInputDTO } from './input-dto/create-user.input-dto';
-import { UserOutputDTO } from './output-dto/user.output-dto';
+import { GetUserListQueryInputDTO } from './input-dto/query/get-user-list-query.input-dto';
+import { UserSortFieldQueryInputDTO } from './input-dto/query/user-sort-field-query.input-dto';
 import { DeleteUSerByIdUriInputDTO } from './input-dto/uri/delete-user-by-id-uri.input-dto';
-import { inject, injectable } from 'inversify';
-import { TYPES } from '../../ioc/types';
+import { PaginatedUserListOutputDTO } from './output-dto/paginated-user-list.output-dto';
+import { UserOutputDTO } from './output-dto/user.output-dto';
+import { mapFromResultStatusToHttpStatus } from '../../core/utils/result/mappers/map-from-result-status-to-http-status.util';
+import { errorsHandler } from '../../core/errors/errors-handler.util';
+import { getSanitizedQueryInputWithDefaultPaginationSettings } from '../../core/utils/pagination/get-sanitized-query-input-with-default-pagination-settings.util';
 
 /*Контроллер для работы с пользователями.*/
 @injectable()
