@@ -4,4 +4,5 @@ export type SecurityDeviceType = {
   title: string;
   ip: string;
   lastActiveDate: Date;
+  userId: string;
 };

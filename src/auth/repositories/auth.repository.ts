@@ -48,9 +48,9 @@ export class AuthRepository {
   }
 
   /*Метод для создания данных о коде восстановления пароля пользователя в БД.*/
-  public async createRecoveryPasswordCodeData(newRequestRateLimitLog: RecoveryCodeDataType): Promise<string> {
+  public async createRecoveryPasswordCodeData(newRecoveryCodeData: RecoveryCodeDataType): Promise<string> {
     /*Просим модель "RecoveryCodeDataModel" создать данные о коде восстановления пароля пользователя в БД.*/
-    const recoveryCodeData: HydratedDocument<RecoveryCodeDataType> = new RecoveryCodeDataModel(newRequestRateLimitLog);
+    const recoveryCodeData: HydratedDocument<RecoveryCodeDataType> = new RecoveryCodeDataModel(newRecoveryCodeData);
     await recoveryCodeData.save();
     /*Возвращаем ID созданных данных о коде восстановления пароля пользователя.*/
     return recoveryCodeData._id.toString();

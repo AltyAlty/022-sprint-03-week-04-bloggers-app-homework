@@ -75,9 +75,9 @@ export class SecurityDevicesService {
   }
 
   /*Метод для удаления всех устройств пользователя, кроме текущего.*/
-  public async deleteAllExceptCurrentDevice(id: string): Promise<Result<{}>> {
+  public async deleteAllExceptCurrentDevice(id: string, userId: string): Promise<Result<{}>> {
     /*Просим репозиторий "securityDevicesRepository" удалить все устройства пользователя, кроме текущего, в БД.*/
-    await this.securityDevicesRepository.deleteAllExceptCurrentDevice(id);
+    await this.securityDevicesRepository.deleteAllExceptCurrentDevice(id, userId);
     /*Возвращаем ResultObject с информацией об удалении устройств пользователя.*/
     return { status: ResultStatuses.NoContent, data: {}, extensions: [] };
   }

@@ -72,6 +72,7 @@ export const validUserAgents = {
   userAgent_01: 'test-user-agent_01',
   userAgent_02: 'test-user-agent_02',
   userAgent_03: 'test-user-agent_03',
+  userAgent_04: 'test-user-agent_04',
 };
 
 export const invalidUserAgents = {

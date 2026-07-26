@@ -48,5 +48,11 @@ const SessionSchema = new mongoose.Schema<SessionDBType>({
   },
 });
 
+/*Поскольку часто выполняются операции поиска, обновления и удаления сессий (Equality по полям "userId" и "deviceId"),
+то создаем составной уникальный индекс для ускорения этих операций и гарантии, что у одного пользователя не может быть
+двух сессий на одном устройстве (проверки в коде могут пропустить такие случаи). Этот индекс также покрывает запросы
+только по полю "userId" (правило префиксов).*/
+SessionSchema.index({ userId: 1, deviceId: 1 }, { unique: true });
+
 /*Модель для сессии в БД.*/
 export const SessionModel = mongoose.model<SessionDBType>('Session', SessionSchema, 'sessions');

@@ -28,7 +28,10 @@ const RequestRateLimitLogSchema = new mongoose.Schema<RequestRateLimitLogDBType>
   },
 });
 
-/*Используем составной индекс, чтобы ускорить работу метода "countDocuments()".*/
+/*Поскольку при каждом запросе к защищенным при помощи middleware "RequestRateLimitGuardMiddleware" эндпоинтам
+выполняется подсчет количества запросов с конкретного IP по конкретному URL за определенный период (Equality по полям
+"ip" и "url", Range по полю "timestamp"), то создаем составной индекс для ускорения этих операций подсчета методом
+"countDocuments()".*/
 RequestRateLimitLogSchema.index({ ip: 1, url: 1, timestamp: -1 });
 
 /*Модель для записи в журнале лимитов запросов в БД.*/

@@ -60,8 +60,11 @@ const CommentSchema = new mongoose.Schema<CommentDBType>({
   },
 });
 
-/*Создаем индекс для быстрого поиска по массиву с postId.*/
-CommentSchema.index({ postId: 1 });
+/*Поскольку часто выполняются операции чтения комментариев в каком-то посте по умолчанию с сортировкой по дате создания
+комментариев по убыванию (новые комментарии в начале), то создаем составной индекс для ускорения сортировки и более
+консистентной пагинации. Так как в "_id" вшита дата создания документа, то используем одинаковые направления для полей
+"createdAt" и "_id" индекса.*/
+CommentSchema.index({ postId: 1, createdAt: -1, _id: -1 });
 
 /*Модель для комментария в БД.*/
 export const CommentModel = mongoose.model<CommentDBType>('Comment', CommentSchema, 'comments');

@@ -101,7 +101,14 @@ export class AuthService {
     });
 
     /*Просим сервис "securityDevicesService" добавить устройство пользователя.*/
-    await this.securityDevicesService.create({ deviceId, title: deviceName, ip, lastActiveDate: refreshTokenIatDate });
+    await this.securityDevicesService.create({
+      deviceId,
+      title: deviceName,
+      ip,
+      lastActiveDate: refreshTokenIatDate,
+      userId,
+    });
+
     /*Возвращаем ResultObject с AT и RT.*/
     return { status: ResultStatuses.Ok, data: { accessToken, refreshToken }, extensions: [] };
   }
@@ -418,7 +425,7 @@ export class AuthService {
     /*Просим репозиторий "authRepository" удалить все сессии пользователя, кроме текущей, в БД.*/
     await this.authRepository.deleteSessionsExceptCurrentDevice(userId, deviceId);
     /*Просим сервис "securityDevicesService" удалить все устройства пользователя, кроме текущего.*/
-    await this.securityDevicesService.deleteAllExceptCurrentDevice(deviceId);
+    await this.securityDevicesService.deleteAllExceptCurrentDevice(deviceId, userId);
     /*Возвращаем ResultObject с информацией об отзыве сессий.*/
     return { status: ResultStatuses.NoContent, data: {}, extensions: [] };
   }

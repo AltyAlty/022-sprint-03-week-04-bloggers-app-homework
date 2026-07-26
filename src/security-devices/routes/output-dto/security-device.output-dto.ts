@@ -1,4 +1,7 @@
-import { SecurityDeviceType } from '../../application/types/security-device.type';
-
 /*Output DTO для устройства пользователя из сессии.*/
-export type SecurityDeviceOutputDTO = SecurityDeviceType;
+export type SecurityDeviceOutputDTO = {
+  deviceId: string;
+  title: string;
+  ip: string;
+  lastActiveDate: Date;
+};

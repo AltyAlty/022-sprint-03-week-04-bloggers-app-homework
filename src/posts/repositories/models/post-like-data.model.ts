@@ -23,7 +23,6 @@ const PostLikeDataSchema = new mongoose.Schema<PostLikeDataDBType>({
   login: {
     type: String,
     required: true,
-    unique: true,
     trim: true,
     minLength: 1,
     maxLength: 100,
@@ -42,10 +41,15 @@ const PostLikeDataSchema = new mongoose.Schema<PostLikeDataDBType>({
   },
 });
 
-/*Составной индекс для защиты от дубликатов данных о лайке от одного пользователя на пост.*/
+/*Поскольку часто выполняются операции поиска, обновления и удаления данных о лайке для конкретного поста и для
+конкретного пользователя (Equality по полям "postId" и "userId"), то создаем составной уникальный индекс для ускорения
+этих операций и гарантии, что на уровне БД один пользователь не сможет оставить более одного лайка на один и тот же пост
+(проверки в код могут пропустить такие случаи).*/
 PostLikeDataSchema.index({ postId: 1, userId: 1 }, { unique: true });
-/*Индекс для быстрых подсчетов лайков/дизлайков.*/
-PostLikeDataSchema.index({ postId: 1 });
+/*Поскольку для отображения постов часто требуется найти три последних лайка (фильтрация по полям "postId" и
+"likeStatus", затем сортировка по дате добавления по убыванию), создаем составной индекс для ускорения получения самых
+свежих данных о лайках постов без сканирования лишних документов.*/
+PostLikeDataSchema.index({ postId: 1, likeStatus: 1, addedAt: -1 });
 
 /*Модель для данных о лайке поста в БД.*/
 export const PostLikeDataModel = mongoose.model<PostLikeDataDBType>(

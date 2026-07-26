@@ -28,6 +28,12 @@ const EmailConfirmationSchema = new mongoose.Schema<EmailConfirmationDBType>({
   },
 });
 
+/*Следующие индексы стоит использовать, например, при большом наплыве новых пользователей:
+1. Поскольку при подтверждении регистрации выполняется поиск по коду подтверждения, то создаем индекс для ускорения этой
+операции: "EmailConfirmationSchema.index({ confirmationCode: 1 })".
+2. Поскольку выполняются операции поиска, обновления и удаления данных о подтверждении регистрации по ID пользователя,
+то создаем индекс для ускорения этих операций: "EmailConfirmationSchema.index({ userId: 1 })".*/
+
 /*Модель для данных о подтверждении регистрации пользователя в БД.*/
 export const EmailConfirmationModel = mongoose.model<EmailConfirmationDBType>(
   'EmailConfirmation',

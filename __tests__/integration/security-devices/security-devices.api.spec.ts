@@ -9,6 +9,7 @@ import { SecurityDeviceOutputDTO } from '../../../src/security-devices/routes/ou
 import { SecurityDeviceListOutputDTO } from '../../../src/security-devices/routes/output-dto/security-device-list.output-dto';
 import { UserOutputDTO } from '../../../src/users/routes/output-dto/user.output-dto';
 import { validUserAgents } from '../../test-data/auth.test-data';
+import { validUserEmails, validUserLogins, validUserPasswords } from '../../test-data/users.test-data';
 import { loginUserReturnAccessAndRefreshTokens } from '../../utils/auth/login-user-return-access-and-refresh-tokens.test-util';
 import { doBeforeTestsWithMongoMemoryServer } from '../../utils/common/do-before-tests.test-util';
 import { getSecurityDeviceList } from '../../utils/security-devices/get-security-device-list.test-util';
@@ -89,96 +90,192 @@ describe('Security Devices API', () => {
   });
 
   it('✅ 002 should revoke sessions except the current security device; 002. DEL /api/security/devices', async () => {
-    const createUserData: CreateUserInputDTO = getCreateUserInputDTO();
-    const createdUser: UserOutputDTO = await createUser(app, createUserData);
-    const createdUserId: string = createdUser.id;
-    const loginUserData: LoginDataInputDTO = { loginOrEmail: createUserData.login, password: createUserData.password };
+    const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
+
+    const createUserData_02: CreateUserInputDTO = {
+      login: validUserLogins.login_01,
+      password: validUserPasswords.password_01,
+      email: validUserEmails.email_01,
+    };
+
+    const createdUser_01: UserOutputDTO = await createUser(app, createUserData_01);
+    const createdUser_02: UserOutputDTO = await createUser(app, createUserData_02);
+    const createdUserId_01: string = createdUser_01.id;
+    const createdUserId_02: string = createdUser_02.id;
+
+    const loginUserData_01: LoginDataInputDTO = {
+      loginOrEmail: createUserData_01.login,
+      password: createUserData_01.password,
+    };
+
+    const loginUserData_02: LoginDataInputDTO = {
+      loginOrEmail: createUserData_02.login,
+      password: createUserData_02.password,
+    };
+
     const testUserAgent_01: string = validUserAgents.userAgent_01;
     const testUserAgent_02: string = validUserAgents.userAgent_02;
     const testUserAgent_03: string = validUserAgents.userAgent_03;
-    await loginUserReturnAccessAndRefreshTokens(app, testUserAgent_01, loginUserData);
+    const testUserAgent_04: string = validUserAgents.userAgent_04;
+    await loginUserReturnAccessAndRefreshTokens(app, testUserAgent_01, loginUserData_01);
 
-    const { refreshToken }: { refreshToken: string } = await loginUserReturnAccessAndRefreshTokens(
+    const { refreshToken: refreshToken_01 }: { refreshToken: string } = await loginUserReturnAccessAndRefreshTokens(
       app,
       testUserAgent_02,
-      loginUserData
+      loginUserData_01
     );
 
-    await loginUserReturnAccessAndRefreshTokens(app, testUserAgent_03, loginUserData);
+    await loginUserReturnAccessAndRefreshTokens(app, testUserAgent_03, loginUserData_01);
 
-    const decodedRefreshTokenPayload: { userId: string; deviceId: string; iat: number; exp: number } | null =
-      await jwtAdapter.decodeRefreshToken(refreshToken);
+    const { refreshToken: refreshToken_02 }: { refreshToken: string } = await loginUserReturnAccessAndRefreshTokens(
+      app,
+      testUserAgent_04,
+      loginUserData_02
+    );
 
-    const decodedRefreshTokenPayloadUserId: string | undefined = decodedRefreshTokenPayload?.userId;
-    const decodedRefreshTokenPayloadDeviceId: string | undefined = decodedRefreshTokenPayload?.deviceId;
-    const decodedRefreshTokenPayloadIat: number | undefined = decodedRefreshTokenPayload?.iat;
-    const decodedRefreshTokenPayloadExp: number | undefined = decodedRefreshTokenPayload?.exp;
-    const decodedRefreshTokenPayloadIatDate: Date = new Date(decodedRefreshTokenPayloadIat! * 1000);
-    const decodedRefreshTokenPayloadExpDate: Date = new Date(decodedRefreshTokenPayloadExp! * 1000);
+    const decodedRefreshTokenPayload_01: { userId: string; deviceId: string; iat: number; exp: number } | null =
+      await jwtAdapter.decodeRefreshToken(refreshToken_01);
 
-    await revokeSessionsExceptCurrentDevice(app, testUserAgent_02, refreshToken);
+    const decodedRefreshTokenPayloadUserId_01: string | undefined = decodedRefreshTokenPayload_01?.userId;
+    const decodedRefreshTokenPayloadDeviceId_01: string | undefined = decodedRefreshTokenPayload_01?.deviceId;
+    const decodedRefreshTokenPayloadIat_01: number | undefined = decodedRefreshTokenPayload_01?.iat;
+    const decodedRefreshTokenPayloadExp_01: number | undefined = decodedRefreshTokenPayload_01?.exp;
+    const decodedRefreshTokenPayloadIatDate_01: Date = new Date(decodedRefreshTokenPayloadIat_01! * 1000);
+    const decodedRefreshTokenPayloadExpDate_01: Date = new Date(decodedRefreshTokenPayloadExp_01! * 1000);
 
-    const sessions: SessionListDBType = await authRepository.findAllSessionsByUserId(createdUserId);
-    const session = sessions[0];
-    const sessionUserId: string = session.userId;
-    const sessionDeviceId: string = session.deviceId;
-    const sessionDeviceName: string = session.deviceName;
-    const sessionIp: string = session.ip;
-    const sessionIat: Date = session.iat;
-    const sessionExp: Date = session.exp;
+    const decodedRefreshTokenPayload_02: { userId: string; deviceId: string; iat: number; exp: number } | null =
+      await jwtAdapter.decodeRefreshToken(refreshToken_02);
 
-    const getSecurityDeviceListResponse: SecurityDeviceListOutputDTO = await getSecurityDeviceList(
+    const decodedRefreshTokenPayloadUserId_02: string | undefined = decodedRefreshTokenPayload_02?.userId;
+    const decodedRefreshTokenPayloadDeviceId_02: string | undefined = decodedRefreshTokenPayload_02?.deviceId;
+    const decodedRefreshTokenPayloadIat_02: number | undefined = decodedRefreshTokenPayload_02?.iat;
+    const decodedRefreshTokenPayloadExp_02: number | undefined = decodedRefreshTokenPayload_02?.exp;
+    const decodedRefreshTokenPayloadIatDate_02: Date = new Date(decodedRefreshTokenPayloadIat_02! * 1000);
+    const decodedRefreshTokenPayloadExpDate_02: Date = new Date(decodedRefreshTokenPayloadExp_02! * 1000);
+
+    await revokeSessionsExceptCurrentDevice(app, testUserAgent_02, refreshToken_01);
+
+    const sessions_01: SessionListDBType = await authRepository.findAllSessionsByUserId(createdUserId_01);
+    const session_01 = sessions_01[0];
+    const sessionUserId_01: string = session_01.userId;
+    const sessionDeviceId_01: string = session_01.deviceId;
+    const sessionDeviceName_01: string = session_01.deviceName;
+    const sessionIp_01: string = session_01.ip;
+    const sessionIat_01: Date = session_01.iat;
+    const sessionExp_01: Date = session_01.exp;
+    const sessions_02: SessionListDBType = await authRepository.findAllSessionsByUserId(createdUserId_02);
+    const session_02 = sessions_02[0];
+    const sessionUserId_02: string = session_02.userId;
+    const sessionDeviceId_02: string = session_02.deviceId;
+    const sessionDeviceName_02: string = session_02.deviceName;
+    const sessionIp_02: string = session_02.ip;
+    const sessionIat_02: Date = session_02.iat;
+    const sessionExp_02: Date = session_02.exp;
+
+    const getSecurityDeviceListResponse_01: SecurityDeviceListOutputDTO = await getSecurityDeviceList(
       app,
       testUserAgent_02,
-      refreshToken
+      refreshToken_01
     );
 
-    const securityDevice: SecurityDeviceOutputDTO | undefined = getSecurityDeviceListResponse[0];
-    const securityDeviceId: string = securityDevice.deviceId;
-    const securityDeviceTitle: string = securityDevice.title;
-    const securityDeviceIp: string = securityDevice.ip;
-    const securityDeviceLastActiveDate: Date = new Date(securityDevice.lastActiveDate);
-    expect(sessions).toBeInstanceOf(Array);
-    expect(sessions.length).toBe(1);
-    expect(getSecurityDeviceListResponse).toBeInstanceOf(Array);
-    expect(getSecurityDeviceListResponse.length).toBe(1);
-    expect(sessionUserId).toBe(createdUserId);
-    expect(sessionUserId).toBe(decodedRefreshTokenPayloadUserId);
-    expect(sessionDeviceId).toBe(decodedRefreshTokenPayloadDeviceId);
-    expect(sessionDeviceId).toBe(securityDeviceId);
-    expect(sessionDeviceName).toBe(testUserAgent_02);
-    expect(sessionDeviceName).toBe(securityDeviceTitle);
-    expect(sessionIp).toBe(securityDeviceIp);
-    expect(sessionIat).toEqual(decodedRefreshTokenPayloadIatDate);
-    expect(sessionIat).toEqual(securityDeviceLastActiveDate);
-    expect(sessionExp).toEqual(decodedRefreshTokenPayloadExpDate);
+    const securityDevice_01: SecurityDeviceOutputDTO | undefined = getSecurityDeviceListResponse_01[0];
+    const securityDeviceId_01: string = securityDevice_01.deviceId;
+    const securityDeviceTitle_01: string = securityDevice_01.title;
+    const securityDeviceIp_01: string = securityDevice_01.ip;
+    const securityDeviceLastActiveDate_01: Date = new Date(securityDevice_01.lastActiveDate);
+
+    const getSecurityDeviceListResponse_02: SecurityDeviceListOutputDTO = await getSecurityDeviceList(
+      app,
+      testUserAgent_04,
+      refreshToken_02
+    );
+
+    const securityDevice_02: SecurityDeviceOutputDTO | undefined = getSecurityDeviceListResponse_02[0];
+    const securityDeviceId_02: string = securityDevice_02.deviceId;
+    const securityDeviceTitle_02: string = securityDevice_02.title;
+    const securityDeviceIp_02: string = securityDevice_02.ip;
+    const securityDeviceLastActiveDate_02: Date = new Date(securityDevice_02.lastActiveDate);
+    expect(sessions_01).toBeInstanceOf(Array);
+    expect(sessions_01.length).toBe(1);
+    expect(sessions_02).toBeInstanceOf(Array);
+    expect(sessions_02.length).toBe(1);
+    expect(getSecurityDeviceListResponse_01).toBeInstanceOf(Array);
+    expect(getSecurityDeviceListResponse_01.length).toBe(1);
+    expect(getSecurityDeviceListResponse_02).toBeInstanceOf(Array);
+    expect(getSecurityDeviceListResponse_02.length).toBe(1);
+    expect(sessionUserId_01).toBe(createdUserId_01);
+    expect(sessionUserId_01).toBe(decodedRefreshTokenPayloadUserId_01);
+    expect(sessionDeviceId_01).toBe(decodedRefreshTokenPayloadDeviceId_01);
+    expect(sessionDeviceId_01).toBe(securityDeviceId_01);
+    expect(sessionDeviceName_01).toBe(testUserAgent_02);
+    expect(sessionDeviceName_01).toBe(securityDeviceTitle_01);
+    expect(sessionIp_01).toBe(securityDeviceIp_01);
+    expect(sessionIat_01).toEqual(decodedRefreshTokenPayloadIatDate_01);
+    expect(sessionIat_01).toEqual(securityDeviceLastActiveDate_01);
+    expect(sessionExp_01).toEqual(decodedRefreshTokenPayloadExpDate_01);
+    expect(sessionUserId_02).toBe(createdUserId_02);
+    expect(sessionUserId_02).toBe(decodedRefreshTokenPayloadUserId_02);
+    expect(sessionDeviceId_02).toBe(decodedRefreshTokenPayloadDeviceId_02);
+    expect(sessionDeviceId_02).toBe(securityDeviceId_02);
+    expect(sessionDeviceName_02).toBe(testUserAgent_04);
+    expect(sessionDeviceName_02).toBe(securityDeviceTitle_02);
+    expect(sessionIp_02).toBe(securityDeviceIp_02);
+    expect(sessionIat_02).toEqual(decodedRefreshTokenPayloadIatDate_02);
+    expect(sessionIat_02).toEqual(securityDeviceLastActiveDate_02);
+    expect(sessionExp_02).toEqual(decodedRefreshTokenPayloadExpDate_02);
   });
 
   it('✅ 003 should revoke a session by a correct ID of a security device; 003. DEL /api/security/devices/:id', async () => {
-    const createUserData: CreateUserInputDTO = getCreateUserInputDTO();
-    const createdUser: UserOutputDTO = await createUser(app, createUserData);
-    const createdUserId: string = createdUser.id;
-    const loginUserData: LoginDataInputDTO = { loginOrEmail: createUserData.login, password: createUserData.password };
+    const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
+
+    const createUserData_02: CreateUserInputDTO = {
+      login: validUserLogins.login_01,
+      password: validUserPasswords.password_01,
+      email: validUserEmails.email_01,
+    };
+
+    const createdUser_01: UserOutputDTO = await createUser(app, createUserData_01);
+    const createdUser_02: UserOutputDTO = await createUser(app, createUserData_02);
+    const createdUserId_01: string = createdUser_01.id;
+    const createdUserId_02: string = createdUser_02.id;
+
+    const loginUserData_01: LoginDataInputDTO = {
+      loginOrEmail: createUserData_01.login,
+      password: createUserData_01.password,
+    };
+
+    const loginUserData_02: LoginDataInputDTO = {
+      loginOrEmail: createUserData_02.login,
+      password: createUserData_02.password,
+    };
+
     const testUserAgent_01: string = validUserAgents.userAgent_01;
     const testUserAgent_02: string = validUserAgents.userAgent_02;
     const testUserAgent_03: string = validUserAgents.userAgent_03;
+    const testUserAgent_04: string = validUserAgents.userAgent_04;
 
     const { refreshToken: refreshToken_01 }: { refreshToken: string } = await loginUserReturnAccessAndRefreshTokens(
       app,
       testUserAgent_01,
-      loginUserData
+      loginUserData_01
     );
 
     const { refreshToken: refreshToken_02 }: { refreshToken: string } = await loginUserReturnAccessAndRefreshTokens(
       app,
       testUserAgent_02,
-      loginUserData
+      loginUserData_01
     );
 
     const { refreshToken: refreshToken_03 }: { refreshToken: string } = await loginUserReturnAccessAndRefreshTokens(
       app,
       testUserAgent_03,
-      loginUserData
+      loginUserData_01
+    );
+
+    const { refreshToken: refreshToken_04 }: { refreshToken: string } = await loginUserReturnAccessAndRefreshTokens(
+      app,
+      testUserAgent_04,
+      loginUserData_02
     );
 
     const decodedRefreshTokenPayload_01: { userId: string; deviceId: string; iat: number; exp: number } | null =
@@ -206,45 +303,79 @@ describe('Security Devices API', () => {
     const decodedRefreshTokenPayloadIatDate_03: Date = new Date(decodedRefreshTokenPayloadIat_03! * 1000);
     const decodedRefreshTokenPayloadExpDate_03: Date = new Date(decodedRefreshTokenPayloadExp_03! * 1000);
 
+    const decodedRefreshTokenPayload_04: { userId: string; deviceId: string; iat: number; exp: number } | null =
+      await jwtAdapter.decodeRefreshToken(refreshToken_04);
+
+    const decodedRefreshTokenPayloadUserId_04: string | undefined = decodedRefreshTokenPayload_04?.userId;
+    const decodedRefreshTokenPayloadDeviceId_04: string | undefined = decodedRefreshTokenPayload_04?.deviceId;
+    const decodedRefreshTokenPayloadIat_04: number | undefined = decodedRefreshTokenPayload_04?.iat;
+    const decodedRefreshTokenPayloadExp_04: number | undefined = decodedRefreshTokenPayload_04?.exp;
+    const decodedRefreshTokenPayloadIatDate_04: Date = new Date(decodedRefreshTokenPayloadIat_04! * 1000);
+    const decodedRefreshTokenPayloadExpDate_04: Date = new Date(decodedRefreshTokenPayloadExp_04! * 1000);
+
     await revokeSessionByDeviceId(app, testUserAgent_02, decodedRefreshTokenPayloadDeviceId_02!, refreshToken_02);
 
-    const sessions: SessionListDBType = await authRepository.findAllSessionsByUserId(createdUserId);
-    const session_01 = sessions[0];
+    const sessions_01: SessionListDBType = await authRepository.findAllSessionsByUserId(createdUserId_01);
+    const session_01 = sessions_01[0];
     const sessionUserId_01: string = session_01.userId;
     const sessionDeviceId_01: string = session_01.deviceId;
     const sessionDeviceName_01: string = session_01.deviceName;
     const sessionIp_01: string = session_01.ip;
     const sessionIat_01: Date = session_01.iat;
     const sessionExp_01: Date = session_01.exp;
-    const session_02 = sessions[1];
+    const session_02 = sessions_01[1];
     const sessionUserId_02: string = session_02.userId;
     const sessionDeviceId_02: string = session_02.deviceId;
     const sessionDeviceName_02: string = session_02.deviceName;
     const sessionIp_02: string = session_02.ip;
     const sessionIat_02: Date = session_02.iat;
     const sessionExp_02: Date = session_02.exp;
+    const sessions_02: SessionListDBType = await authRepository.findAllSessionsByUserId(createdUserId_02);
+    const session_03 = sessions_02[0];
+    const sessionUserId_03: string = session_03.userId;
+    const sessionDeviceId_03: string = session_03.deviceId;
+    const sessionDeviceName_03: string = session_03.deviceName;
+    const sessionIp_03: string = session_03.ip;
+    const sessionIat_03: Date = session_03.iat;
+    const sessionExp_03: Date = session_03.exp;
 
-    const getSecurityDeviceListResponse: SecurityDeviceListOutputDTO = await getSecurityDeviceList(
+    const getSecurityDeviceListResponse_01: SecurityDeviceListOutputDTO = await getSecurityDeviceList(
       app,
       testUserAgent_01,
       refreshToken_01
     );
 
-    const securityDevice_01: SecurityDeviceOutputDTO | undefined = getSecurityDeviceListResponse[0];
+    const securityDevice_01: SecurityDeviceOutputDTO | undefined = getSecurityDeviceListResponse_01[0];
     const securityDeviceId_01: string = securityDevice_01.deviceId;
     const securityDeviceTitle_01: string = securityDevice_01.title;
     const securityDeviceIp_01: string = securityDevice_01.ip;
     const securityDeviceLastActiveDate_01: Date = new Date(securityDevice_01.lastActiveDate);
-    const securityDevice_02: SecurityDeviceOutputDTO | undefined = getSecurityDeviceListResponse[1];
+    const securityDevice_02: SecurityDeviceOutputDTO | undefined = getSecurityDeviceListResponse_01[1];
     const securityDeviceId_02: string = securityDevice_02.deviceId;
     const securityDeviceTitle_02: string = securityDevice_02.title;
     const securityDeviceIp_02: string = securityDevice_02.ip;
     const securityDeviceLastActiveDate_02: Date = new Date(securityDevice_02.lastActiveDate);
-    expect(sessions).toBeInstanceOf(Array);
-    expect(sessions.length).toBe(2);
-    expect(getSecurityDeviceListResponse).toBeInstanceOf(Array);
-    expect(getSecurityDeviceListResponse.length).toBe(2);
-    expect(sessionUserId_01).toBe(createdUserId);
+
+    const getSecurityDeviceListResponse_02: SecurityDeviceListOutputDTO = await getSecurityDeviceList(
+      app,
+      testUserAgent_04,
+      refreshToken_04
+    );
+
+    const securityDevice_03: SecurityDeviceOutputDTO | undefined = getSecurityDeviceListResponse_02[0];
+    const securityDeviceId_03: string = securityDevice_03.deviceId;
+    const securityDeviceTitle_03: string = securityDevice_03.title;
+    const securityDeviceIp_03: string = securityDevice_03.ip;
+    const securityDeviceLastActiveDate_03: Date = new Date(securityDevice_03.lastActiveDate);
+    expect(sessions_01).toBeInstanceOf(Array);
+    expect(sessions_01.length).toBe(2);
+    expect(sessions_02).toBeInstanceOf(Array);
+    expect(sessions_02.length).toBe(1);
+    expect(getSecurityDeviceListResponse_01).toBeInstanceOf(Array);
+    expect(getSecurityDeviceListResponse_01.length).toBe(2);
+    expect(getSecurityDeviceListResponse_02).toBeInstanceOf(Array);
+    expect(getSecurityDeviceListResponse_02.length).toBe(1);
+    expect(sessionUserId_01).toBe(createdUserId_01);
     expect(sessionUserId_01).toBe(decodedRefreshTokenPayloadUserId_01);
     expect(sessionDeviceId_01).toBe(decodedRefreshTokenPayloadDeviceId_01);
     expect(sessionDeviceId_01).toBe(securityDeviceId_01);
@@ -254,7 +385,7 @@ describe('Security Devices API', () => {
     expect(sessionIat_01).toEqual(decodedRefreshTokenPayloadIatDate_01);
     expect(sessionIat_01).toEqual(securityDeviceLastActiveDate_01);
     expect(sessionExp_01).toEqual(decodedRefreshTokenPayloadExpDate_01);
-    expect(sessionUserId_02).toBe(createdUserId);
+    expect(sessionUserId_02).toBe(createdUserId_01);
     expect(sessionUserId_02).toBe(decodedRefreshTokenPayloadUserId_03);
     expect(sessionDeviceId_02).toBe(decodedRefreshTokenPayloadDeviceId_03);
     expect(sessionDeviceId_02).toBe(securityDeviceId_02);
@@ -264,5 +395,15 @@ describe('Security Devices API', () => {
     expect(sessionIat_02).toEqual(decodedRefreshTokenPayloadIatDate_03);
     expect(sessionIat_02).toEqual(securityDeviceLastActiveDate_02);
     expect(sessionExp_02).toEqual(decodedRefreshTokenPayloadExpDate_03);
+    expect(sessionUserId_03).toBe(createdUserId_02);
+    expect(sessionUserId_03).toBe(decodedRefreshTokenPayloadUserId_04);
+    expect(sessionDeviceId_03).toBe(decodedRefreshTokenPayloadDeviceId_04);
+    expect(sessionDeviceId_03).toBe(securityDeviceId_03);
+    expect(sessionDeviceName_03).toBe(testUserAgent_04);
+    expect(sessionDeviceName_03).toBe(securityDeviceTitle_03);
+    expect(sessionIp_03).toBe(securityDeviceIp_03);
+    expect(sessionIat_03).toEqual(decodedRefreshTokenPayloadIatDate_04);
+    expect(sessionIat_03).toEqual(securityDeviceLastActiveDate_03);
+    expect(sessionExp_03).toEqual(decodedRefreshTokenPayloadExpDate_04);
   });
 });

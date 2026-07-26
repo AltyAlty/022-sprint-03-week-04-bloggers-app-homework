@@ -28,6 +28,12 @@ const RecoveryCodeDataSchema = new mongoose.Schema<RecoveryCodeDataDBType>({
   },
 });
 
+/*Следующие индексы стоит использовать, например, при массовом восстановлении паролей пользователей после утечки данных:
+1. Поскольку при восстановлении пароля выполняются операции поиска и удаления по коду восстановления, то создаем индекс
+для ускорения этих операций: "RecoveryCodeDataSchema.index({ recoveryCode: 1 })".
+2. Поскольку выполняются операции поиска и удаления данных о коде восстановления по ID пользователя, то создаем индекс
+для ускорения этих операций: "RecoveryCodeDataSchema.index({ userId: 1 })".*/
+
 /*Модель для данных о коде восстановления пароля пользователя в БД.*/
 export const RecoveryCodeDataModel = mongoose.model<RecoveryCodeDataDBType>(
   'RecoveryCodeData',

@@ -49,9 +49,9 @@ export class SecurityDevicesRepository {
   }
 
   /*Метод для удаления всех устройств пользователя, кроме текущего, в БД.*/
-  public async deleteAllExceptCurrentDevice(id: string): Promise<number> {
+  public async deleteAllExceptCurrentDevice(id: string, userId: string): Promise<number> {
     /*Просим модель "SecurityDeviceModel" удалить все устройства пользователя, кроме текущего, в БД.*/
-    const result: DeleteResult = await SecurityDeviceModel.deleteMany({ deviceId: { $ne: id } });
+    const result: DeleteResult = await SecurityDeviceModel.deleteMany({ userId, deviceId: { $ne: id } });
     /*Возвращаем количество удаленных устройств пользователя.*/
     return result.deletedCount;
   }
