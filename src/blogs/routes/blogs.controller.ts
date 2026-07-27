@@ -146,12 +146,14 @@ export class BlogsController {
     try {
       /*Получаем ID блога.*/
       const blogId: string = req.params.blogId;
+      /*Получаем имя блога.*/
+      const blogName: string = req.blogName!;
 
       /*Просим сервис "postsService" создать пост в блоге.*/
-      const createdPostResult: Result<{ createdPostId: string } | null> = await this.postsService.create({
-        ...req.body,
-        blogId,
-      });
+      const createdPostResult: Result<{ createdPostId: string } | null> = await this.postsService.create(
+        { ...req.body, blogId },
+        blogName
+      );
 
       /*Получаем HTTP-статус операции по созданию поста в блоге.*/
       const createdPostResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(createdPostResult.status);

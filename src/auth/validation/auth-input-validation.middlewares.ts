@@ -9,28 +9,31 @@ import { RecoveryCodeDataDBType } from '../repositories/types/recovery-code-data
 import { normalizeEmail } from '../../core/utils/email/normalize-email.util';
 
 /*Функция для валидации логина.*/
-const validateLoginValue = (value: unknown): string => {
-  if (!value) throw new Error('Login is required');
-  if (typeof value !== 'string') throw new Error('Login must be a string');
-  const trimmed = value.trim();
-  if (trimmed.length === 0) throw new Error('Login must not be empty');
-  if (trimmed.length < 3 || trimmed.length > 10) throw new Error('Login must be between 3 and 10 characters');
+const validateLoginValue = (loginValue: unknown): string => {
+  if (!loginValue) throw new Error('Login is required');
+  if (typeof loginValue !== 'string') throw new Error('Login must be a string');
+  const trimmedLoginValue: string = loginValue.trim();
+  if (trimmedLoginValue.length === 0) throw new Error('Login must not be empty');
 
-  if (!/^[a-zA-Z0-9_-]*$/.test(trimmed)) {
+  if (trimmedLoginValue.length < 3 || trimmedLoginValue.length > 10) {
+    throw new Error('Login must be between 3 and 10 characters');
+  }
+
+  if (!/^[a-zA-Z0-9_-]*$/.test(trimmedLoginValue)) {
     throw new Error('Login can only contain letters, numbers, underscores and hyphens');
   }
 
-  return trimmed;
+  return trimmedLoginValue;
 };
 
 /*Функция для валидации email.*/
-export function validateEmailValue(value: unknown): string {
-  if (!value) throw new Error('Email is required');
-  if (typeof value !== 'string') throw new Error('Email must be a string');
-  const trimmed = value.trim();
-  if (trimmed.length === 0) throw new Error('Email must not be empty');
-  if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(trimmed)) throw new Error('Email is invalid');
-  return trimmed;
+export function validateEmailValue(emailValue: unknown): string {
+  if (!emailValue) throw new Error('Email is required');
+  if (typeof emailValue !== 'string') throw new Error('Email must be a string');
+  const trimmedEmailValue: string = emailValue.trim();
+  if (trimmedEmailValue.length === 0) throw new Error('Email must not be empty');
+  if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(trimmedEmailValue)) throw new Error('Email is invalid');
+  return trimmedEmailValue;
 }
 
 export const loginOrEmailValidation = body('loginOrEmail')
@@ -41,13 +44,13 @@ export const loginOrEmailValidation = body('loginOrEmail')
   .trim()
   .notEmpty()
   .withMessage('Field "loginOrEmail" must not be empty')
-  .custom(value => {
+  .custom(loginOrEmail => {
     /*Проверяем является ли поле "loginOrEmail" email-ом.*/
-    const isEmail = value.includes('@') && value.includes('.');
+    const isEmail: string = loginOrEmail.includes('@') && loginOrEmail.includes('.');
 
     /*Валидируем поле "loginOrEmail" либо как email, либо как логин.*/
-    if (isEmail) validateEmailValue(normalizeEmail(value));
-    else validateLoginValue(value);
+    if (isEmail) validateEmailValue(normalizeEmail(loginOrEmail));
+    else validateLoginValue(loginOrEmail);
 
     return true;
   });

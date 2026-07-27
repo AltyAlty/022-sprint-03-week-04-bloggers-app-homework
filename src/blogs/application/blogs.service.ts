@@ -1,4 +1,3 @@
-import { lazyInject } from '../../ioc/decorators';
 import { TYPES } from '../../ioc/types';
 import { inject, injectable } from 'inversify';
 import { PostsService } from '../../posts/application/posts.service';
@@ -15,8 +14,10 @@ import { mapFromBlogDBTypeToBlogOutputDTO } from '../repositories/mappers/map-fr
 /*Сервис для работы с блогами.*/
 @injectable()
 export class BlogsService {
-  @lazyInject(TYPES.PostsService) private readonly postsService!: PostsService;
-  constructor(@inject(TYPES.BlogsRepository) private readonly blogsRepository: BlogsRepository) {}
+  constructor(
+    @inject(TYPES.PostsService) private readonly postsService: PostsService,
+    @inject(TYPES.BlogsRepository) private readonly blogsRepository: BlogsRepository
+  ) {}
 
   /*Метод для добавления блога.*/
   public async create(dto: CreateBlogInputDTO): Promise<Result<{ createdBlogId: string }>> {

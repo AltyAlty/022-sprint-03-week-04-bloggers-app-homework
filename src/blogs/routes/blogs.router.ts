@@ -1,5 +1,6 @@
 import {
   basicAuthGuardMiddleware,
+  blogExistsMiddleware,
   blogsController,
   optionalAccessTokenGuardMiddleware,
 } from '../../ioc/composition-root';
@@ -40,6 +41,7 @@ blogsRouter
     blogIdValidation,
     paginationValidationMiddleware(PostSortFieldQueryInputDTO),
     inputValidationResultMiddleware,
+    blogExistsMiddleware,
     blogsController.getPostListByBlogIdHandler.bind(blogsController)
   )
   /*004. POST-запрос по добавлению поста в блог по ID, используя URI-параметры.*/
@@ -49,6 +51,7 @@ blogsRouter
     blogIdValidation,
     createPostForBlogInputValidation,
     inputValidationResultMiddleware,
+    blogExistsMiddleware,
     blogsController.createPostForBlogByBlogIdHandler.bind(blogsController)
   )
   /*005. GET-запрос по получению блога по ID, используя URI-параметры. При помощи ":" Express.js позволяет указывать

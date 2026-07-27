@@ -1,6 +1,5 @@
 import { TYPES } from '../../ioc/types';
 import { inject, injectable } from 'inversify';
-import { PostsQueryService } from '../../posts/application/posts.query-service';
 import { CommentsQueryRepository } from '../repositories/comments.query-repository';
 import { Result } from '../../core/types/result/result.type';
 import { ResultStatuses } from '../../core/types/result/result-statuses.type';
@@ -8,7 +7,6 @@ import { CommentDBType } from '../repositories/types/comment-db.type';
 import { CommentLikeDataDBType } from '../repositories/types/comment-like-data-db.type';
 import { CommentListDBType } from '../repositories/types/comment-list-db.type';
 import { GetCommentListByPostIdQueryInputDTO } from '../routes/input-dto/query/get-comment-list-by-post-id-query.input-dto';
-import { PostOutputDTO } from '../../posts/routes/output-dto/post.output-dto';
 import { CommentLikeStatusOutputDTO, CommentOutputDTO } from '../routes/output-dto/comment.output-dto';
 import { CommentListOutputDTO } from '../routes/output-dto/comment-list.output-dto';
 import { PaginatedCommentListOutputDTO } from '../routes/output-dto/paginated-comment-list.output-dto';
@@ -20,7 +18,6 @@ import { mapFromCommentListDBTypeToCommentListOutputDTO } from '../repositories/
 @injectable()
 export class CommentsQueryService {
   constructor(
-    @inject(TYPES.PostsQueryService) private readonly postsQueryService: PostsQueryService,
     @inject(TYPES.CommentsQueryRepository) private readonly commentsQueryRepository: CommentsQueryRepository
   ) {}
 
@@ -65,12 +62,7 @@ export class CommentsQueryService {
     queryDTO: GetCommentListByPostIdQueryInputDTO,
     userId?: string
   ): Promise<Result<{ paginatedCommentListOutput: PaginatedCommentListOutputDTO } | null>> {
-    /*Просим query-сервис "postsQueryService" найти пост по ID.*/
-    const postResult: Result<{ postOutput: PostOutputDTO } | null> = await this.postsQueryService.findById(postId);
-    /*Если пост не был найден, то возвращаем ResultObject с информацией об этом.*/
-    if (postResult.status !== ResultStatuses.Ok) return postResult as Result;
-
-    /*Если пост был найден, то просим query-репозиторий "commentsQueryRepository" найти комментарии по ID поста в БД.*/
+    /*Просим query-репозиторий "commentsQueryRepository" найти комментарии по ID поста в БД.*/
     const { items, totalCount }: { items: CommentListDBType; totalCount: number } =
       await this.commentsQueryRepository.findAllByPostId(postId, queryDTO);
 

@@ -95,10 +95,12 @@ export class PostsController {
       const postId: string = req.params.postId;
       /*Получаем ID пользователя.*/
       const userId: string = req.userId!.id;
+      /*Получаем логин пользователя.*/
+      const login: string = req.login!;
 
       /*Просим сервис "commentsService" создать комментарий в посте.*/
       const createdCommentResult: Result<{ createdCommentId: string } | null> =
-        await this.commentsService.createForPost(postId, userId, req.body);
+        await this.commentsService.createForPost(postId, userId, login, req.body);
 
       /*Получаем HTTP-статус операции по созданию комментария в посте.*/
       const createdCommentResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(createdCommentResult.status);
@@ -172,8 +174,15 @@ export class PostsController {
     res: Response<PostOutputDTO | ExtensionType[]>
   ): Promise<void | Response<PostOutputDTO | ExtensionType[]>> {
     try {
+      /*Получаем имя блога.*/
+      const blogName: string = req.blogName!;
+
       /*Просим сервис "postsService" создать пост.*/
-      const createdPostResult: Result<{ createdPostId: string } | null> = await this.postsService.create(req.body);
+      const createdPostResult: Result<{ createdPostId: string } | null> = await this.postsService.create(
+        req.body,
+        blogName
+      );
+
       /*Получаем HTTP-статус операции по созданию поста.*/
       const createdPostResultHttpStatus: HttpStatuses = mapFromResultStatusToHttpStatus(createdPostResult.status);
 

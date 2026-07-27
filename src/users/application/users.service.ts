@@ -20,10 +20,10 @@ import { normalizeEmail } from '../../core/utils/email/normalize-email.util';
 @injectable()
 export class UsersService {
   @lazyInject(TYPES.AuthService) private readonly authService!: AuthService;
-  @lazyInject(TYPES.CommentsService) private readonly commentsService!: CommentsService;
 
   constructor(
     @inject(TYPES.Argon2Adapter) private readonly argon2Adapter: Argon2Adapter,
+    @inject(TYPES.CommentsService) private readonly commentsService: CommentsService,
     @inject(TYPES.UsersRepository) private readonly usersRepository: UsersRepository
   ) {}
 
@@ -48,28 +48,6 @@ export class UsersService {
     const createdUserId: string = await this.usersRepository.create(newUser);
     /*Возвращаем ResultObject с ID пользователя.*/
     return { status: ResultStatuses.Created, data: { createdUserId }, extensions: [] };
-  }
-
-  /*Метод для поиска пользователя по ID.*/
-  public async findById(id: string): Promise<Result<{ userOutput: UserOutputDTO } | null>> {
-    /*Просим репозиторий "usersRepository" найти пользователя по ID в БД.*/
-    const userDB: UserDBType | null = await this.usersRepository.findById(id);
-
-    /*Если пользователь не был найден, то возвращаем ResultObject с информацией об этом.*/
-    if (!userDB) {
-      return {
-        status: ResultStatuses.NotFound,
-        data: null,
-        errorMessage: 'Not Found',
-        extensions: [{ field: 'id', message: 'User not found' }],
-      };
-    }
-
-    /*Если пользователь был найден, то преобразовываем пользователя из БД в подготовленного для отправки клиенту
-    пользователя.*/
-    const userOutput: UserOutputDTO = mapFromUserDBTypeToUserOutputDTO(userDB);
-    /*Возвращаем ResultObject с преобразованным пользователем.*/
-    return { status: ResultStatuses.Ok, data: { userOutput }, extensions: [] };
   }
 
   /*Метод для поиска пользователя по email.*/

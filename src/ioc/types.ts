@@ -12,6 +12,8 @@ export const TYPES = {
   RefreshTokenGuardMiddleware: Symbol('RefreshTokenGuardMiddleware'),
   RequestRateLimitGuardMiddleware: Symbol('RequestRateLimitGuardMiddleware'),
   OptionalAccessTokenGuardMiddleware: Symbol('OptionalAccessTokenGuardMiddleware'),
+  BlogExistsMiddleware: Symbol('BlogExistsMiddleware'),
+  PostExistsMiddleware: Symbol('PostExistsMiddleware'),
 
   AuthController: Symbol('AuthController'),
   SecurityDevicesController: Symbol('SecurityDevicesController'),

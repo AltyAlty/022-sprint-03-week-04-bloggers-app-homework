@@ -1,7 +1,9 @@
 import {
   accessTokenGuardMiddleware,
   basicAuthGuardMiddleware,
+  blogExistsMiddleware,
   optionalAccessTokenGuardMiddleware,
+  postExistsMiddleware,
   postsController,
 } from '../../ioc/composition-root';
 import { Router } from 'express';
@@ -30,6 +32,7 @@ postsRouter
     postIdValidation,
     paginationValidationMiddleware(CommentSortFieldQueryInputDTO),
     inputValidationResultMiddleware,
+    postExistsMiddleware,
     postsController.getCommentListByPostIdHandler.bind(postsController)
   )
   /*002. POST-запрос по добавлению комментария в пост по ID, используя URI-параметры.*/
@@ -39,6 +42,7 @@ postsRouter
     postIdValidation,
     createCommentForPostInputValidation,
     inputValidationResultMiddleware,
+    postExistsMiddleware,
     postsController.createCommentForPostHandler.bind(postsController)
   )
   /*003. GET-запрос по получению постов с пагинацией, используя query-параметры.*/
@@ -55,6 +59,7 @@ postsRouter
     basicAuthGuardMiddleware,
     createPostInputValidation,
     inputValidationResultMiddleware,
+    blogExistsMiddleware,
     postsController.createPostHandler.bind(postsController)
   )
   /*005. GET-запрос по получению поста по ID, используя URI-параметры.*/

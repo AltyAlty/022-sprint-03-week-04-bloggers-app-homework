@@ -1,8 +1,5 @@
-import { lazyInject } from '../../ioc/decorators';
 import { TYPES } from '../../ioc/types';
 import { inject, injectable } from 'inversify';
-import { PostsService } from '../../posts/application/posts.service';
-import { UsersService } from '../../users/application/users.service';
 import { CommentsRepository } from '../repositories/comments.repository';
 import { Result } from '../../core/types/result/result.type';
 import { ResultStatuses } from '../../core/types/result/result-statuses.type';
@@ -13,36 +10,24 @@ import { CommentLikeStatus } from './types/comment-like-data.type';
 import { CreateCommentForPostInputDTO } from '../routes/input-dto/create-comment-for-post.input-dto';
 import { CommentLikeStatusInputDTO } from '../routes/input-dto/like-comment-by-id.input-dto';
 import { UpdateCommentByIdInputDTO } from '../routes/input-dto/update-comment-by-id.input-dto';
-import { PostOutputDTO } from '../../posts/routes/output-dto/post.output-dto';
-import { UserOutputDTO } from '../../users/routes/output-dto/user.output-dto';
 
 /*Сервис для работы с комментариями.*/
 @injectable()
 export class CommentsService {
-  @lazyInject(TYPES.UsersService) private readonly usersService!: UsersService;
-  @lazyInject(TYPES.PostsService) private readonly postsService!: PostsService;
   constructor(@inject(TYPES.CommentsRepository) private readonly commentsRepository: CommentsRepository) {}
 
   /*Метод для добавления комментария в пост.*/
   public async createForPost(
     postId: string,
     userId: string,
+    login: string,
     dto: CreateCommentForPostInputDTO
   ): Promise<Result<{ createdCommentId: string } | null>> {
-    /*Просим сервис "usersService" найти пользователя по ID.*/
-    const userResult: Result<{ userOutput: UserOutputDTO } | null> = await this.usersService.findById(userId);
-    /*Если пользователь не был найден, то возвращаем ResultObject с информацией об этом.*/
-    if (userResult.status !== ResultStatuses.Ok) return userResult as Result;
-    /*Если пользователь был найден, то просим сервис "postsService" найти пост по ID.*/
-    const postResult: Result<{ postOutput: PostOutputDTO } | null> = await this.postsService.findById(postId);
-    /*Если пост не был найден, то возвращаем ResultObject с информацией об этом.*/
-    if (postResult.status !== ResultStatuses.Ok) return postResult as Result;
-
-    /*Если пользователь и пост были найдены, то создаем объект с данными нового комментария.*/
+    /*Создаем объект с данными нового комментария.*/
     const newComment: CommentType = {
       content: dto.content,
       postId: postId,
-      commentatorInfo: { userId, userLogin: userResult.data!.userOutput.login },
+      commentatorInfo: { userId, userLogin: login },
       createdAt: new Date(),
       likesInfo: { likesCount: 0, dislikesCount: 0 },
     };

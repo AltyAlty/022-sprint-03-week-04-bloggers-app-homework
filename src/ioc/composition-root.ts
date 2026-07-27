@@ -3,6 +3,10 @@ import { BasicAuthGuardMiddleware } from '../auth/middlewares/guard-middlewares/
 import { OptionalAccessTokenGuardMiddleware } from '../auth/middlewares/guard-middlewares/optional-access-token.guard-middleware';
 import { RefreshTokenGuardMiddleware } from '../auth/middlewares/guard-middlewares/refresh-token.guard-middleware';
 import { RequestRateLimitGuardMiddleware } from '../auth/middlewares/guard-middlewares/request-rate-limit.guard-middleware';
+import {
+  BlogExistsMiddleware,
+  PostExistsMiddleware,
+} from '../core/middlewares/validation/params-id-validation.middlewares';
 import { Argon2Adapter } from '../auth/adapters/argon2.adapter';
 import { BcryptAdapter } from '../auth/adapters/bcrypt.adapter';
 import { JwtAdapter } from '../auth/adapters/jwt.adapter';
@@ -72,6 +76,9 @@ container
   .bind<OptionalAccessTokenGuardMiddleware>(TYPES.OptionalAccessTokenGuardMiddleware)
   .to(OptionalAccessTokenGuardMiddleware)
   .inSingletonScope();
+
+container.bind<BlogExistsMiddleware>(TYPES.BlogExistsMiddleware).to(BlogExistsMiddleware).inSingletonScope();
+container.bind<PostExistsMiddleware>(TYPES.PostExistsMiddleware).to(PostExistsMiddleware).inSingletonScope();
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 
@@ -171,6 +178,11 @@ export const optionalAccessTokenGuardMiddleware = optionalAccessTokenGuardMiddle
   optionalAccessTokenGuardMiddlewareInstance
 );
 
+const blogExistsMiddlewareInstance = container.get<BlogExistsMiddleware>(TYPES.BlogExistsMiddleware);
+export const blogExistsMiddleware = blogExistsMiddlewareInstance.execute.bind(blogExistsMiddlewareInstance);
+
+const postExistsMiddlewareInstance = container.get<PostExistsMiddleware>(TYPES.PostExistsMiddleware);
+export const postExistsMiddleware = postExistsMiddlewareInstance.execute.bind(postExistsMiddlewareInstance);
 /*--------------------------------------------------------------------------------------------------------------------*/
 
 export const authController = container.get<AuthController>(TYPES.AuthController);

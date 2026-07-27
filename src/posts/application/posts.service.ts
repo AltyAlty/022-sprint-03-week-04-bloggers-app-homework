@@ -1,7 +1,5 @@
-import { lazyInject } from '../../ioc/decorators';
 import { TYPES } from '../../ioc/types';
 import { inject, injectable } from 'inversify';
-import { BlogsService } from '../../blogs/application/blogs.service';
 import { CommentsService } from '../../comments/application/comments.service';
 import { PostsRepository } from '../repositories/posts.repository';
 import { Result } from '../../core/types/result/result.type';
@@ -14,35 +12,24 @@ import { PostLikeStatus } from './types/post-like-data.type';
 import { CreatePostInputDTO } from '../routes/input-dto/create-post.input-dto';
 import { PostLikeStatusInputDTO } from '../routes/input-dto/like-post-by-id.input-dto';
 import { UpdatePostByIdInputDTO } from '../routes/input-dto/update-post-by-id.input-dto';
-import { BlogOutputDTO } from '../../blogs/routes/output-dto/blog.output-dto';
-import {
-  NewestPostLikeListOutputDTO,
-  PostLikeStatusOutputDTO,
-  PostOutputDTO,
-} from '../routes/output-dto/post.output-dto';
-import { mapFromPostDBTypeToPostOutputDTO } from '../repositories/mappers/map-from-post-db-type-to-post-output-dto.util';
 
 /*Сервис для работы с постами.*/
 @injectable()
 export class PostsService {
-  @lazyInject(TYPES.BlogsService) private readonly blogsService!: BlogsService;
-  @lazyInject(TYPES.CommentsService) private readonly commentsService!: CommentsService;
-  constructor(@inject(TYPES.PostsRepository) private readonly postsRepository: PostsRepository) {}
+  constructor(
+    @inject(TYPES.CommentsService) private readonly commentsService: CommentsService,
+    @inject(TYPES.PostsRepository) private readonly postsRepository: PostsRepository
+  ) {}
 
   /*Метод для добавления поста.*/
-  public async create(dto: CreatePostInputDTO): Promise<Result<{ createdPostId: string } | null>> {
-    /*Просим сервис "blogsService" найти блог по ID.*/
-    const blogResult: Result<{ blogOutput: BlogOutputDTO } | null> = await this.blogsService.findById(dto.blogId);
-    /*Если блог не был найден, то возвращаем ResultObject с информацией об этом.*/
-    if (blogResult.status !== ResultStatuses.Ok) return blogResult as Result;
-
-    /*Если блог был найден, то создаем объект с данными нового поста.*/
+  public async create(dto: CreatePostInputDTO, blogName: string): Promise<Result<{ createdPostId: string } | null>> {
+    /*Создаем объект с данными нового поста.*/
     const newPost: PostType = {
       title: dto.title,
       shortDescription: dto.shortDescription,
       content: dto.content,
       blogId: dto.blogId,
-      blogName: blogResult.data!.blogOutput.name,
+      blogName,
       createdAt: new Date(),
       extendedLikesInfo: { likesCount: 0, dislikesCount: 0 },
     };
@@ -51,45 +38,6 @@ export class PostsService {
     const createdPostId: string = await this.postsRepository.create(newPost);
     /*Возвращаем ResultObject с ID созданного поста.*/
     return { status: ResultStatuses.Created, data: { createdPostId }, extensions: [] };
-  }
-
-  /*Метод для поиска поста по ID.*/
-  public async findById(id: string, userId?: string): Promise<Result<{ postOutput: PostOutputDTO } | null>> {
-    /*Просим репозиторий "postsRepository" найти пост по ID в БД.*/
-    const postDB: PostDBType | null = await this.postsRepository.findById(id);
-
-    /*Если пост не был найден, то возвращаем ResultObject с информацией об этом.*/
-    if (!postDB) {
-      return {
-        status: ResultStatuses.NotFound,
-        data: null,
-        errorMessage: 'Not Found',
-        extensions: [{ field: 'id', message: 'Post not found' }],
-      };
-    }
-
-    /*Формируем статус лайка поста.*/
-    let likeStatus: PostLikeStatusOutputDTO = PostLikeStatusOutputDTO.None;
-
-    /*Если в запросе был указан AT.*/
-    if (userId) {
-      /*Просим репозиторий "postsRepository" найти данные о лайке поста в БД.*/
-      const postLikeDataDB: PostLikeDataDBType | null = await this.postsRepository.findPostLikeDataByPostIdAndUserId(
-        id,
-        userId
-      );
-
-      /*Если данные о лайке поста были найдены, то получаем статус лайка.*/
-      if (postLikeDataDB) likeStatus = postLikeDataDB.likeStatus as unknown as PostLikeStatusOutputDTO;
-    }
-
-    /*Просим репозиторий "postsQueryRepository" найти данные о трех последних лайках поста по ID поста в БД.*/
-    const newestLikes: NewestPostLikeListOutputDTO = await this.postsRepository.findLastThreePostLikes(id);
-
-    /*Если пост был найден, то преобразовываем пост из БД в подготовленный для отправки клиенту пост.*/
-    const postOutput: PostOutputDTO = mapFromPostDBTypeToPostOutputDTO(postDB, likeStatus, newestLikes);
-    /*Возвращаем ResultObject с преобразованным постом.*/
-    return { status: ResultStatuses.Ok, data: { postOutput }, extensions: [] };
   }
 
   /*Метод для изменения поста по ID.*/

@@ -1,6 +1,5 @@
 import { TYPES } from '../../ioc/types';
 import { inject, injectable } from 'inversify';
-import { BlogsQueryService } from '../../blogs/application/blogs.query-service';
 import { PostsQueryRepository } from '../repositories/posts.query-repository';
 import { Result } from '../../core/types/result/result.type';
 import { ResultStatuses } from '../../core/types/result/result-statuses.type';
@@ -8,7 +7,6 @@ import { PostDBType } from '../repositories/types/post-db.type';
 import { PostLikeDataDBType } from '../repositories/types/post-like-data-db.type';
 import { PostListDBType } from '../repositories/types/post-list-db.type';
 import { GetPostListQueryInputDTO } from '../routes/input-dto/query/get-post-list-query.input-dto';
-import { BlogOutputDTO } from '../../blogs/routes/output-dto/blog.output-dto';
 import { PaginatedPostListOutputDTO } from '../routes/output-dto/paginated-post-list.output-dto';
 import {
   NewestPostLikeListOutputDTO,
@@ -23,10 +21,7 @@ import { mapFromPostListDBTypeToPostListOutputDTO } from '../repositories/mapper
 /*Query-сервис для работы с постами.*/
 @injectable()
 export class PostsQueryService {
-  constructor(
-    @inject(TYPES.BlogsQueryService) private readonly blogsQueryService: BlogsQueryService,
-    @inject(TYPES.PostsQueryRepository) private readonly postsQueryRepository: PostsQueryRepository
-  ) {}
+  constructor(@inject(TYPES.PostsQueryRepository) private readonly postsQueryRepository: PostsQueryRepository) {}
 
   /*Метод для поиска поста по ID.*/
   public async findById(id: string, userId?: string): Promise<Result<{ postOutput: PostOutputDTO } | null>> {
@@ -70,14 +65,6 @@ export class PostsQueryService {
     blogId?: string,
     userId?: string
   ): Promise<Result<{ paginatedPostListOutput: PaginatedPostListOutputDTO } | null>> {
-    /*Если был указан ID блога, то проверяем существует ли он.*/
-    if (blogId) {
-      /*Просим query-сервис "blogsQueryService" найти блог по ID.*/
-      const blogResult: Result<{ blogOutput: BlogOutputDTO } | null> = await this.blogsQueryService.findById(blogId);
-      /*Если блог не был найден, то возвращаем ResultObject с информацией об этом.*/
-      if (blogResult.status !== ResultStatuses.Ok) return blogResult as Result;
-    }
-
     /*Просим query-репозиторий "postsQueryRepository" найти посты в БД.*/
     const { items, totalCount }: { items: PostListDBType; totalCount: number } =
       await this.postsQueryRepository.findAll(queryDTO, blogId);

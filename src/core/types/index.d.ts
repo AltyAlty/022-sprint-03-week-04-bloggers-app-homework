@@ -14,6 +14,8 @@ declare global {
       deviceId: IdType | undefined;
       /*Добавляем в интерфейс "Request" новое свойство "login".*/
       login: string | undefined;
+      /*Добавляем в интерфейс "Request" новое свойство "blogName".*/
+      blogName: string | undefined;
     }
   }
 }
