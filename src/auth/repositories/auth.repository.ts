@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { DeleteResult } from 'mongodb';
 import { HydratedDocument } from 'mongoose';
-import { EmailConfirmationModel } from './models/email-сonfirmation.model';
+import { EmailConfirmationModel } from './models/email-confirmation.model';
 import { RecoveryCodeDataModel } from './models/recovery-code-data.model';
 import { RequestRateLimitLogModel } from './models/request-rate-limit-log.model';
 import { SessionModel } from './models/session.model';
