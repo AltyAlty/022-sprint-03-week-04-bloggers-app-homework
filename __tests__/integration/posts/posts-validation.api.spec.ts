@@ -1,4 +1,5 @@
 import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
+import { PostLikeStatusInputDTO } from '../../../src/posts/routes/input-dto/like-post-by-id.input-dto';
 import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
 import { BlogOutputDTO } from '../../../src/blogs/routes/output-dto/blog.output-dto';
 import { PaginatedCommentListOutputDTO } from '../../../src/comments/routes/output-dto/paginated-comment-list.output-dto';
@@ -20,6 +21,7 @@ import {
 import {
   invalidPostContents,
   invalidPostIds,
+  invalidPostLikesData,
   invalidPostShortDescriptions,
   invalidPostsPaginationSettings,
   invalidPostTitles,
@@ -35,6 +37,7 @@ import { deletePostById } from '../../utils/posts/delete-post-by-id.test-util';
 import { getCommentListByPostId } from '../../utils/posts/get-comment-list-by-post-id.test-util';
 import { getPostById } from '../../utils/posts/get-post-by-id.test-util';
 import { getPostList } from '../../utils/posts/get-post-list.test-util';
+import { likePostById } from '../../utils/posts/like-post-by-id.test-util';
 import { updatePostById } from '../../utils/posts/update-post-by-id.test-util';
 import { createUser } from '../../utils/users/create-user.test-util';
 import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
@@ -202,9 +205,35 @@ describe('Posts API Validation', () => {
     await createPost(app);
     const testStatus: HttpStatuses = HttpStatuses.BadRequest_400;
 
-    const getPostByIdResponse_01: any = await getPostById(app, invalidPostIds.id_01, testStatus);
-    const getPostByIdResponse_02: any = await getPostById(app, invalidPostIds.id_02, testStatus);
-    const getPostByIdResponse_03: any = await getPostById(app, invalidPostIds.id_03, testStatus);
+    const getPostByIdResponse_01: any = await getPostById(
+      app,
+      undefined,
+      invalidPostIds.id_01,
+      undefined,
+      testStatus,
+      true,
+      true
+    );
+
+    const getPostByIdResponse_02: any = await getPostById(
+      app,
+      undefined,
+      invalidPostIds.id_02,
+      undefined,
+      testStatus,
+      true,
+      true
+    );
+
+    const getPostByIdResponse_03: any = await getPostById(
+      app,
+      undefined,
+      invalidPostIds.id_03,
+      undefined,
+      testStatus,
+      true,
+      true
+    );
 
     expect(getPostByIdResponse_01.errorsMessages[0].field).toBe('id');
     expect(getPostByIdResponse_01.errorsMessages[0].message).toBe('Field "id" must be an ObjectId');
@@ -217,7 +246,7 @@ describe('Posts API Validation', () => {
   it('❌ 004 should not return a post by an incorrect ID; 005. GET /api/posts/:id', async () => {
     await createPost(app);
 
-    await getPostById(app, validPostIds.id_01, HttpStatuses.NotFound_404);
+    await getPostById(app, undefined, validPostIds.id_01, undefined, HttpStatuses.NotFound_404, true, true);
   });
 
   it('❌ 005 should not return a list of posts when invalid pagination settings passed; 003. GET /api/posts', async () => {
@@ -265,7 +294,16 @@ describe('Posts API Validation', () => {
       invalidBasicAuthTokens.BAT_01
     );
 
-    const getPostByIdResponse: PostOutputDTO = await getPostById(app, createdPostId);
+    const getPostByIdResponse: PostOutputDTO = await getPostById(
+      app,
+      undefined,
+      createdPostId,
+      undefined,
+      undefined,
+      true,
+      true
+    );
+
     expect(getPostByIdResponse).toEqual(createdPost);
   });
 
@@ -299,7 +337,16 @@ describe('Posts API Validation', () => {
       testStatus
     );
 
-    const getPostByIdResponse: PostOutputDTO = await getPostById(app, createdPost.id);
+    const getPostByIdResponse: PostOutputDTO = await getPostById(
+      app,
+      undefined,
+      createdPost.id,
+      undefined,
+      undefined,
+      true,
+      true
+    );
+
     expect(getPostByIdResponse).toEqual(createdPost);
     expect(updatePostByIdResponse_01.errorsMessages[0].field).toBe('id');
     expect(updatePostByIdResponse_01.errorsMessages[0].message).toBe('Field "id" must be an ObjectId');
@@ -316,7 +363,16 @@ describe('Posts API Validation', () => {
 
     await updatePostById(app, validPostIds.id_01, createdBlogId, undefined, HttpStatuses.NotFound_404);
 
-    const getPostByIdResponse: PostOutputDTO = await getPostById(app, createdPost.id);
+    const getPostByIdResponse: PostOutputDTO = await getPostById(
+      app,
+      undefined,
+      createdPost.id,
+      undefined,
+      undefined,
+      true,
+      true
+    );
+
     expect(getPostByIdResponse).toEqual(createdPost);
   });
 
@@ -447,7 +503,16 @@ describe('Posts API Validation', () => {
       testStatus
     );
 
-    const getPostByIdResponse: PostOutputDTO = await getPostById(app, createdPostId);
+    const getPostByIdResponse: PostOutputDTO = await getPostById(
+      app,
+      undefined,
+      createdPostId,
+      undefined,
+      undefined,
+      true,
+      true
+    );
+
     expect(getPostByIdResponse).toEqual(createdPost);
     expect(updatePostByIdResponse_01.errorsMessages[0].field).toBe('title');
     expect(updatePostByIdResponse_01.errorsMessages[0].message).toBe('Field "title" must not be empty');
@@ -493,17 +558,536 @@ describe('Posts API Validation', () => {
     expect(updatePostByIdResponse_15.errorsMessages[0].message).toBe('Field "blogId" must not be empty');
   });
 
-  it('❌ 010 should not delete a post by a correct ID without proper basic authorization; 007. DELETE /api/posts/:id', async () => {
+  it('❌ 010 should not like a post by a correct ID when an invalid access token passed; 008. PUT /api/posts/:id/like-status', async () => {
+    const createdPost: PostOutputDTO = await createPost(app);
+    const createdPostId: string = createdPost.id;
+    const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
+    await createUser(app, createUserData_01);
+
+    const accessToken: string = await loginUserReturnAccessToken(app, {
+      loginOrEmail: createUserData_01.login,
+      password: createUserData_01.password,
+    });
+
+    const testUserAgent: string = validUserAgents.userAgent_01;
+    const testStatus: HttpStatuses = HttpStatuses.Unauthorized_401;
+
+    await likePostById(
+      app,
+      testUserAgent,
+      invalidAccessTokens.AT_01,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    await likePostById(
+      app,
+      testUserAgent,
+      invalidAccessTokens.AT_02,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    await likePostById(
+      app,
+      testUserAgent,
+      invalidAccessTokens.AT_03,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    await likePostById(
+      app,
+      testUserAgent,
+      invalidAccessTokens.AT_04,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    await likePostById(
+      app,
+      testUserAgent,
+      invalidAccessTokens.AT_05,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    await likePostById(
+      app,
+      testUserAgent,
+      invalidAccessTokens.AT_06,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    await likePostById(
+      app,
+      testUserAgent,
+      invalidAccessTokens.AT_07,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    await likePostById(
+      app,
+      testUserAgent,
+      invalidAccessTokens.AT_08,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    await likePostById(
+      app,
+      testUserAgent,
+      invalidAccessTokens.AT_09,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    const getPostByIdResponse: PostOutputDTO = await getPostById(app, testUserAgent, createdPostId, accessToken);
+    expect(getPostByIdResponse.extendedLikesInfo.myStatus).toBe(PostLikeStatusInputDTO.None);
+    expect(getPostByIdResponse.extendedLikesInfo.likesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.dislikesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.newestLikes.length).toBe(0);
+  });
+
+  it('❌ 011 should not like a post by a correct ID when an incorrect access token passed; 008. PUT /api/posts/:id/like-status', async () => {
+    const createdPost: PostOutputDTO = await createPost(app);
+    const createdPostId: string = createdPost.id;
+    const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
+    await createUser(app, createUserData_01);
+
+    const accessToken: string = await loginUserReturnAccessToken(app, {
+      loginOrEmail: createUserData_01.login,
+      password: createUserData_01.password,
+    });
+
+    const testUserAgent: string = validUserAgents.userAgent_01;
+
+    await likePostById(
+      app,
+      testUserAgent,
+      validAccessTokens.AT_01,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      HttpStatuses.Unauthorized_401
+    );
+
+    const getPostByIdResponse: PostOutputDTO = await getPostById(app, testUserAgent, createdPostId, accessToken);
+    expect(getPostByIdResponse.extendedLikesInfo.myStatus).toBe(PostLikeStatusInputDTO.None);
+    expect(getPostByIdResponse.extendedLikesInfo.likesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.dislikesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.newestLikes.length).toBe(0);
+  });
+
+  it('❌ 012 should not like a post by a correct ID when an access token not passed; 008. PUT /api/posts/:id/like-status', async () => {
+    const createdPost: PostOutputDTO = await createPost(app);
+    const createdPostId: string = createdPost.id;
+    const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
+    await createUser(app, createUserData_01);
+
+    const accessToken: string = await loginUserReturnAccessToken(app, {
+      loginOrEmail: createUserData_01.login,
+      password: createUserData_01.password,
+    });
+
+    const testUserAgent: string = validUserAgents.userAgent_01;
+
+    await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      HttpStatuses.Unauthorized_401,
+      false,
+      true
+    );
+
+    const getPostByIdResponse: PostOutputDTO = await getPostById(app, testUserAgent, createdPostId, accessToken);
+    expect(getPostByIdResponse.extendedLikesInfo.myStatus).toBe(PostLikeStatusInputDTO.None);
+    expect(getPostByIdResponse.extendedLikesInfo.likesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.dislikesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.newestLikes.length).toBe(0);
+  });
+
+  it('❌ 013 should not like a post by an invalid ID; 008. PUT /api/posts/:id/like-status', async () => {
+    const createdPost: PostOutputDTO = await createPost(app);
+    const createdPostId: string = createdPost.id;
+    const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
+    await createUser(app, createUserData_01);
+
+    const accessToken: string = await loginUserReturnAccessToken(app, {
+      loginOrEmail: createUserData_01.login,
+      password: createUserData_01.password,
+    });
+
+    const testUserAgent: string = validUserAgents.userAgent_01;
+    const testStatus: HttpStatuses = HttpStatuses.BadRequest_400;
+
+    const likePostByIdResponse_01: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      invalidPostIds.id_01,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    const likePostByIdResponse_02: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      invalidPostIds.id_02,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    const likePostByIdResponse_03: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      invalidPostIds.id_03,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    const likePostByIdResponse_04: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      invalidPostIds.id_04,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    const getPostByIdResponse: PostOutputDTO = await getPostById(app, testUserAgent, createdPostId, accessToken);
+    expect(getPostByIdResponse.extendedLikesInfo.myStatus).toBe(PostLikeStatusInputDTO.None);
+    expect(getPostByIdResponse.extendedLikesInfo.likesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.dislikesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.newestLikes.length).toBe(0);
+    expect(likePostByIdResponse_01.errorsMessages[0].field).toBe('id');
+    expect(likePostByIdResponse_01.errorsMessages[0].message).toBe('Field "id" must be an ObjectId');
+    expect(likePostByIdResponse_02.errorsMessages[0].field).toBe('id');
+    expect(likePostByIdResponse_02.errorsMessages[0].message).toBe('Field "id" must be an ObjectId');
+    expect(likePostByIdResponse_03.errorsMessages[0].field).toBe('id');
+    expect(likePostByIdResponse_03.errorsMessages[0].message).toBe('Field "id" must be an ObjectId');
+    expect(likePostByIdResponse_04.errorsMessages[0].field).toBe('id');
+    expect(likePostByIdResponse_04.errorsMessages[0].message).toBe('Field "id" must not be empty');
+  });
+
+  it('❌ 014 should not like a post by an incorrect ID; 008. PUT /api/posts/:id/like-status', async () => {
+    const createdPost: PostOutputDTO = await createPost(app);
+    const createdPostId: string = createdPost.id;
+    const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
+    await createUser(app, createUserData_01);
+
+    const accessToken: string = await loginUserReturnAccessToken(app, {
+      loginOrEmail: createUserData_01.login,
+      password: createUserData_01.password,
+    });
+
+    const testUserAgent: string = validUserAgents.userAgent_01;
+
+    await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      validPostIds.id_01,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      HttpStatuses.NotFound_404
+    );
+
+    const getPostByIdResponse: PostOutputDTO = await getPostById(app, testUserAgent, createdPostId, accessToken);
+    expect(getPostByIdResponse.extendedLikesInfo.myStatus).toBe(PostLikeStatusInputDTO.None);
+    expect(getPostByIdResponse.extendedLikesInfo.likesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.dislikesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.newestLikes.length).toBe(0);
+  });
+
+  it('❌ 015 should not like a post by a correct ID when an invalid user agent passed; 008. PUT /api/posts/:id/like-status', async () => {
+    const createdPost: PostOutputDTO = await createPost(app);
+    const createdPostId: string = createdPost.id;
+    const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
+    await createUser(app, createUserData_01);
+
+    const accessToken: string = await loginUserReturnAccessToken(app, {
+      loginOrEmail: createUserData_01.login,
+      password: createUserData_01.password,
+    });
+
+    const testStatus: HttpStatuses = HttpStatuses.Unauthorized_401;
+
+    await likePostById(
+      app,
+      invalidUserAgents.userAgent_01,
+      accessToken,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    await likePostById(
+      app,
+      invalidUserAgents.userAgent_02,
+      accessToken,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      testStatus
+    );
+
+    const getPostByIdResponse: PostOutputDTO = await getPostById(
+      app,
+      validUserAgents.userAgent_01,
+      createdPostId,
+      accessToken
+    );
+
+    expect(getPostByIdResponse.extendedLikesInfo.myStatus).toBe(PostLikeStatusInputDTO.None);
+    expect(getPostByIdResponse.extendedLikesInfo.likesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.dislikesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.newestLikes.length).toBe(0);
+  });
+
+  it('❌ 016 should not like a post by a correct ID when a user agent not passed; 008. PUT /api/posts/:id/like-status', async () => {
+    const createdPost: PostOutputDTO = await createPost(app);
+    const createdPostId: string = createdPost.id;
+    const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
+    await createUser(app, createUserData_01);
+
+    const accessToken: string = await loginUserReturnAccessToken(app, {
+      loginOrEmail: createUserData_01.login,
+      password: createUserData_01.password,
+    });
+
+    const testUserAgent: string = validUserAgents.userAgent_01;
+
+    await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      createdPostId,
+      { likeStatus: PostLikeStatusInputDTO.Like },
+      HttpStatuses.Unauthorized_401,
+      true
+    );
+
+    const getPostByIdResponse: PostOutputDTO = await getPostById(app, testUserAgent, createdPostId, accessToken);
+    expect(getPostByIdResponse.extendedLikesInfo.myStatus).toBe(PostLikeStatusInputDTO.None);
+    expect(getPostByIdResponse.extendedLikesInfo.likesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.dislikesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.newestLikes.length).toBe(0);
+  });
+
+  it('❌ 017 should not like a post by a correct ID when an invalid body passed; 008. PUT /api/posts/:id/like-status', async () => {
+    const createdPost: PostOutputDTO = await createPost(app);
+    const createdPostId: string = createdPost.id;
+    const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
+    await createUser(app, createUserData_01);
+
+    const accessToken: string = await loginUserReturnAccessToken(app, {
+      loginOrEmail: createUserData_01.login,
+      password: createUserData_01.password,
+    });
+
+    const testUserAgent: string = validUserAgents.userAgent_01;
+    const testStatus: HttpStatuses = HttpStatuses.BadRequest_400;
+
+    const likePostByIdResponse_01: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      createdPostId,
+      { likeStatus: invalidPostLikesData.data_01 },
+      testStatus
+    );
+
+    const likePostByIdResponse_02: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      createdPostId,
+      { likeStatus: invalidPostLikesData.data_02 },
+      testStatus
+    );
+
+    const likePostByIdResponse_03: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      createdPostId,
+      { likeStatus: invalidPostLikesData.data_03 },
+      testStatus
+    );
+
+    const likePostByIdResponse_04: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      createdPostId,
+      { likeStatus: invalidPostLikesData.data_04 },
+      testStatus
+    );
+
+    const likePostByIdResponse_05: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      createdPostId,
+      { likeStatus: invalidPostLikesData.data_05 },
+      testStatus
+    );
+
+    const likePostByIdResponse_06: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      createdPostId,
+      { likeStatus: invalidPostLikesData.data_06 },
+      testStatus
+    );
+
+    const likePostByIdResponse_07: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      createdPostId,
+      { likeStatus: invalidPostLikesData.data_07 },
+      testStatus
+    );
+    const likePostByIdResponse_08: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      createdPostId,
+      { likeStatus: invalidPostLikesData.data_08 },
+      testStatus
+    );
+
+    const likePostByIdResponse_09: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      createdPostId,
+      { likeStatus: invalidPostLikesData.data_09 },
+      testStatus
+    );
+
+    const likePostByIdResponse_10: any = await likePostById(
+      app,
+      testUserAgent,
+      accessToken,
+      createdPostId,
+      { likeStatus: invalidPostLikesData.data_10 },
+      testStatus
+    );
+
+    const getPostByIdResponse: PostOutputDTO = await getPostById(app, testUserAgent, createdPostId, accessToken);
+    expect(getPostByIdResponse.extendedLikesInfo.myStatus).toBe(PostLikeStatusInputDTO.None);
+    expect(getPostByIdResponse.extendedLikesInfo.likesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.dislikesCount).toBe(0);
+    expect(getPostByIdResponse.extendedLikesInfo.newestLikes.length).toBe(0);
+    expect(likePostByIdResponse_01.errorsMessages[0].field).toBe('likeStatus');
+
+    expect(likePostByIdResponse_01.errorsMessages[0].message).toBe(
+      'Field "likeStatus" must be one of: None, Like, Dislike'
+    );
+
+    expect(likePostByIdResponse_02.errorsMessages[0].field).toBe('likeStatus');
+    expect(likePostByIdResponse_02.errorsMessages[0].message).toBe('Field "likeStatus" must not be empty');
+    expect(likePostByIdResponse_03.errorsMessages[0].field).toBe('likeStatus');
+    expect(likePostByIdResponse_03.errorsMessages[0].message).toBe('Field "likeStatus" must not be empty');
+    expect(likePostByIdResponse_04.errorsMessages[0].field).toBe('likeStatus');
+
+    expect(likePostByIdResponse_04.errorsMessages[0].message).toBe(
+      'Field "likeStatus" must be one of: None, Like, Dislike'
+    );
+
+    expect(likePostByIdResponse_05.errorsMessages[0].field).toBe('likeStatus');
+
+    expect(likePostByIdResponse_05.errorsMessages[0].message).toBe(
+      'Field "likeStatus" must be one of: None, Like, Dislike'
+    );
+
+    expect(likePostByIdResponse_06.errorsMessages[0].field).toBe('likeStatus');
+    expect(likePostByIdResponse_06.errorsMessages[0].message).toBe('Field "likeStatus" must be a string');
+    expect(likePostByIdResponse_07.errorsMessages[0].field).toBe('likeStatus');
+    expect(likePostByIdResponse_07.errorsMessages[0].message).toBe('Field "likeStatus" must be a string');
+    expect(likePostByIdResponse_08.errorsMessages[0].field).toBe('likeStatus');
+    expect(likePostByIdResponse_08.errorsMessages[0].message).toBe('Field "likeStatus" must be a string');
+    expect(likePostByIdResponse_09.errorsMessages[0].field).toBe('likeStatus');
+    expect(likePostByIdResponse_09.errorsMessages[0].message).toBe('Field "likeStatus" is required');
+    expect(likePostByIdResponse_10.errorsMessages[0].field).toBe('likeStatus');
+    expect(likePostByIdResponse_10.errorsMessages[0].message).toBe('Field "likeStatus" must be a string');
+  });
+
+  it('❌ 018 should not like a post by a correct ID when a user tries to set the same like status; 008. PUT /api/posts/:id/like-status', async () => {
+    const createdPost: PostOutputDTO = await createPost(app);
+    const createdPostId: string = createdPost.id;
+    const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
+    await createUser(app, createUserData_01);
+
+    const accessToken: string = await loginUserReturnAccessToken(app, {
+      loginOrEmail: createUserData_01.login,
+      password: createUserData_01.password,
+    });
+
+    const testUserAgent: string = validUserAgents.userAgent_01;
+
+    await likePostById(app, testUserAgent, accessToken, createdPostId, { likeStatus: PostLikeStatusInputDTO.None });
+    const getPostByIdResponse_01: PostOutputDTO = await getPostById(app, testUserAgent, createdPostId, accessToken);
+    await likePostById(app, testUserAgent, accessToken, createdPostId, { likeStatus: PostLikeStatusInputDTO.Like });
+    await likePostById(app, testUserAgent, accessToken, createdPostId, { likeStatus: PostLikeStatusInputDTO.Like });
+    const getPostByIdResponse_02: PostOutputDTO = await getPostById(app, testUserAgent, createdPostId, accessToken);
+    await likePostById(app, testUserAgent, accessToken, createdPostId, { likeStatus: PostLikeStatusInputDTO.Dislike });
+    await likePostById(app, testUserAgent, accessToken, createdPostId, { likeStatus: PostLikeStatusInputDTO.Dislike });
+    const getPostByIdResponse_03: PostOutputDTO = await getPostById(app, testUserAgent, createdPostId, accessToken);
+
+    expect(getPostByIdResponse_01.extendedLikesInfo.myStatus).toBe(PostLikeStatusInputDTO.None);
+    expect(getPostByIdResponse_01.extendedLikesInfo.likesCount).toBe(0);
+    expect(getPostByIdResponse_01.extendedLikesInfo.dislikesCount).toBe(0);
+    expect(getPostByIdResponse_01.extendedLikesInfo.newestLikes.length).toBe(0);
+
+    expect(getPostByIdResponse_02.extendedLikesInfo.myStatus).toBe(PostLikeStatusInputDTO.Like);
+    expect(getPostByIdResponse_02.extendedLikesInfo.likesCount).toBe(1);
+    expect(getPostByIdResponse_02.extendedLikesInfo.dislikesCount).toBe(0);
+    expect(getPostByIdResponse_02.extendedLikesInfo.newestLikes.length).toBe(1);
+
+    expect(getPostByIdResponse_03.extendedLikesInfo.myStatus).toBe(PostLikeStatusInputDTO.Dislike);
+    expect(getPostByIdResponse_03.extendedLikesInfo.likesCount).toBe(0);
+    expect(getPostByIdResponse_03.extendedLikesInfo.dislikesCount).toBe(1);
+    expect(getPostByIdResponse_03.extendedLikesInfo.newestLikes.length).toBe(0);
+  });
+
+  it('❌ 019 should not delete a post by a correct ID without proper basic authorization; 007. DELETE /api/posts/:id', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createdPostId: string = createdPost.id;
 
     await deletePostById(app, createdPostId, HttpStatuses.Unauthorized_401, invalidBasicAuthTokens.BAT_01);
 
-    const getPostByIdResponse: PostOutputDTO = await getPostById(app, createdPostId);
+    const getPostByIdResponse: PostOutputDTO = await getPostById(
+      app,
+      undefined,
+      createdPostId,
+      undefined,
+      undefined,
+      true,
+      true
+    );
+
     expect(getPostByIdResponse).toEqual(createdPost);
   });
 
-  it('❌ 011 should not delete a post by an invalid ID; 007. DELETE /api/posts/:id', async () => {
+  it('❌ 020 should not delete a post by an invalid ID; 007. DELETE /api/posts/:id', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const testStatus: HttpStatuses = HttpStatuses.BadRequest_400;
 
@@ -511,7 +1095,16 @@ describe('Posts API Validation', () => {
     const deletePostByIdResponse_02: any = await deletePostById(app, invalidPostIds.id_02, testStatus);
     const deletePostByIdResponse_03: any = await deletePostById(app, invalidPostIds.id_03, testStatus);
 
-    const getPostByIdResponse: PostOutputDTO = await getPostById(app, createdPost.id);
+    const getPostByIdResponse: PostOutputDTO = await getPostById(
+      app,
+      undefined,
+      createdPost.id,
+      undefined,
+      undefined,
+      true,
+      true
+    );
+
     expect(getPostByIdResponse).toEqual(createdPost);
     expect(deletePostByIdResponse_01.errorsMessages[0].field).toBe('id');
     expect(deletePostByIdResponse_01.errorsMessages[0].message).toBe('Field "id" must be an ObjectId');
@@ -521,16 +1114,25 @@ describe('Posts API Validation', () => {
     expect(deletePostByIdResponse_03.errorsMessages[0].message).toBe('Field "id" must be an ObjectId');
   });
 
-  it('❌ 012 should not delete a post by an incorrect ID; 007. DELETE /api/posts/:id', async () => {
+  it('❌ 021 should not delete a post by an incorrect ID; 007. DELETE /api/posts/:id', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
 
     await deletePostById(app, validPostIds.id_01, HttpStatuses.NotFound_404);
 
-    const getPostByIdResponse: PostOutputDTO = await getPostById(app, createdPost.id);
+    const getPostByIdResponse: PostOutputDTO = await getPostById(
+      app,
+      undefined,
+      createdPost.id,
+      undefined,
+      undefined,
+      true,
+      true
+    );
+
     expect(getPostByIdResponse).toEqual(createdPost);
   });
 
-  it('❌ 013 should not create a comment for a post by a correct ID when an invalid access token passed; 002. POST /api/posts/:postId/comments', async () => {
+  it('❌ 022 should not create a comment for a post by a correct ID when an invalid access token passed; 002. POST /api/posts/:postId/comments', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createdPostId: string = createdPost.id;
     const testUserAgent: string = validUserAgents.userAgent_01;
@@ -562,7 +1164,7 @@ describe('Posts API Validation', () => {
     expect(getCommentListByPostIdResponse.totalCount).toBe(0);
   });
 
-  it('❌ 014 should not create a comment for a post by a correct ID when an incorrect access token passed; 002. POST /api/posts/:postId/comments', async () => {
+  it('❌ 023 should not create a comment for a post by a correct ID when an incorrect access token passed; 002. POST /api/posts/:postId/comments', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createdPostId: string = createdPost.id;
     const testUserAgent: string = validUserAgents.userAgent_01;
@@ -592,7 +1194,7 @@ describe('Posts API Validation', () => {
     expect(getCommentListByPostIdResponse.totalCount).toBe(0);
   });
 
-  it('❌ 015 should not create a comment for a post by a correct ID when an access token not passed; 002. POST /api/posts/:postId/comments', async () => {
+  it('❌ 024 should not create a comment for a post by a correct ID when an access token not passed; 002. POST /api/posts/:postId/comments', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createdPostId: string = createdPost.id;
     const createUserData: CreateUserInputDTO = getCreateUserInputDTO();
@@ -632,7 +1234,7 @@ describe('Posts API Validation', () => {
     expect(getCommentListByPostIdResponse.totalCount).toBe(0);
   });
 
-  it('❌ 016 should not create a comment for a post by an invalid ID; 002. POST /api/posts/:postId/comments', async () => {
+  it('❌ 025 should not create a comment for a post by an invalid ID; 002. POST /api/posts/:postId/comments', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createUserData: CreateUserInputDTO = getCreateUserInputDTO();
     await createUser(app, createUserData);
@@ -702,7 +1304,7 @@ describe('Posts API Validation', () => {
     expect(createCommentForPostResponse_04.errorsMessages[0].message).toBe('Field "postId" must not be empty');
   });
 
-  it('❌ 017 should not create a comment for a post by an incorrect ID; 002. POST /api/posts/:postId/comments', async () => {
+  it('❌ 026 should not create a comment for a post by an incorrect ID; 002. POST /api/posts/:postId/comments', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createUserData: CreateUserInputDTO = getCreateUserInputDTO();
     await createUser(app, createUserData);
@@ -736,7 +1338,7 @@ describe('Posts API Validation', () => {
     expect(getCommentListByPostIdResponse.totalCount).toBe(0);
   });
 
-  it('❌ 018 should not create a comment for a post by a correct ID when an invalid user agent passed; 002. POST /api/posts/:postId/comments', async () => {
+  it('❌ 027 should not create a comment for a post by a correct ID when an invalid user agent passed; 002. POST /api/posts/:postId/comments', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createdPostId: string = createdPost.id;
     const createUserData: CreateUserInputDTO = getCreateUserInputDTO();
@@ -765,7 +1367,7 @@ describe('Posts API Validation', () => {
     expect(getCommentListByPostIdResponse.totalCount).toBe(0);
   });
 
-  it('❌ 019 should not create a comment for a post by a correct ID when a user agent not passed; 002. POST /api/posts/:postId/comments', async () => {
+  it('❌ 028 should not create a comment for a post by a correct ID when a user agent not passed; 002. POST /api/posts/:postId/comments', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createdPostId: string = createdPost.id;
     const createUserData: CreateUserInputDTO = getCreateUserInputDTO();
@@ -801,7 +1403,7 @@ describe('Posts API Validation', () => {
     expect(getCommentListByPostIdResponse.totalCount).toBe(0);
   });
 
-  it('❌ 020 should not create a comment for a post by a correct ID when an invalid body passed; 002. POST /api/posts/:postId/comments', async () => {
+  it('❌ 029 should not create a comment for a post by a correct ID when an invalid body passed; 002. POST /api/posts/:postId/comments', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createdPostId: string = createdPost.id;
     const createUserData: CreateUserInputDTO = getCreateUserInputDTO();
@@ -950,7 +1552,7 @@ describe('Posts API Validation', () => {
     expect(createCommentForPostResponse_10.errorsMessages[0].message).toBe('Field "content" must be a string');
   });
 
-  it('❌ 021 should not return a list of comments for a post by an invalid ID; 001. GET /api/posts/:postId/comments', async () => {
+  it('❌ 030 should not return a list of comments for a post by an invalid ID; 001. GET /api/posts/:postId/comments', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createdPostId: string = createdPost.id;
     const createUserData: CreateUserInputDTO = getCreateUserInputDTO();
@@ -1016,7 +1618,7 @@ describe('Posts API Validation', () => {
     expect(getCommentListByPostIdResponse_04.errorsMessages[0].message).toBe('Field "postId" must not be empty');
   });
 
-  it('❌ 022 should not return a list of comments for a post by an incorrect ID; 001. GET /api/posts/:postId/comments', async () => {
+  it('❌ 031 should not return a list of comments for a post by an incorrect ID; 001. GET /api/posts/:postId/comments', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createdPostId: string = createdPost.id;
     const createUserData: CreateUserInputDTO = getCreateUserInputDTO();
@@ -1044,7 +1646,7 @@ describe('Posts API Validation', () => {
     );
   });
 
-  it('❌ 023 should not return a list of comments for a post by a correct ID when invalid pagination settings passed; 001. GET /api/posts/:postId/comments', async () => {
+  it('❌ 032 should not return a list of comments for a post by a correct ID when invalid pagination settings passed; 001. GET /api/posts/:postId/comments', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createdPostId: string = createdPost.id;
     const invalidUrl_01: string = `${SETTINGS.POSTS_PATH}/${createdPostId}/comments?pageSize=${invalidCommentsPaginationSettings.pageSize}&pageNumber=${validCommentsPaginationSettings.pageNumber}&sortDirection=${validCommentsPaginationSettings.sortDirection}&sortBy=${validCommentsPaginationSettings.sortBy}`;
@@ -1132,7 +1734,7 @@ describe('Posts API Validation', () => {
     );
   });
 
-  it('❌ 024 should not return a list of comments for a post by a correct ID when an invalid user agent passed; 001. GET /api/posts/:postId/comments', async () => {
+  it('❌ 033 should not return a list of comments for a post by a correct ID when an invalid user agent passed; 001. GET /api/posts/:postId/comments', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createdPostId: string = createdPost.id;
     const createUserData: CreateUserInputDTO = getCreateUserInputDTO();
@@ -1170,7 +1772,7 @@ describe('Posts API Validation', () => {
     );
   });
 
-  it('❌ 025 should not return a list of comments for a post by a correct ID when a user agent not passed; 001. GET /api/posts/:postId/comments', async () => {
+  it('❌ 034 should not return a list of comments for a post by a correct ID when a user agent not passed; 001. GET /api/posts/:postId/comments', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createdPostId: string = createdPost.id;
     const createUserData: CreateUserInputDTO = getCreateUserInputDTO();

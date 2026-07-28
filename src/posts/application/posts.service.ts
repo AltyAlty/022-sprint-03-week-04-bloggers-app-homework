@@ -183,6 +183,8 @@ export class PostsService {
   public async deleteById(id: string): Promise<Result<{} | null>> {
     /*Просим сервис "commentsService" удалить комментарии в посте по ID.*/
     await this.commentsService.deleteAllByPostId(id);
+    /*Просим репозиторий "postsRepository" удалить данные о лайках поста по ID поста в БД.*/
+    await this.postsRepository.deleteAllPostLikesDataByPostId(id);
     /*Просим репозиторий "postsRepository" удалить пост по ID в БД.*/
     const deletedPostCount: number = await this.postsRepository.deleteById(id);
 
@@ -203,16 +205,13 @@ export class PostsService {
   /*Метод для удаления постов по ID блога.*/
   public async deleteAllByBlogId(blogId: string): Promise<Result<{ deletedPostsCount: number } | null>> {
     /*Просим репозиторий "postsRepository" найти посты в блоге по ID в БД.*/
-    const postsDB: PostListDBType | null = await this.postsRepository.findAllByBlogId(blogId);
-
-    /*Если посты в блоге были найдены, то удаляем комментарии внутри постов.*/
-    if (postsDB) {
-      /*Получаем массив ID постов внутри блога.*/
-      const postIds: string[] = postsDB.map(post => post._id.toString());
-      /*Просим сервис "commentsService" удалить комментарии по ID постов.*/
-      await this.commentsService.deleteAllByPostIds(postIds);
-    }
-
+    const postsDB: PostListDBType = await this.postsRepository.findAllByBlogId(blogId);
+    /*Получаем массив ID постов внутри блога.*/
+    const postIds: string[] = postsDB.map(post => post._id.toString());
+    /*Просим сервис "commentsService" удалить комментарии по ID постов.*/
+    await this.commentsService.deleteAllByPostIds(postIds);
+    /*Просим репозиторий "postsRepository" удалить данные о лайках постов по ID постов в БД.*/
+    await this.postsRepository.deleteAllPostLikesDataByPostIds(postIds);
     /*Просим репозиторий "postsRepository" удалить посты по ID блога в БД.*/
     const deletedPostsCount: number = await this.postsRepository.deleteAllByBlogId(blogId);
     /*Возвращаем ResultObject с информацией об удалении постов.*/

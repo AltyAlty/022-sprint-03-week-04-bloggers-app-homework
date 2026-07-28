@@ -7,6 +7,7 @@ import { CommentType } from '../application/types/comment.type';
 import { CommentLikeDataType, CommentLikeStatus } from '../application/types/comment-like-data.type';
 import { CommentDBType } from './types/comment-db.type';
 import { CommentLikeDataDBType } from './types/comment-like-data-db.type';
+import { CommentListDBType } from './types/comment-list-db.type';
 import { UpdateCommentByIdInputDTO } from '../routes/input-dto/update-comment-by-id.input-dto';
 
 /*Репозиторий для работы с комментариями в БД.*/
@@ -37,13 +38,13 @@ export class CommentsRepository {
   }
 
   /*Метод для поиска комментариев по ID поста в БД.*/
-  public async findAllByPostId(postId: string): Promise<CommentDBType[]> {
+  public async findAllByPostId(postId: string): Promise<CommentListDBType> {
     /*Просим модель "CommentModel" найти комментарии по ID поста в БД.*/
     return await CommentModel.find({ postId }).lean();
   }
 
   /*Метод для поиска комментариев по ID постов в БД.*/
-  public async findAllByPostIds(postIds: string[]): Promise<CommentDBType[]> {
+  public async findAllByPostIds(postIds: string[]): Promise<CommentListDBType> {
     /*Просим модель "CommentModel" найти комментарии по ID постов в БД.*/
     return await CommentModel.find({ postId: { $in: postIds } }).lean();
   }

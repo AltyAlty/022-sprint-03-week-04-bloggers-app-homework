@@ -95,7 +95,7 @@ describe('Comments API', () => {
     });
   });
 
-  it('✅ 003 should like a comment by a correct ID when a valid access token passed; 004. PUT /api/comments/:id', async () => {
+  it('✅ 003 should like a comment by a correct ID when a valid access token passed; 004. PUT /api/comments/:id/like-status', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
 

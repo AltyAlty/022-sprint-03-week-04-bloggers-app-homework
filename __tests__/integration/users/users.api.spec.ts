@@ -111,7 +111,7 @@ describe('Users API', () => {
     expect(getUserListResponse.items).toBeInstanceOf(Array);
     expect(getUserListResponse.items.length).toBe(0);
     expect(getUserListResponse.totalCount).toBe(0);
-    await getPostById(app, createdPostId);
+    await getPostById(app, undefined, createdPostId, undefined, undefined, true, true);
     await getCommentById(app, testUserAgent, createdComment_01.id, undefined, testStatus, false, true);
     await getCommentById(app, testUserAgent, createdComment_02.id, undefined, testStatus, false, true);
 

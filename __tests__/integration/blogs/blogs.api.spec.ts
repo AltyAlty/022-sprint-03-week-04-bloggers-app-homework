@@ -1,10 +1,13 @@
 import { container } from '../../../src/ioc/container';
 import { TYPES } from '../../../src/ioc/types';
 import { CommentsRepository } from '../../../src/comments/repositories/comments.repository';
+import { PostsRepository } from '../../../src/posts/repositories/posts.repository';
 import { CommentLikeDataDBType } from '../../../src/comments/repositories/types/comment-like-data-db.type';
 import { HttpStatuses } from '../../../src/core/types/http-statuses.type';
+import { PostLikeDataDBType } from '../../../src/posts/repositories/types/post-like-data-db.type';
 import { UpdateBlogByIdInputDTO } from '../../../src/blogs/routes/input-dto/update-blog-by-id.input-dto';
 import { CommentLikeStatusInputDTO } from '../../../src/comments/routes/input-dto/like-comment-by-id.input-dto';
+import { PostLikeStatusInputDTO } from '../../../src/posts/routes/input-dto/like-post-by-id.input-dto';
 import { CreateUserInputDTO } from '../../../src/users/routes/input-dto/create-user.input-dto';
 import { BlogOutputDTO } from '../../../src/blogs/routes/output-dto/blog.output-dto';
 import { PaginatedBlogListOutputDTO } from '../../../src/blogs/routes/output-dto/paginated-blog-list.output-dto';
@@ -31,6 +34,7 @@ import { createCommentForPost } from '../../utils/posts/create-comment-for-post.
 import { createPost } from '../../utils/posts/create-post.test-util';
 import { getCommentListByPostId } from '../../utils/posts/get-comment-list-by-post-id.test-util';
 import { getPostById } from '../../utils/posts/get-post-by-id.test-util';
+import { likePostById } from '../../utils/posts/like-post-by-id.test-util';
 import { createUser } from '../../utils/users/create-user.test-util';
 import { getCreateUserInputDTO } from '../../utils/users/input-dto-utils/get-create-user-input-dto.test-util';
 import { SETTINGS } from '../../../src/core/settings/settings';
@@ -117,30 +121,56 @@ describe('Blogs API', () => {
     await getBlogById(app, createdBlogId, HttpStatuses.NotFound_404);
   });
 
-  it('✅ 007 should delete a blog with its posts by a correct ID; 007. DELETE /api/blogs/:id', async () => {
+  it(`✅ 007 should delete a blog with its posts and posts' likes by a correct ID; 007. DELETE /api/blogs/:id`, async () => {
+    const postsRepository = container.get<PostsRepository>(TYPES.PostsRepository);
+
     const createdBlog: BlogOutputDTO = await createBlog(app);
     const createdBlogId: string = createdBlog.id;
+    const createUserData: CreateUserInputDTO = getCreateUserInputDTO();
+    const createdUser: UserOutputDTO = await createUser(app, createUserData);
+    const createdUserId: string = createdUser.id;
+
+    const accessToken: string = await loginUserReturnAccessToken(app, {
+      loginOrEmail: createUserData.login,
+      password: createUserData.password,
+    });
+
+    const testUserAgent: string = validUserAgents.userAgent_01;
     const createdPost_01: PostOutputDTO = await createPost(app, undefined, createdBlogId);
+    const createdPostId_01: string = createdPost_01.id;
+    await likePostById(app, testUserAgent, accessToken, createdPostId_01, { likeStatus: PostLikeStatusInputDTO.Like });
     const createdPost_02: PostOutputDTO = await createPost(app, undefined, createdBlogId);
+    await likePostById(app, testUserAgent, accessToken, createdPostId_01, { likeStatus: PostLikeStatusInputDTO.Like });
+    const createdPostId_02: string = createdPost_02.id;
     const testStatus: HttpStatuses = HttpStatuses.NotFound_404;
 
     await deleteBlogById(app, createdBlogId);
 
     await getBlogById(app, createdBlogId, testStatus);
     await getPostListByBlogId(app, createdBlogId, undefined, testStatus);
-    await getPostById(app, createdPost_01.id, testStatus);
-    await getPostById(app, createdPost_02.id, testStatus);
+    await getPostById(app, undefined, createdPostId_01, undefined, testStatus, true, true);
+    await getPostById(app, undefined, createdPostId_02, undefined, testStatus, true, true);
+
+    const postLikeData_01: PostLikeDataDBType | null = await postsRepository.findPostLikeDataByPostIdAndUserId(
+      createdPostId_01,
+      createdUserId
+    );
+
+    const postLikeData_02: PostLikeDataDBType | null = await postsRepository.findPostLikeDataByPostIdAndUserId(
+      createdPostId_02,
+      createdUserId
+    );
+
+    expect(postLikeData_01).toBeNull();
+    expect(postLikeData_02).toBeNull();
   });
 
-  it(`✅ 008 should delete a blog with its posts, comments and comments' likes by a correct ID; 007. DELETE /api/blogs/:id`, async () => {
+  it(`✅ 008 should delete a blog with its posts, posts' likes, comments and comments' likes by a correct ID; 007. DELETE /api/blogs/:id`, async () => {
+    const postsRepository = container.get<PostsRepository>(TYPES.PostsRepository);
     const commentsRepository = container.get<CommentsRepository>(TYPES.CommentsRepository);
 
     const createdBlog: BlogOutputDTO = await createBlog(app);
     const createdBlogId: string = createdBlog.id;
-    const createdPost_01: PostOutputDTO = await createPost(app, undefined, createdBlogId);
-    const createdPost_02: PostOutputDTO = await createPost(app, undefined, createdBlogId);
-    const createdPostId_01: string = createdPost_01.id;
-    const createdPostId_02: string = createdPost_02.id;
     const createUserData: CreateUserInputDTO = getCreateUserInputDTO();
     const createdUser: UserOutputDTO = await createUser(app, createUserData);
     const createdUserId: string = createdUser.id;
@@ -152,12 +182,24 @@ describe('Blogs API', () => {
 
     const testUserAgent: string = validUserAgents.userAgent_01;
 
+    const createdPost_01: PostOutputDTO = await createPost(app, undefined, createdBlogId);
+    const createdPostId_01: string = createdPost_01.id;
+    await likePostById(app, testUserAgent, accessToken, createdPostId_01, { likeStatus: PostLikeStatusInputDTO.Like });
+    const createdPost_02: PostOutputDTO = await createPost(app, undefined, createdBlogId);
+    const createdPostId_02: string = createdPost_02.id;
+
+    await likePostById(app, testUserAgent, accessToken, createdPostId_02, {
+      likeStatus: PostLikeStatusInputDTO.Dislike,
+    });
+
     const createdComment_01: CommentOutputDTO = await createCommentForPost(
       app,
       testUserAgent,
       createdPostId_01,
       accessToken
     );
+
+    const createdCommentId_01: string = createdComment_01.id;
 
     await likeCommentById(app, testUserAgent, accessToken, createdComment_01.id, {
       likeStatus: CommentLikeStatusInputDTO.Like,
@@ -170,6 +212,8 @@ describe('Blogs API', () => {
       accessToken
     );
 
+    const createdCommentId_02: string = createdComment_02.id;
+
     await likeCommentById(app, testUserAgent, accessToken, createdComment_02.id, {
       likeStatus: CommentLikeStatusInputDTO.Like,
     });
@@ -180,6 +224,8 @@ describe('Blogs API', () => {
       createdPostId_02,
       accessToken
     );
+
+    const createdCommentId_03: string = createdComment_03.id;
 
     await likeCommentById(app, testUserAgent, accessToken, createdComment_03.id, {
       likeStatus: CommentLikeStatusInputDTO.Dislike,
@@ -192,6 +238,8 @@ describe('Blogs API', () => {
       accessToken
     );
 
+    const createdCommentId_04: string = createdComment_04.id;
+
     await likeCommentById(app, testUserAgent, accessToken, createdComment_04.id, {
       likeStatus: CommentLikeStatusInputDTO.Dislike,
     });
@@ -202,26 +250,39 @@ describe('Blogs API', () => {
 
     await getBlogById(app, createdBlogId, testStatus);
     await getPostListByBlogId(app, createdBlogId, undefined, testStatus);
-    await getPostById(app, createdPostId_01, testStatus);
-    await getPostById(app, createdPostId_02, testStatus);
+    await getPostById(app, undefined, createdPostId_01, undefined, testStatus, true, true);
+    await getPostById(app, undefined, createdPostId_02, undefined, testStatus, true, true);
     await getCommentListByPostId(app, testUserAgent, createdPostId_01, undefined, accessToken, testStatus);
     await getCommentListByPostId(app, testUserAgent, createdPostId_02, undefined, accessToken, testStatus);
-    await getCommentById(app, testUserAgent, createdComment_01.id, accessToken, testStatus);
-    await getCommentById(app, testUserAgent, createdComment_02.id, accessToken, testStatus);
-    await getCommentById(app, testUserAgent, createdComment_03.id, accessToken, testStatus);
-    await getCommentById(app, testUserAgent, createdComment_04.id, accessToken, testStatus);
+    await getCommentById(app, testUserAgent, createdCommentId_01, accessToken, testStatus);
+    await getCommentById(app, testUserAgent, createdCommentId_02, accessToken, testStatus);
+    await getCommentById(app, testUserAgent, createdCommentId_03, accessToken, testStatus);
+    await getCommentById(app, testUserAgent, createdCommentId_04, accessToken, testStatus);
+
+    const postLikeData_01: PostLikeDataDBType | null = await postsRepository.findPostLikeDataByPostIdAndUserId(
+      createdPostId_01,
+      createdUserId
+    );
+
+    const postLikeData_02: PostLikeDataDBType | null = await postsRepository.findPostLikeDataByPostIdAndUserId(
+      createdPostId_02,
+      createdUserId
+    );
+
+    expect(postLikeData_01).toBeNull();
+    expect(postLikeData_02).toBeNull();
 
     const commentLikeData_01: CommentLikeDataDBType | null =
-      await commentsRepository.findCommentLikeDataByCommentIdAndUserId(createdComment_01.id, createdUserId);
+      await commentsRepository.findCommentLikeDataByCommentIdAndUserId(createdCommentId_01, createdUserId);
 
     const commentLikeData_02: CommentLikeDataDBType | null =
-      await commentsRepository.findCommentLikeDataByCommentIdAndUserId(createdComment_01.id, createdUserId);
+      await commentsRepository.findCommentLikeDataByCommentIdAndUserId(createdCommentId_02, createdUserId);
 
     const commentLikeData_03: CommentLikeDataDBType | null =
-      await commentsRepository.findCommentLikeDataByCommentIdAndUserId(createdComment_01.id, createdUserId);
+      await commentsRepository.findCommentLikeDataByCommentIdAndUserId(createdCommentId_03, createdUserId);
 
     const commentLikeData_04: CommentLikeDataDBType | null =
-      await commentsRepository.findCommentLikeDataByCommentIdAndUserId(createdComment_01.id, createdUserId);
+      await commentsRepository.findCommentLikeDataByCommentIdAndUserId(createdCommentId_04, createdUserId);
 
     expect(commentLikeData_01).toBeNull();
     expect(commentLikeData_02).toBeNull();
@@ -234,7 +295,16 @@ describe('Blogs API', () => {
 
     const createdPostForBlog: PostOutputDTO = await createPostForBlog(app, createdBlog.id);
 
-    const getPostByIdResponse: PostOutputDTO = await getPostById(app, createdPostForBlog.id);
+    const getPostByIdResponse: PostOutputDTO = await getPostById(
+      app,
+      undefined,
+      createdPostForBlog.id,
+      undefined,
+      undefined,
+      true,
+      true
+    );
+
     expect(getPostByIdResponse).toEqual(createdPostForBlog);
   });
 

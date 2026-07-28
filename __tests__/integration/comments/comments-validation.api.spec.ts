@@ -624,7 +624,7 @@ describe('Comments API Validation', () => {
     expect(updateCommentByIdResponse_10.errorsMessages[0].message).toBe('Field "content" must be a string');
   });
 
-  it('❌ 011 should not like a comment by a correct ID when an invalid access token passed; 004. PUT /api/comments/:id', async () => {
+  it('❌ 011 should not like a comment by a correct ID when an invalid access token passed; 004. PUT /api/comments/:id/like-status', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
     await createUser(app, createUserData_01);
@@ -739,7 +739,7 @@ describe('Comments API Validation', () => {
     expect(getCommentByIdResponse.likesInfo.dislikesCount).toBe(0);
   });
 
-  it('❌ 012 should not like a comment by a correct ID when an incorrect access token passed; 004. PUT /api/comments/:id', async () => {
+  it('❌ 012 should not like a comment by a correct ID when an incorrect access token passed; 004. PUT /api/comments/:id/like-status', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
     await createUser(app, createUserData_01);
@@ -781,7 +781,7 @@ describe('Comments API Validation', () => {
     expect(getCommentByIdResponse.likesInfo.dislikesCount).toBe(0);
   });
 
-  it('❌ 013 should not like a comment by a correct ID when an access token not passed; 004. PUT /api/comments/:id', async () => {
+  it('❌ 013 should not like a comment by a correct ID when an access token not passed; 004. PUT /api/comments/:id/like-status', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
     await createUser(app, createUserData_01);
@@ -825,7 +825,7 @@ describe('Comments API Validation', () => {
     expect(getCommentByIdResponse.likesInfo.dislikesCount).toBe(0);
   });
 
-  it('❌ 014 should not like a comment by an invalid ID; 004. PUT /api/comments/:id', async () => {
+  it('❌ 014 should not like a comment by an invalid ID; 004. PUT /api/comments/:id/like-status', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
     await createUser(app, createUserData_01);
@@ -891,7 +891,7 @@ describe('Comments API Validation', () => {
     expect(likeCommentByIdResponse_03.errorsMessages[0].message).toBe('Field "id" must be an ObjectId');
   });
 
-  it('❌ 015 should not like a comment by an incorrect ID; 004. PUT /api/comments/:id', async () => {
+  it('❌ 015 should not like a comment by an incorrect ID; 004. PUT /api/comments/:id/like-status', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
     await createUser(app, createUserData_01);
@@ -931,7 +931,7 @@ describe('Comments API Validation', () => {
     expect(getCommentByIdResponse.likesInfo.dislikesCount).toBe(0);
   });
 
-  it('❌ 016 should not like a comment by a correct ID when an invalid user agent passed; 004. PUT /api/comments/:id', async () => {
+  it('❌ 016 should not like a comment by a correct ID when an invalid user agent passed; 004. PUT /api/comments/:id/like-status', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
     await createUser(app, createUserData_01);
@@ -983,7 +983,7 @@ describe('Comments API Validation', () => {
     expect(getCommentByIdResponse.likesInfo.dislikesCount).toBe(0);
   });
 
-  it('❌ 017 should not like a comment by a correct ID when a user agent not passed; 004. PUT /api/comments/:id', async () => {
+  it('❌ 017 should not like a comment by a correct ID when a user agent not passed; 004. PUT /api/comments/:id/like-status', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
     await createUser(app, createUserData_01);
@@ -1026,7 +1026,7 @@ describe('Comments API Validation', () => {
     expect(getCommentByIdResponse.likesInfo.dislikesCount).toBe(0);
   });
 
-  it('❌ 018 should not like a comment by a correct ID when an invalid body passed; 004. PUT /api/comments/:id', async () => {
+  it('❌ 018 should not like a comment by a correct ID when an invalid body passed; 004. PUT /api/comments/:id/like-status', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
     await createUser(app, createUserData_01);
@@ -1182,7 +1182,7 @@ describe('Comments API Validation', () => {
     expect(likeCommentByIdResponse_10.errorsMessages[0].message).toBe('Field "likeStatus" must be a string');
   });
 
-  it('❌ 019 should not like a comment by a correct ID when a user tries to set the same like status; 004. PUT /api/comments/:id', async () => {
+  it('❌ 019 should not like a comment by a correct ID when a user tries to set the same like status; 004. PUT /api/comments/:id/like-status', async () => {
     const createdPost: PostOutputDTO = await createPost(app);
     const createUserData_01: CreateUserInputDTO = getCreateUserInputDTO();
     await createUser(app, createUserData_01);
@@ -1247,11 +1247,9 @@ describe('Comments API Validation', () => {
     expect(getCommentByIdResponse_01.likesInfo.myStatus).toBe(CommentLikeStatusInputDTO.None);
     expect(getCommentByIdResponse_01.likesInfo.likesCount).toBe(0);
     expect(getCommentByIdResponse_01.likesInfo.dislikesCount).toBe(0);
-
     expect(getCommentByIdResponse_02.likesInfo.myStatus).toBe(CommentLikeStatusInputDTO.Like);
     expect(getCommentByIdResponse_02.likesInfo.likesCount).toBe(1);
     expect(getCommentByIdResponse_02.likesInfo.dislikesCount).toBe(0);
-
     expect(getCommentByIdResponse_03.likesInfo.myStatus).toBe(CommentLikeStatusInputDTO.Dislike);
     expect(getCommentByIdResponse_03.likesInfo.likesCount).toBe(0);
     expect(getCommentByIdResponse_03.likesInfo.dislikesCount).toBe(1);

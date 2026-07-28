@@ -5,6 +5,7 @@ import { Result } from '../../core/types/result/result.type';
 import { ResultStatuses } from '../../core/types/result/result-statuses.type';
 import { CommentDBType } from '../repositories/types/comment-db.type';
 import { CommentLikeDataDBType } from '../repositories/types/comment-like-data-db.type';
+import { CommentListDBType } from '../repositories/types/comment-list-db.type';
 import { CommentType } from './types/comment.type';
 import { CommentLikeStatus } from './types/comment-like-data.type';
 import { CreateCommentForPostInputDTO } from '../routes/input-dto/create-comment-for-post.input-dto';
@@ -224,7 +225,7 @@ export class CommentsService {
   /*Метод для удаления комментариев по ID поста.*/
   public async deleteAllByPostId(postId: string): Promise<Result<{ deletedCommentsCount: number } | null>> {
     /*Просим репозиторий "commentsRepository" найти комментарии по ID поста в БД.*/
-    const commentsDB: CommentDBType[] = await this.commentsRepository.findAllByPostId(postId);
+    const commentsDB: CommentListDBType = await this.commentsRepository.findAllByPostId(postId);
     /*Получаем массив ID комментариев внутри поста.*/
     const commentIds = commentsDB.map((comment: CommentDBType) => comment._id.toString());
     /*Просим репозиторий "commentsRepository" удалить данные о лайках комментариев по ID комментариев в БД.*/
@@ -248,7 +249,7 @@ export class CommentsService {
   /*Метод для удаления комментариев по ID постов.*/
   public async deleteAllByPostIds(postIds: string[]): Promise<Result<{ deletedCommentsCount: number } | null>> {
     /*Просим репозиторий "commentsRepository" найти комментарии по ID постов в БД.*/
-    const commentsDB: CommentDBType[] = await this.commentsRepository.findAllByPostIds(postIds);
+    const commentsDB: CommentListDBType = await this.commentsRepository.findAllByPostIds(postIds);
     /*Получаем массив ID комментариев внутри постов.*/
     const commentIds = commentsDB.map((comment: CommentDBType) => comment._id.toString());
     /*Просим репозиторий "commentsRepository" удалить данные о лайках комментариев по ID комментариев в БД.*/

@@ -9,7 +9,6 @@ import { PostDBType } from './types/post-db.type';
 import { PostLikeDataDBType } from './types/post-like-data-db.type';
 import { PostListDBType } from './types/post-list-db.type';
 import { UpdatePostByIdInputDTO } from '../routes/input-dto/update-post-by-id.input-dto';
-import { NewestPostLikeListOutputDTO } from '../routes/output-dto/post.output-dto';
 
 /*Репозиторий для работы с постами в БД.*/
 @injectable()
@@ -39,34 +38,15 @@ export class PostsRepository {
   }
 
   /*Метод для поиска постов по ID блога в БД.*/
-  public async findAllByBlogId(blogId: string): Promise<PostListDBType | null> {
+  public async findAllByBlogId(blogId: string): Promise<PostListDBType> {
     /*Просим модель "PostModel" найти посты по ID блога в БД.*/
-    const posts: PostListDBType = await PostModel.find({ blogId }).lean();
-    /*Если посты были найдены, то возвращаем их, иначе возвращаем null.*/
-    return posts.length === 0 ? null : posts;
+    return await PostModel.find({ blogId }).lean();
   }
 
   /*Метод для поиска данных о лайке поста по ID поста и ID пользователя в БД.*/
   public async findPostLikeDataByPostIdAndUserId(postId: string, userId: string): Promise<PostLikeDataDBType | null> {
     /*Просим модель "PostLikeDataModel" найти данные о лайке поста по ID поста и ID пользователя в БД.*/
     return await PostLikeDataModel.findOne({ postId, userId }).lean();
-  }
-
-  /*Метод для поиска данных о трех последних лайках поста по ID поста в БД.*/
-  public async findLastThreePostLikes(postId: string): Promise<NewestPostLikeListOutputDTO> {
-    /*Просим модель "PostLikeDataModel" найти данные о трех последних лайках поста по ID поста в БД.*/
-    return (
-      PostLikeDataModel.find(
-        { postId, likeStatus: PostLikeStatus.Like },
-        /*Указываем какие поля включать в результат.*/
-        { addedAt: 1, userId: 1, login: 1, _id: 0 }
-      )
-        /*Сортируем найденные данные о лайках поста по полю "addedAt" в порядке убывания.*/
-        .sort({ addedAt: -1 })
-        /*Ограничиваем количество возвращаемых данных о лайках поста до трех.*/
-        .limit(3)
-        .lean()
-    );
   }
 
   /*Метод для изменения поста по ID в БД.*/
@@ -137,6 +117,22 @@ export class PostsRepository {
     /*Просим модель "PostLikeDataModel" удалить данные о лайке поста по ID поста и ID пользователя в БД.*/
     const result: DeleteResult = await PostLikeDataModel.deleteOne({ postId, userId });
     /*Возвращаем количество удаленных данных о лайке поста.*/
+    return result.deletedCount;
+  }
+
+  /*Метод для удаления данных о лайках поста по ID поста в БД.*/
+  public async deleteAllPostLikesDataByPostId(postId: string): Promise<number> {
+    /*Просим модель "PostLikeDataModel" удалить данные о лайках поста по ID поста в БД.*/
+    const result: DeleteResult = await PostLikeDataModel.deleteMany({ postId });
+    /*Возвращаем количество удаленных данных о лайках поста.*/
+    return result.deletedCount;
+  }
+
+  /*Метод для удаления данных о лайках постов по ID постов в БД.*/
+  public async deleteAllPostLikesDataByPostIds(postIds: string[]): Promise<number> {
+    /*Просим модель "PostLikeDataModel" удалить данные о лайках постов по ID постов в БД.*/
+    const result: DeleteResult = await PostLikeDataModel.deleteMany({ postId: { $in: postIds } });
+    /*Возвращаем количество удаленных данных о лайках постов.*/
     return result.deletedCount;
   }
 }

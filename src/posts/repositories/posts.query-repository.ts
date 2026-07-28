@@ -123,7 +123,9 @@ export class PostsQueryRepository {
   }
 
   /*Метод для поиска данных о трех последних лайках постов по ID постов в БД.*/
-  public async findLastThreeLikesForPostsByPostIds2(postIds: string[]): Promise<Map<string, PostLikeDataDBType[]>> {
+  public async findLastThreeLikesForPostsByPostIds_BAD_VERSION(
+    postIds: string[]
+  ): Promise<Map<string, PostLikeDataDBType[]>> {
     /*Просим модель "PostLikeDataModel" найти данные о трех последних лайках постов по ID постов в БД.*/
     const postLikesData = await PostLikeDataModel.find({ postId: { $in: postIds }, likeStatus: PostLikeStatus.Like })
       .sort({ addedAt: -1 })

@@ -42,3 +42,16 @@ export const invalidPostContents = {
   content_02: '   ',
   content_03: null,
 };
+
+export const invalidPostLikesData = {
+  data_01: 'qwe123zxc',
+  data_02: '',
+  data_03: '   ',
+  data_04: 'ABC',
+  data_05: '1234567890',
+  data_06: [],
+  data_07: {},
+  data_08: null,
+  data_09: undefined,
+  data_10: 1234567890,
+};
