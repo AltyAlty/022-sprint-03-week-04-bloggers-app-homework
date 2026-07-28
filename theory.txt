@@ -1641,30 +1641,3 @@ Reflect.
 11.3 "/__tests__/test-date/" - данные, используемые в тестировании приложения.
 11.4 "/__tests__/test-doubles/" - моки и шпионы, используемые в тестировании приложения.
 11.5 "/__tests__/utils/" - утилиты, используемые в тестировании приложения.
-
-
-import { lazyInject } from '../../ioc/decorators';
-import { TYPES } from '../../ioc/types';
-import { inject, injectable } from 'inversify';
-import { Argon2Adapter } from '../../auth/adapters/argon2.adapter';
-import { AuthService } from '../../auth/application/auth.service';
-import { CommentsService } from '../../comments/application/comments.service';
-import { UsersRepository } from '../repositories/users.repository';
-import { EmailConfirmationType } from '../../auth/application/types/email-сonfirmation.type';
-import { UserType } from './types/user.type';
-import { UserDBType } from '../repositories/types/user-db.type';
-import { RecoveryCodeDataType } from '../../auth/application/types/recovery-code-data.type';
-import { Result } from '../../core/types/result/result.type';
-import { ResultStatuses } from '../../core/types/result/result-statuses.type';
-import { CreateUserInputDTO } f rom '../routes/input-dto/create-user.input-dto';
-import { UserOutputDTO } from '../routes/output-dto/user.output-dto';
-import { mapFromUserDBTypeToUserOutputDTO } from '../repositories/mappers/map-from-user-db-type-to-user-output-dto.util';
-import { normalizeEmail } from '../../core/utils/email/normalize-email.util';
-
-
-import 'reflect-metadata';
-import 'dotenv/config';
-import { db } from './db/mongodb/mongo.db';
-import express, { Express } from 'express';
-import { setupApp } from './setup-app.util';
-import { SETTINGS } from './core/settings/settings';
