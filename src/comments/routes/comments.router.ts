@@ -41,7 +41,8 @@ commentsRouter
     idValidation,
     inputValidationResultMiddleware,
     commentsController.getCommentByIdHandler.bind(commentsController)
-  ) /*004. PUT-запрос по лайку комментария по ID, используя URI-параметры.*/
+  )
+  /*004. PUT-запрос по лайку комментария по ID, используя URI-параметры.*/
   .put(
     SETTINGS.LIKE_COMMENT_BY_ID_PATH,
     accessTokenGuardMiddleware,

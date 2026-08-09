@@ -36,7 +36,7 @@ export class CommentsQueryService {
       };
     }
 
-    /*Формируем статус лайка комментария.*/
+    /*Если комментарий был найден, то формируем статус лайка комментария.*/
     let likeStatus: CommentLikeStatusOutputDTO = CommentLikeStatusOutputDTO.None;
 
     /*Если в запросе был указан AT.*/
@@ -49,8 +49,7 @@ export class CommentsQueryService {
       if (commentLikeDataDB) likeStatus = commentLikeDataDB.likeStatus as unknown as CommentLikeStatusOutputDTO;
     }
 
-    /*Если комментарий был найден, то преобразовываем комментарий из БД в подготовленный для отправки клиенту
-    комментарий.*/
+    /*Преобразовываем комментарий из БД в подготовленный для отправки клиенту комментарий.*/
     const commentOutput: CommentOutputDTO = mapFromCommentDBTypeToCommentOutputDTO(commentDB, likeStatus);
     /*Возвращаем ResultObject с преобразованным комментарием.*/
     return { status: ResultStatuses.Ok, data: { commentOutput }, extensions: [] };

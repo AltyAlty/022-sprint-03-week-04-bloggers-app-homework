@@ -38,7 +38,7 @@ export class PostsQueryService {
       };
     }
 
-    /*Формируем статус лайка поста.*/
+    /*Если пост был найден, то формируем статус лайка поста.*/
     let likeStatus: PostLikeStatusOutputDTO = PostLikeStatusOutputDTO.None;
 
     /*Если в запросе был указан AT.*/
@@ -53,7 +53,7 @@ export class PostsQueryService {
 
     /*Просим query-репозиторий "postsQueryRepository" найти данные о трех последних лайках поста по ID поста в БД.*/
     const newestLikes: NewestPostLikeListOutputDTO = await this.postsQueryRepository.findLastThreePostLikes(id);
-    /*Если пост был найден, то преобразовываем пост из БД в подготовленный для отправки клиенту пост.*/
+    /*Преобразовываем пост из БД в подготовленный для отправки клиенту пост.*/
     const postOutput: PostOutputDTO = mapFromPostDBTypeToPostOutputDTO(postDB, likeStatus, newestLikes);
     /*Возвращаем ResultObject с преобразованным постом.*/
     return { status: ResultStatuses.Ok, data: { postOutput }, extensions: [] };
