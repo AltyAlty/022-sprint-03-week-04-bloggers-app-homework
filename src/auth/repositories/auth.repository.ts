@@ -204,10 +204,10 @@ export class AuthRepository {
 
   /*Метод для удаления данных о всех кодах восстановления пароля пользователя по ID пользователя в БД.*/
   public async deleteAllRecoveryCodesDataByUserId(userId: string): Promise<number> {
-    /*Просим модель "RecoveryCodeDataModel" удалить данные о коде восстановления пароля пользователя по ID пользователя
-    в БД.*/
-    const result: DeleteResult = await RecoveryCodeDataModel.deleteOne({ userId });
-    /*Возвращаем количество удаленных данных о коде восстановления пароля пользователя.*/
+    /*Просим модель "RecoveryCodeDataModel" удалить данные о всех кодах восстановления пароля пользователя по ID
+    пользователя в БД.*/
+    const result: DeleteResult = await RecoveryCodeDataModel.deleteMany({ userId });
+    /*Возвращаем количество удаленных данных о кодах восстановления пароля пользователя.*/
     return result.deletedCount;
   }
 }
