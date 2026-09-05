@@ -59,7 +59,7 @@ export class AuthService {
     /*Если проверка прошла успешно, то получаем ID пользователя.*/
     const userId: string = checkedUserCredentialsResult.data!.id;
     /*Генерируем ID устройства пользователя.*/
-    const deviceId = new ObjectId().toString();
+    const deviceId: string = new ObjectId().toString();
     /*Просим адаптер "jwtAdapter" создать AT.*/
     const accessToken: string = await this.jwtAdapter.createAccessToken(userId, SETTINGS.AT_SECRET!, SETTINGS.AT_TIME!);
 
